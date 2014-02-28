@@ -81,6 +81,8 @@ def customise_harvesting(process):
     process.load('Validation.MuonGEMDigis.PostProcessor_cff')
     process.genHarvesting += process.MuonGEMHitsPostProcessors
     process.genHarvesting += process.MuonGEMDigisPostProcessors
+    process.muonAssociatorByHitsESProducer.muonAssociatorByHitsCommonParameters.useGEMs = cms.bool(True)
+    process.muonTrackValidator.useGEMs = cms.bool(True)
     return (process)
 
 def outputCustoms(process):
