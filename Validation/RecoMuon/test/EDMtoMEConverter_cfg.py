@@ -6,8 +6,11 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load("DQMServices.Components.EDMtoMEConverter_cff")
 process.load("DQMServices.Components.DQMEnvironment_cfi")
 #process.load("Configuration.StandardSequences.FakeConditions_cff")
-process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = "IDEAL_V11::All"
+process.load('Configuration.Geometry.GeometryExtended2023MuonReco_cff')
+process.load('Configuration.Geometry.GeometryExtended2023Muon_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
 process.load("Validation.Configuration.postValidation_cff")
 process.load("Validation.RecoMuon.PostProcessorHLT_cff")
 
@@ -31,6 +34,6 @@ process.dqmSaver.forceRunNumber = cms.untracked.int32(1)
 process.dqmSaver.workflow = "/GlobalValidation/Test/RECO"
 
 process.p1 = cms.Path(process.EDMtoMEConverter*
-                      process.postValidation*
+                      #process.postValidation*
 #                      process.recoMuonPostProcessorsHLT*
                       process.dqmSaver)

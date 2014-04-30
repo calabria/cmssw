@@ -174,6 +174,11 @@ tpToL2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorB
 tpToL2UpdMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToL3MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 
+# few more association modules usable for the Upgrade TP studies 
+tpToTkSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToStaUpdSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToGlbSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+
 tpToTkMuonAssociation.tpTag = 'mix:MergedTrackTruth'
 #tpToTkMuonAssociation.tracksTag = 'generalTracks'
 tpToTkMuonAssociation.tracksTag = 'probeTracks'
@@ -273,6 +278,33 @@ tpToL3MuonAssociation.ignoreMissingTrackCollection = True
 tpToL3MuonAssociation.UseSplitting = False
 tpToL3MuonAssociation.UseGrouped = False
 
+# few more association modules usable for the Upgrade TP studies 
+#tpToTkSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+#tpToStaUpdSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+#tpToGlbSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+
+tpToTkSelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToTkSelMuonAssociation.tracksTag = 'probeTracks'
+tpToTkSelMuonAssociation.UseTracker = True
+tpToTkSelMuonAssociation.UseMuon = False
+tpToTkSelMuonAssociation.EfficiencyCut_track = cms.double(0.5)
+tpToTkSelMuonAssociation.PurityCut_track = cms.double(0.75)
+
+tpToStaUpdSelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToStaUpdSelMuonAssociation.tracksTag = 'standAloneMuons:UpdatedAtVtx' 
+tpToStaUpdSelMuonAssociation.UseTracker = False
+tpToStaUpdSelMuonAssociation.UseMuon = True
+tpToStaUpdSelMuonAssociation.includeZeroHitMuons = False
+
+tpToGlbSelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToGlbSelMuonAssociation.tracksTag = 'extractedGlobalMuons' 
+tpToGlbSelMuonAssociation.UseTracker = True
+tpToGlbSelMuonAssociation.UseMuon = True
+tpToGlbSelMuonAssociation.EfficiencyCut_track = cms.double(0.5)
+tpToGlbSelMuonAssociation.PurityCut_track = cms.double(0.75)
+tpToGlbSelMuonAssociation.acceptOneStubMatchings = False
+tpToGlbSelMuonAssociation.includeZeroHitMuons = False
+ 
 #
 # Associators for cosmics:
 #
@@ -326,6 +358,9 @@ muonAssociation_seq = cms.Sequence(
 #    +(tpToStaSeedAssociation+tpToStaMuonAssociation+tpToStaUpdMuonAssociation+tpToGlbMuonAssociation)
     +(tpToStaMuonAssociation+tpToStaUpdMuonAssociation+tpToGlbMuonAssociation)
 #   +(tpToStaTrackAssociation+tpToStaUpdTrackAssociation+tpToGlbTrackAssociation)
+#    
+# few more association modules usable for the Upgrade TP studies 
+    +(tpToTkSelMuonAssociation+tpToStaUpdSelMuonAssociation+tpToGlbSelMuonAssociation) 
 )
 muonAssociationTEV_seq = cms.Sequence(
     (tpToTevFirstMuonAssociation+tpToTevPickyMuonAssociation+tpToTevDytMuonAssociation)

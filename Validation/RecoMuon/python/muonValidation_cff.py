@@ -204,6 +204,29 @@ glbCosmicMuonTrackVMuonAssoc.label = ('globalCosmicMuons',)
 glbCosmicMuonTrackVMuonAssoc.usetracker = True
 glbCosmicMuonTrackVMuonAssoc.usemuon = True
 
+### a few more validator modules usable also for Upgrade TP studies
+trkProbeTrackVSelMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+trkProbeTrackVSelMuonAssoc.associatormap = 'tpToTkSelMuonAssociation'
+trkProbeTrackVSelMuonAssoc.associators = ('MuonAssociationByHits',)
+trkProbeTrackVSelMuonAssoc.label = ('probeTracks',)
+trkProbeTrackVSelMuonAssoc.usetracker = True
+trkProbeTrackVSelMuonAssoc.usemuon = False
+
+staUpdMuonTrackVSelMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVSelMuonAssoc.associatormap = 'tpToStaUpdSelMuonAssociation'
+staUpdMuonTrackVSelMuonAssoc.associators = ('MuonAssociationByHits',)
+staUpdMuonTrackVSelMuonAssoc.label = ('standAloneMuons:UpdatedAtVtx',)
+staUpdMuonTrackVSelMuonAssoc.usetracker = False
+staUpdMuonTrackVSelMuonAssoc.usemuon = True
+
+glbMuonTrackVSelMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+glbMuonTrackVSelMuonAssoc.associatormap = 'tpToGlbSelMuonAssociation'
+glbMuonTrackVSelMuonAssoc.associators = ('MuonAssociationByHits',)
+glbMuonTrackVSelMuonAssoc.label = ('extractedGlobalMuons',)
+glbMuonTrackVSelMuonAssoc.usetracker = True
+glbMuonTrackVSelMuonAssoc.usemuon = True
+###
+
 
 # Configurations for RecoMuonValidators
 from RecoMuon.TrackingTools.MuonServiceProxy_cff import *
@@ -320,6 +343,9 @@ recoMuonVMuAssoc_tgt.primaryVertex = 'offlinePrimaryVertices'
 muonValidation_seq = cms.Sequence(trkProbeTrackVMuonAssoc+trkMuonTrackVTrackAssoc
 #                                 +staSeedTrackVMuonAssoc
                                  +staMuonTrackVMuonAssoc+staUpdMuonTrackVMuonAssoc+glbMuonTrackVMuonAssoc
+# 
+                                 +trkProbeTrackVSelMuonAssoc+staUpdMuonTrackVSelMuonAssoc+glbMuonTrackVSelMuonAssoc
+#
                                  +recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt)
                                   
 muonValidationTEV_seq = cms.Sequence(tevMuonFirstTrackVMuonAssoc+tevMuonPickyTrackVMuonAssoc+tevMuonDytTrackVMuonAssoc)
