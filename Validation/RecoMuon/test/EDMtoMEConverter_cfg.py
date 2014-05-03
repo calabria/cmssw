@@ -6,8 +6,7 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load("DQMServices.Components.EDMtoMEConverter_cff")
 process.load("DQMServices.Components.DQMEnvironment_cfi")
 #process.load("Configuration.StandardSequences.FakeConditions_cff")
-process.load('Configuration.Geometry.GeometryExtended2023MuonReco_cff')
-process.load('Configuration.Geometry.GeometryExtended2023Muon_cff')
+
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
@@ -33,7 +32,9 @@ process.dqmSaver.forceRunNumber = cms.untracked.int32(1)
 #End of 'RelVal convention settings
 process.dqmSaver.workflow = "/GlobalValidation/Test/RECO"
 
+from Validation.RecoMuon.PostProcessor_cff import *
 process.p1 = cms.Path(process.EDMtoMEConverter*
                       #process.postValidation*
-#                      process.recoMuonPostProcessorsHLT*
+		      process.recoMuonPostProcessors*
+#                     process.recoMuonPostProcessorsHLT*
                       process.dqmSaver)
