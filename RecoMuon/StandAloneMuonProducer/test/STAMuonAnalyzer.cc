@@ -871,11 +871,11 @@ void STAMuonAnalyzer::analyze(const Event & event, const EventSetup& eventSetup)
 		std::cout<<"-----------------------------------------------------------------------------------------"<<std::endl;
 
 	}*/
-	//double muPt = isGlobalMuon_? muon.bestPt : muon.standAlonePt;
-	//double muQ = isGlobalMuon_? muon.bestCharge : muon.chargeSTA;
+	double muPt = isGlobalMuon_? muon.bestPt : muon.standAlonePt;
+	double muQ = isGlobalMuon_? muon.bestCharge : muon.chargeSTA;
 
-	double muPt = isGlobalMuon_? muon.bestTunePPt : muon.standAlonePt;
-	double muQ = isGlobalMuon_? muon.bestTunePCharge : muon.chargeSTA;
+	//double muPt = isGlobalMuon_? muon.bestTunePPt : muon.standAlonePt;
+	//double muQ = isGlobalMuon_? muon.bestTunePCharge : muon.chargeSTA;
 
 	if(muonType && muon.matchedTracks == 1 && muPt > 0){
 
@@ -1016,7 +1016,7 @@ void STAMuonAnalyzer::analyze(const Event & event, const EventSetup& eventSetup)
 				//std::cout<<"GEM Region"<<region<<" Station "<<station<<" ring "<<ring<<std::endl;
 
 			}*/
-			else if ((*recHit)->geographicalId().subdetId() == MuonSubdetId::CSC){
+			/*else if ((*recHit)->geographicalId().subdetId() == MuonSubdetId::CSC){
 
 				std::cout<<"CSC found"<<std::endl;
 
@@ -1033,7 +1033,7 @@ void STAMuonAnalyzer::analyze(const Event & event, const EventSetup& eventSetup)
 
 				std::cout<<"CSC Region"<<region<<" Station "<<station<<" ring "<<ring<<std::endl;
 
-			}
+			}*/
 			
 			histContainer_["hNumRPCRecHitsRE31"]->Fill(numRE31);
 			histContainer_["hNumRPCRecHitsRE41"]->Fill(numRE41);
