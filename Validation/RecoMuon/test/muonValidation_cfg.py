@@ -7,7 +7,8 @@ readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
 process.source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles)
 readFiles.extend( (
-	'file:/lustre/cms/store/user/calabria/calabria_SingleMuPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2023Scenario_Case5/calabria_SingleMuPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2023Scenario_Case5/b751428e425b1090114480565dd0c2b6/out_reco_81_1_a0b.root',
+	'file:root://xrootd.unl.edu//store/mc/GEM2019Upg14DR/Muplus_Pt500-gun/GEN-SIM-RECO/PU50bx25_DES19_62_V8-v1/00000/0012638F-98D7-E311-A35A-0025905A60AA.root',
+	#'file:/lustre/cms/store/user/calabria/calabria_SingleMuPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2019Scenario/calabria_SingleMuPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2019Scenario/b788bfa6b0f87227d732e8dd40293d91/out_reco_75_1_FqS.root',
     ))
 secFiles.extend((
 
@@ -49,12 +50,15 @@ process.load("DQMServices.Components.MEtoEDMConverter_cfi")
 process.MEtoEDMConverter_step = cms.Path(process.MEtoEDMConverter)
 
 process.load("Configuration.StandardSequences.Services_cff")
-process.load('Configuration.Geometry.GeometryExtended2023MuonReco_cff')
-process.load('Configuration.Geometry.GeometryExtended2023Muon_cff')
+#process.load('Configuration.Geometry.GeometryExtended2023MuonReco_cff')
+#process.load('Configuration.Geometry.GeometryExtended2023Muon_cff')
+process.load('Configuration.Geometry.GeometryExtended2019Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2019_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgrade2019', '')
 
 #---- Validation stuffs ----#
 ## Default validation modules
@@ -65,7 +69,7 @@ process.validation_step = cms.Path(process.validation)
 process.muonValidation_step = cms.Path(process.recoMuonValidation)
 
 process.schedule = cms.Schedule(
-    process.raw2digi_step,
+    #process.raw2digi_step,
 #    process.validation_step,
     process.muonValidation_step,
     process.MEtoEDMConverter_step,process.outpath)

@@ -14,6 +14,8 @@
 #include "DataFormats/TrackReco/interface/Track.h"
 #include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
 
+#include "CommonTools/CandAlgos/interface/GenParticleCustomSelector.h"
+
 class MuonTrackValidator : public edm::EDAnalyzer, protected MuonTrackValidatorBase {
  public:
   /// Constructor
@@ -182,6 +184,9 @@ private:
   std::vector<MonitorElement*> ptpull_vs_phi, phipull_vs_phi, thetapull_vs_phi;
   std::vector<MonitorElement*> h_dxypulleta, h_ptpulleta, h_dzpulleta, h_phipulleta, h_thetapulleta;
   std::vector<MonitorElement*> h_ptpullphi, h_phipullphi, h_thetapullphi;
+
+  const TrackAssociatorByChi2* associatorByChi2;
+  GenParticleCustomSelector gpSelector;	
 
 };
 

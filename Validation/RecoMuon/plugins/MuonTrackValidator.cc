@@ -239,13 +239,21 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
   edm::ESHandle<ParametersDefinerForTP> parametersDefinerTP; 
   setup.get<TrackAssociatorRecord>().get(parametersDefiner,parametersDefinerTP);    
   
-  edm::Handle<TrackingParticleCollection>  TPCollectionHeff ;
+  /*edm::Handle<TrackingParticleCollection>  TPCollectionHeff ;
   event.getByLabel(label_tp_effic,TPCollectionHeff);
   const TrackingParticleCollection tPCeff = *(TPCollectionHeff.product());
   
   edm::Handle<TrackingParticleCollection>  TPCollectionHfake ;
   event.getByLabel(label_tp_fake,TPCollectionHfake);
-  const TrackingParticleCollection tPCfake = *(TPCollectionHfake.product());
+  const TrackingParticleCollection tPCfake = *(TPCollectionHfake.product());*/
+
+  edm::Handle<GenParticleCollection> TPCollectionHeff ;
+  event.getByLabel(label_tp_effic,TPCollectionHeff);
+  const GenParticleCollection tPCeff = *(TPCollectionHeff.product());
+  
+  edm::Handle<GenParticleCollection> TPCollectionHfake ;
+  event.getByLabel(label_tp_fake,TPCollectionHfake);
+  const GenParticleCollection tPCfake = *(TPCollectionHfake.product());
   
   edm::Handle<reco::BeamSpot> recoBeamSpotHandle;
   event.getByLabel(bsSrc,recoBeamSpotHandle);
@@ -253,14 +261,22 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
   
   int w=0;
   for (unsigned int ww=0;ww<associators.size();ww++){
+
+    associatorByChi2 = dynamic_cast<const TrackAssociatorByChi2*>(associator[ww]);
+    if (associatorByChi2==0) continue;
+
     for (unsigned int www=0;www<label.size();www++){
       //
       //get collections from the event
       //
       edm::Handle<View<Track> >  trackCollection;
 
-      reco::RecoToSimCollection recSimColl;
-      reco::SimToRecoCollection simRecColl;
+      //reco::RecoToSimCollection recSimColl;
+      //reco::SimToRecoCollection simRecColl;
+
+      reco::RecoToGenCollection recSimColl;
+      reco::GenToRecoCollection simRecColl;
+
       unsigned int trackCollectionSize = 0;
 
       //      if(!event.getByLabel(label[www], trackCollection)&&ignoremissingtkcollection_) continue;
@@ -274,6 +290,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
       else {
 
 	trackCollectionSize = trackCollection->size();
+
 	//associate tracks
 	if(UseAssociators){
 	  edm::LogVerbatim("MuonTrackValidator") << "Analyzing " 
@@ -282,14 +299,24 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 						 << label[www].instance()<<" with "
 						 << associators[ww].c_str() <<"\n";
 	
-	  LogTrace("MuonTrackValidator") << "Calling associateRecoToSim method" << "\n";
+	  /*LogTrace("MuonTrackValidator") << "Calling associateRecoToSim method" << "\n";
 	  recSimColl=associator[ww]->associateRecoToSim(trackCollection,
 							TPCollectionHfake,
 							&event,&setup);
 	  LogTrace("MuonTrackValidator") << "Calling associateSimToReco method" << "\n";
 	  simRecColl=associator[ww]->associateSimToReco(trackCollection,
 							TPCollectionHeff, 
-							&event,&setup);
+							&event,&setup);*/
+
+	  LogTrace("TrackValidator") << "Calling associateRecoToGen method" << "\n";
+	  recSimColl=associatorByChi2->associateRecoToGen(trackCollection,
+							TPCollectionHfake,
+							&event);
+	  LogTrace("TrackValidator") << "Calling associateGenToReco method" << "\n";
+	  simRecColl=associatorByChi2->associateGenToReco(trackCollection,
+							TPCollectionHeff,
+							&event);
+
 	}
 	else{
 	  edm::LogVerbatim("MuonTrackValidator") << "Analyzing " 
@@ -300,16 +327,25 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 						 << associatormap.label()<<":"
 						 << associatormap.instance()<<"\n";
 	
-	  Handle<reco::SimToRecoCollection > simtorecoCollectionH;
+	  /*Handle<reco::SimToRecoCollection > simtorecoCollectionH;
 	  event.getByLabel(associatormap,simtorecoCollectionH);
 	  simRecColl= *(simtorecoCollectionH.product()); 
 	
 	  Handle<reco::RecoToSimCollection > recotosimCollectionH;
 	  event.getByLabel(associatormap,recotosimCollectionH);
+	  recSimColl= *(recotosimCollectionH.product());*/
+
+	  Handle<reco::GenToRecoCollection > simtorecoCollectionH;
+	  event.getByLabel(associatormap,simtorecoCollectionH);
+	  simRecColl= *(simtorecoCollectionH.product());
+
+	  Handle<reco::RecoToGenCollection > recotosimCollectionH;
+   	  event.getByLabel(associatormap,recotosimCollectionH);
 	  recSimColl= *(recotosimCollectionH.product()); 
+
 	}
 
-      }
+      }//end else
 
       
       //
@@ -319,37 +355,47 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
       edm::LogVerbatim("MuonTrackValidator") << "\n# of TrackingParticles: " << tPCeff.size() << "\n";
       int ats = 0;
       int st=0;
-      for (TrackingParticleCollection::size_type i=0; i<tPCeff.size(); i++){
+      //for (TrackingParticleCollection::size_type i=0; i<tPCeff.size(); i++){
+      for (GenParticleCollection::size_type i=0; i<tPCeff.size(); i++){
 	bool TP_is_matched = false;
 	double quality = 0.;
 	bool Quality05  = false;
 	bool Quality075 = false;
 
-	TrackingParticleRef tpr(TPCollectionHeff, i);
-	TrackingParticle* tp=const_cast<TrackingParticle*>(tpr.get());
+	//TrackingParticleRef tpr(TPCollectionHeff, i);
+	//TrackingParticle* tp=const_cast<TrackingParticle*>(tpr.get());
+	GenParticleRef tpr(TPCollectionHeff, i);
+	GenParticle* tp=const_cast<GenParticle*>(tpr.get());
 	TrackingParticle::Vector momentumTP; 
 	TrackingParticle::Point vertexTP;
 	double dxySim = 0;
-	double dzSim = 0; 
+	double dzSim = 0;
 
 	//If the TrackingParticle is collison like, get the momentum and vertex at production state
 	if(parametersDefiner=="LhcParametersDefinerForTP")
 	  {
-	    if(! tpSelector(*tp)) continue;
+	    //if(! tpSelector(*tp)) continue;
+	    if(! gpSelector(*tp)) continue;
 	    momentumTP = tp->momentum();
 	    vertexTP = tp->vertex();
 	    //Calcualte the impact parameters w.r.t. PCA
-	    TrackingParticle::Vector momentum = parametersDefinerTP->momentum(event,setup,tpr);
-	    TrackingParticle::Point vertex = parametersDefinerTP->vertex(event,setup,tpr);
+	    //TrackingParticle::Vector momentum = parametersDefinerTP->momentum(event,setup,tpr);
+	    //TrackingParticle::Point vertex = parametersDefinerTP->vertex(event,setup,tpr);
+
+	    TrackingParticle::Vector momentum = parametersDefinerTP->momentum(event,setup,*tp);
+	    TrackingParticle::Point vertex = parametersDefinerTP->vertex(event,setup,*tp);
 	    dxySim = (-vertex.x()*sin(momentum.phi())+vertex.y()*cos(momentum.phi()));
 	    dzSim = vertex.z() - (vertex.x()*momentum.x()+vertex.y()*momentum.y())/sqrt(momentum.perp2()) * momentum.z()/sqrt(momentum.perp2());
 	  }
 	//If the TrackingParticle is comics, get the momentum and vertex at PCA
 	if(parametersDefiner=="CosmicParametersDefinerForTP")
 	  {
-	    if(! cosmictpSelector(tpr,&bs,event,setup)) continue;	
-	    momentumTP = parametersDefinerTP->momentum(event,setup,tpr);
-	    vertexTP = parametersDefinerTP->vertex(event,setup,tpr);
+	    //if(! cosmictpSelector(tpr,&bs,event,setup)) continue;	
+	    //momentumTP = parametersDefinerTP->momentum(event,setup,tpr);
+	    //vertexTP = parametersDefinerTP->vertex(event,setup,tpr);
+
+	    momentumTP = parametersDefinerTP->momentum(event,setup,*tp);
+	    vertexTP = parametersDefinerTP->vertex(event,setup,*tp);
 	    dxySim = (-vertexTP.x()*sin(momentumTP.phi())+vertexTP.y()*cos(momentumTP.phi()));
 	    dzSim = vertexTP.z() - (vertexTP.x()*momentumTP.x()+vertexTP.y()*momentumTP.y())/sqrt(momentumTP.perp2()) * momentumTP.z()/sqrt(momentumTP.perp2());
 	  }
@@ -495,13 +541,16 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	
 	int nSimHits = 0;
 	if (usetracker && usemuon) {
-	  nSimHits= tpr.get()->numberOfHits();
+	  //nSimHits= tpr.get()->numberOfHits();
+	  nSimHits= 0;
 	} 
 	else if (!usetracker && usemuon) {
-	  nSimHits= tpr.get()->numberOfHits() - tpr.get()->numberOfTrackerHits();
+	  //nSimHits= tpr.get()->numberOfHits() - tpr.get()->numberOfTrackerHits();
+	  nSimHits = 0;
 	}
 	else if (usetracker && !usemuon) {
-	  nSimHits=tpr.get()->numberOfTrackerHits();
+	  //nSimHits=tpr.get()->numberOfTrackerHits();
+	  nSimHits = 0; //FIXME
 	}
 
 	
@@ -535,8 +584,10 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	RefToBase<Track> track(trackCollection, i);
 	rT++;
 
-	std::vector<std::pair<TrackingParticleRef, double> > tp;
-	TrackingParticleRef tpr;
+	//std::vector<std::pair<TrackingParticleRef, double> > tp;
+	std::vector<std::pair<GenParticleRef, double> > tp;
+	//TrackingParticleRef tpr;
+	GenParticleRef tpr;
 
 	// new logic (bidirectional)
 	if (BiDirectional_RecoToSim_association) {	  
@@ -669,8 +720,9 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  h_charge[w]->Fill( track->charge() );
 	  
 	  //Get tracking particle parameters at point of closest approach to the beamline
-	  TrackingParticle::Vector momentumTP = parametersDefinerTP->momentum(event,setup,tpr) ;
-	  TrackingParticle::Point vertexTP = parametersDefinerTP->vertex(event,setup,tpr);
+	  TrackingParticle::Vector momentumTP = parametersDefinerTP->momentum(event,setup,*(tpr.get()));
+	  TrackingParticle::Point vertexTP = parametersDefinerTP->vertex(event,setup,*(tpr.get()));
+
 	  double ptSim = sqrt(momentumTP.perp2());
 	  double qoverpSim = tpr->charge()/sqrt(momentumTP.x()*momentumTP.x()+momentumTP.y()*momentumTP.y()+momentumTP.z()*momentumTP.z());
 	  double thetaSim = momentumTP.theta();
@@ -826,13 +878,16 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  
 	  int nSimHits = 0;
 	  if (usetracker && usemuon) {
-	    nSimHits= tpr.get()->numberOfHits();
+	    //nSimHits= tpr.get()->numberOfHits();
+	    nSimHits= 0;
 	  } 
 	  else if (!usetracker && usemuon) {
-	    nSimHits= tpr.get()->numberOfHits() - tpr.get()->numberOfTrackerHits();
+	    //nSimHits= tpr.get()->numberOfHits() - tpr.get()->numberOfTrackerHits();
+	    nSimHits= 0;
 	  }
 	  else if (usetracker && !usemuon) {
-	    nSimHits=tpr.get()->numberOfTrackerHits();
+	    //nSimHits=tpr.get()->numberOfTrackerHits();
+	    nSimHits= 0;
 	  }
 	  
 	  nrecHit_vs_nsimHit_rec2sim[w]->Fill(track->numberOfValidHits(), nSimHits);

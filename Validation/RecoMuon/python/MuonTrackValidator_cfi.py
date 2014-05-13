@@ -5,8 +5,8 @@ from SimTracker.TrackAssociation.CosmicParametersDefinerForTP_cfi import *
 
 muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     # input TrackingParticle collections
-    label_tp_effic = cms.InputTag("mix","MergedTrackTruth"),
-    label_tp_fake = cms.InputTag("mix","MergedTrackTruth"),
+    label_tp_effic = cms.InputTag("genParticles"),
+    label_tp_fake = cms.InputTag("genParticles"),
     # input reco::Track collection
     label = cms.VInputTag(cms.InputTag("globalMuons")),
     # switches to be set according to the input Track collection to properly count SimHits
@@ -36,7 +36,7 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     # parametersDefiner = cms.string('CosmicParametersDefinerForTP'), 
     #
     # if *not* uses associators, the TP-RecoTrack maps has to be specified 
-    UseAssociators = cms.bool(False),
+    UseAssociators = cms.bool(True),
     useGEMs = cms.bool(True),
     associators = cms.vstring('a_MuonAssociator'),
     associatormap = cms.InputTag("tpToMuonTrackAssociation"),
