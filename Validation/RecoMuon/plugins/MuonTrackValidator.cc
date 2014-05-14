@@ -120,6 +120,8 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       h_pullDxy.push_back( dbe_->book1D("pullDxy","pull of dxy parameter",250,-25,25) );
       h_pullDz.push_back( dbe_->book1D("pullDz","pull of dz parameter",250,-25,25) );
       h_pullQoverp.push_back( dbe_->book1D("pullQoverp","pull of qoverp parameter",250,-25,25) );
+      h_Qoverptres.push_back( dbe_->book1D("qoverptres","qoverpt res.",250,-6,6) );
+      h_invptres.push_back( dbe_->book1D("invptres","invpt res.",250,-6,6) );
       
       if (associators[ww]=="TrackAssociatorByChi2"){
 	h_assochi2.push_back( dbe_->book1D("assocChi2","track association #chi^{2}",1000000,0,100000) );
@@ -160,6 +162,18 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       ptres_vs_eta.push_back(dbe_->book2D("ptres_vs_eta","ptres_vs_eta",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       ptres_vs_phi.push_back( dbe_->book2D("ptres_vs_phi","p_{t} res vs #phi",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       ptres_vs_pt.push_back(dbe_->book2D("ptres_vs_pt","ptres_vs_pt",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      invptres_vs_eta.push_back(dbe_->book2D("invptres_vs_eta","invptres_vs_eta",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      invptres_vs_phi.push_back( dbe_->book2D("invptres_vs_phi","1/p_{t} res vs #phi",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      invptres_vs_pt.push_back(dbe_->book2D("invptres_vs_pt","invptres_vs_pt",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      qOverPtres_vs_eta.push_back(dbe_->book2D("qOverPtres_vs_eta","qOverPtres_vs_eta",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres_vs_phi.push_back( dbe_->book2D("qOverPtres_vs_phi","q/p_{t} res vs #phi",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres_vs_pt.push_back(dbe_->book2D("qOverPtres_vs_pt","qOverPtres_vs_pt",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      chargeMisID_vs_eta.push_back(dbe_->book2D("chargeMisID_vs_eta","chargeMisID_vs_eta",nint,min,max,5,-2.5,2.5));
+      chargeMisID_vs_phi.push_back(dbe_->book2D("chargeMisID_vs_phi","chargeMisID vs #phi",nintPhi,minPhi,maxPhi,5,-2.5,2.5));
+      chargeMisID_vs_pt.push_back(dbe_->book2D("chargeMisID_vs_pt","chargeMisID_vs_pt",nintpT,minpT,maxpT,5,-2.5,2.5));
 
       cotThetares_vs_eta.push_back(dbe_->book2D("cotThetares_vs_eta","cotThetares_vs_eta",nint,min,max,cotThetaRes_nbin, cotThetaRes_rangeMin, cotThetaRes_rangeMax));
       cotThetares_vs_pt.push_back(dbe_->book2D("cotThetares_vs_pt","cotThetares_vs_pt",nintpT,minpT,maxpT, cotThetaRes_nbin, cotThetaRes_rangeMin, cotThetaRes_rangeMax));
@@ -375,7 +389,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	if(parametersDefiner=="LhcParametersDefinerForTP")
 	  {
 	    //if(! tpSelector(*tp)) continue;
-	    if(! gpSelector(*tp)) continue;
+	    //if(! gpSelector(*tp)) continue;
 	    momentumTP = tp->momentum();
 	    vertexTP = tp->vertex();
 	    //Calcualte the impact parameters w.r.t. PCA
@@ -724,8 +738,10 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  TrackingParticle::Point vertexTP = parametersDefinerTP->vertex(event,setup,*(tpr.get()));
 
 	  double ptSim = sqrt(momentumTP.perp2());
+	  double chargeSim = tpr->charge();
 	  double qoverpSim = tpr->charge()/sqrt(momentumTP.x()*momentumTP.x()+momentumTP.y()*momentumTP.y()+momentumTP.z()*momentumTP.z());
 	  double thetaSim = momentumTP.theta();
+	  double etaSim = momentumTP.eta();
 	  double lambdaSim = M_PI/2-momentumTP.theta();
 	  double phiSim    = momentumTP.phi();
 	  double dxySim    = (-vertexTP.x()*sin(momentumTP.phi())+vertexTP.y()*cos(momentumTP.phi()));
@@ -764,6 +780,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  }
 	 
 	  double thetaRec = track->theta();
+	  double chargeRec = track->charge();
 	  double ptError = ptErrorRec;
 	  double ptres = ptRec - ptSim; 
 	  double etares = track->eta()-momentumTP.Eta();
@@ -826,55 +843,67 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  h_pullPhi[w]->Fill(phiPull);
 	  h_pullDxy[w]->Fill(dxyPull);
 	  h_pullDz[w]->Fill(dzPull);
+	  h_Qoverptres[w]->Fill((chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  h_invptres[w]->Fill((1/ptRec-1/ptSim)/(1/ptSim));
 
 
 	  h_pt[w]->Fill(ptres/ptError);
 	  h_eta[w]->Fill(etares);
-	  etares_vs_eta[w]->Fill(getEta(track->eta()),etares);
+	  etares_vs_eta[w]->Fill(getEta(etaSim),etares);
  
 
 	  //chi2 and #hit vs eta: fill 2D histos
-	  chi2_vs_eta[w]->Fill(getEta(track->eta()),track->normalizedChi2());
-	  nhits_vs_eta[w]->Fill(getEta(track->eta()),track->numberOfValidHits());
-	  nDThits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonDTHits());
-	  nCSChits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonCSCHits());
-	  nRPChits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonRPCHits());
+	  chi2_vs_eta[w]->Fill(getEta(etaSim),track->normalizedChi2());
+	  nhits_vs_eta[w]->Fill(getEta(etaSim),track->numberOfValidHits());
+	  nDThits_vs_eta[w]->Fill(getEta(etaSim),track->hitPattern().numberOfValidMuonDTHits());
+	  nCSChits_vs_eta[w]->Fill(getEta(etaSim),track->hitPattern().numberOfValidMuonCSCHits());
+	  nRPChits_vs_eta[w]->Fill(getEta(etaSim),track->hitPattern().numberOfValidMuonRPCHits());
 	  //	  std::cout<<track->eta()<<" "<<track->hitPattern().numberOfValidMuonGEMHits()<<std::endl;
-	  if(useGEMs_) nGEMhits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonGEMHits());
+	  if(useGEMs_) nGEMhits_vs_eta[w]->Fill(getEta(etaSim),track->hitPattern().numberOfValidMuonGEMHits());
 
-	  nlosthits_vs_eta[w]->Fill(getEta(track->eta()),track->numberOfLostHits());
+	  nlosthits_vs_eta[w]->Fill(getEta(etaSim),track->numberOfLostHits());
 
 	  //resolution of track params: fill 2D histos
-	  dxyres_vs_eta[w]->Fill(getEta(track->eta()),dxyRec-dxySim);
-	  ptres_vs_eta[w]->Fill(getEta(track->eta()),(ptRec-ptSim)/ptRec);
-	  dzres_vs_eta[w]->Fill(getEta(track->eta()),dzRec-dzSim);
-	  phires_vs_eta[w]->Fill(getEta(track->eta()),phiDiff);
-	  cotThetares_vs_eta[w]->Fill(getEta(track->eta()), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
+	  dxyres_vs_eta[w]->Fill(getEta(etaSim),dxyRec-dxySim);
+	  ptres_vs_eta[w]->Fill(getEta(etaSim),(ptRec-ptSim)/ptSim);
+	  invptres_vs_eta[w]->Fill(getEta(etaSim),(1/ptRec-1/ptSim)/(1/ptSim));
+	  qOverPtres_vs_eta[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  dzres_vs_eta[w]->Fill(getEta(etaSim),dzRec-dzSim);
+	  phires_vs_eta[w]->Fill(getEta(etaSim),phiDiff);
+	  cotThetares_vs_eta[w]->Fill(getEta(etaSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
 	  
 	  //same as before but vs pT
-	  dxyres_vs_pt[w]->Fill(getPt(ptRec),dxyRec-dxySim);
-	  ptres_vs_pt[w]->Fill(getPt(ptRec),(ptRec-ptSim)/ptRec);
-	  dzres_vs_pt[w]->Fill(getPt(ptRec),dzRec-dzSim);
-	  phires_vs_pt[w]->Fill(getPt(ptRec),phiDiff);
- 	  cotThetares_vs_pt[w]->Fill(getPt(ptRec), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
+	  dxyres_vs_pt[w]->Fill(getPt(ptSim),dxyRec-dxySim);
+	  ptres_vs_pt[w]->Fill(getPt(ptSim),(ptRec-ptSim)/ptSim);
+	  invptres_vs_pt[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptSim));
+	  qOverPtres_vs_pt[w]->Fill(getEta(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  dzres_vs_pt[w]->Fill(getPt(ptSim),dzRec-dzSim);
+	  phires_vs_pt[w]->Fill(getPt(ptSim),phiDiff);
+ 	  cotThetares_vs_pt[w]->Fill(getPt(ptSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
+
+	  chargeMisID_vs_eta[w]->Fill(getEta(etaSim),chargeSim*chargeRec);
+	  chargeMisID_vs_pt[w]->Fill(getEta(ptSim),chargeSim*chargeRec);
+	  chargeMisID_vs_phi[w]->Fill(phiSim,chargeSim*chargeRec);
  	   	 
 	  //pulls of track params vs eta: fill 2D histos
-	  dxypull_vs_eta[w]->Fill(getEta(track->eta()),dxyPull);
-	  ptpull_vs_eta[w]->Fill(getEta(track->eta()),ptres/ptError);
-	  dzpull_vs_eta[w]->Fill(getEta(track->eta()),dzPull);
-	  phipull_vs_eta[w]->Fill(getEta(track->eta()),phiPull);
-	  thetapull_vs_eta[w]->Fill(getEta(track->eta()),thetaPull);
+	  dxypull_vs_eta[w]->Fill(getEta(etaSim),dxyPull);
+	  ptpull_vs_eta[w]->Fill(getEta(etaSim),ptres/ptError);
+	  dzpull_vs_eta[w]->Fill(getEta(etaSim),dzPull);
+	  phipull_vs_eta[w]->Fill(getEta(etaSim),phiPull);
+	  thetapull_vs_eta[w]->Fill(getEta(etaSim),thetaPull);
 
 	  //plots vs phi
-	  nhits_vs_phi[w]->Fill(phiRec,track->numberOfValidHits());
-	  chi2_vs_phi[w]->Fill(phiRec,track->normalizedChi2());
+	  nhits_vs_phi[w]->Fill(phiSim,track->numberOfValidHits());
+	  chi2_vs_phi[w]->Fill(phiSim,track->normalizedChi2());
 	  ptmean_vs_eta_phi[w]->Fill(phiRec,getEta(track->eta()),ptRec);
 	  phimean_vs_eta_phi[w]->Fill(phiRec,getEta(track->eta()),phiRec);
-	  ptres_vs_phi[w]->Fill(phiRec,(ptRec-ptSim)/ptRec);
-	  phires_vs_phi[w]->Fill(phiRec,phiDiff);
-	  ptpull_vs_phi[w]->Fill(phiRec,ptres/ptError);
-	  phipull_vs_phi[w]->Fill(phiRec,phiPull); 
-	  thetapull_vs_phi[w]->Fill(phiRec,thetaPull); 
+	  ptres_vs_phi[w]->Fill(phiSim,(ptRec-ptSim)/ptSim);
+	  invptres_vs_phi[w]->Fill(phiSim,(1/ptRec-1/ptSim)/(1/ptSim));
+	  qOverPtres_vs_phi[w]->Fill(phiSim,(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  phires_vs_phi[w]->Fill(phiSim,phiDiff);
+	  ptpull_vs_phi[w]->Fill(phiSim,ptres/ptError);
+	  phipull_vs_phi[w]->Fill(phiSim,phiPull); 
+	  thetapull_vs_phi[w]->Fill(phiSim,thetaPull); 
 	  
 	  int nSimHits = 0;
 	  if (usetracker && usemuon) {
