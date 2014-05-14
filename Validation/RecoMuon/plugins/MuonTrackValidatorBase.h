@@ -159,8 +159,6 @@ class MuonTrackValidatorBase {
 		double num = plot2D->GetBinContent(i,2);
 		double den = plot2D->GetBinContent(i,2) + plot2D->GetBinContent(i,4);
 
-		std::cout<<num<<" "<<den<<std::endl;
-
 		h1->setBinContent(i,num);
 		h2->setBinContent(i,den);
 
