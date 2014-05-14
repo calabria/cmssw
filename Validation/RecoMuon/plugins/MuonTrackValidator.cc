@@ -853,15 +853,15 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
  
 
 	  //chi2 and #hit vs eta: fill 2D histos
-	  chi2_vs_eta[w]->Fill(getEta(etaSim),track->normalizedChi2());
-	  nhits_vs_eta[w]->Fill(getEta(etaSim),track->numberOfValidHits());
-	  nDThits_vs_eta[w]->Fill(getEta(etaSim),track->hitPattern().numberOfValidMuonDTHits());
-	  nCSChits_vs_eta[w]->Fill(getEta(etaSim),track->hitPattern().numberOfValidMuonCSCHits());
-	  nRPChits_vs_eta[w]->Fill(getEta(etaSim),track->hitPattern().numberOfValidMuonRPCHits());
+	  chi2_vs_eta[w]->Fill(getEta(track->eta()),track->normalizedChi2());
+	  nhits_vs_eta[w]->Fill(getEta(track->eta()),track->numberOfValidHits());
+	  nDThits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonDTHits());
+	  nCSChits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonCSCHits());
+	  nRPChits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonRPCHits());
 	  //	  std::cout<<track->eta()<<" "<<track->hitPattern().numberOfValidMuonGEMHits()<<std::endl;
-	  if(useGEMs_) nGEMhits_vs_eta[w]->Fill(getEta(etaSim),track->hitPattern().numberOfValidMuonGEMHits());
+	  if(useGEMs_) nGEMhits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonGEMHits());
 
-	  nlosthits_vs_eta[w]->Fill(getEta(etaSim),track->numberOfLostHits());
+	  nlosthits_vs_eta[w]->Fill(getEta(track->eta()),track->numberOfLostHits());
 
 	  //resolution of track params: fill 2D histos
 	  dxyres_vs_eta[w]->Fill(getEta(etaSim),dxyRec-dxySim);
@@ -893,8 +893,8 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  thetapull_vs_eta[w]->Fill(getEta(etaSim),thetaPull);
 
 	  //plots vs phi
-	  nhits_vs_phi[w]->Fill(phiSim,track->numberOfValidHits());
-	  chi2_vs_phi[w]->Fill(phiSim,track->normalizedChi2());
+	  nhits_vs_phi[w]->Fill(phiRec,track->numberOfValidHits());
+	  chi2_vs_phi[w]->Fill(phiRec,track->normalizedChi2());
 	  ptmean_vs_eta_phi[w]->Fill(phiRec,getEta(track->eta()),ptRec);
 	  phimean_vs_eta_phi[w]->Fill(phiRec,getEta(track->eta()),phiRec);
 	  ptres_vs_phi[w]->Fill(phiSim,(ptRec-ptSim)/ptSim);
