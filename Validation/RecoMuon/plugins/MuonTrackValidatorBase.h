@@ -151,6 +151,23 @@ class MuonTrackValidatorBase {
     }
   }
 
+  void extractCharge(MonitorElement* hIn, MonitorElement* h1, MonitorElement* h2){
+
+	TH2F * plot2D = hIn->getTH2F();
+  	for(int i = 1; i <= plot2D->GetNbinsX(); i++){
+
+		double num = plot2D->GetBinContent(i,2);
+		double den = plot2D->GetBinContent(i,2) + plot2D->GetBinContent(i,4);
+
+		std::cout<<num<<" "<<den<<std::endl;
+
+		h1->setBinContent(i,num);
+		h2->setBinContent(i,den);
+
+  	}
+
+  }
+
   void BinLogX(TH1*h)
   {
     

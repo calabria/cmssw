@@ -42,6 +42,14 @@ class MuonTrackValidator : public edm::EDAnalyzer, protected MuonTrackValidatorB
 						      pset.getParameter<int>("minHitTP"),
 						      pset.getParameter<bool>("chargedOnlyTP"),
 						      pset.getParameter<std::vector<int> >("pdgIdTP"));
+    gpSelector = GenParticleCustomSelector(pset.getParameter<double>("ptMinGP"),
+					   pset.getParameter<double>("minRapidityGP"),
+					   pset.getParameter<double>("maxRapidityGP"),
+					   pset.getParameter<double>("tipGP"),
+					   pset.getParameter<double>("lipGP"),
+					   pset.getParameter<bool>("chargedOnlyGP"),
+					   pset.getParameter<int>("statusGP"),
+					   pset.getParameter<std::vector<int> >("pdgIdGP"));
 
     minPhi = pset.getParameter<double>("minPhi"); 
     maxPhi = pset.getParameter<double>("maxPhi");
@@ -147,7 +155,7 @@ private:
   bool useGsf;
   // select tracking particles 
   //(i.e. "denominator" of the efficiency ratio)
-  TrackingParticleSelector tpSelector;				      
+  TrackingParticleSelector tpSelector;		
   CosmicTrackingParticleSelector cosmictpSelector;
 
   // flag new validation logic (bidirectional RecoToSim association)
@@ -157,6 +165,9 @@ private:
   
   //1D
   std::vector<MonitorElement*> h_nchi2, h_nchi2_prob, h_losthits;
+
+  std::vector<MonitorElement*> chargeMisID_vs_etaNum, chargeMisID_vs_etaDen, chargeMisID_vs_ptNum;
+  std::vector<MonitorElement*> chargeMisID_vs_ptDen, chargeMisID_vs_phiNum, chargeMisID_vs_phiDen;
 
   //2D  
   std::vector<MonitorElement*> chi2_vs_nhits, etares_vs_eta;

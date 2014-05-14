@@ -110,7 +110,6 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       h_assoczpos.push_back( dbe_->book1D("num_assoc(simToReco)_zpos","N of associated tracks (simToReco) vs z vert position",nintZpos,minZpos,maxZpos) );
       h_simulzpos.push_back( dbe_->book1D("num_simul_zpos","N of simulated tracks vs z vert position",nintZpos,minZpos,maxZpos) );
 
-
       /////////////////////////////////
 
       h_eta.push_back( dbe_->book1D("eta", "pseudorapidity residue", 1000, -0.1, 0.1 ) );
@@ -174,6 +173,13 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       chargeMisID_vs_eta.push_back(dbe_->book2D("chargeMisID_vs_eta","chargeMisID_vs_eta",nint,min,max,5,-2.5,2.5));
       chargeMisID_vs_phi.push_back(dbe_->book2D("chargeMisID_vs_phi","chargeMisID vs #phi",nintPhi,minPhi,maxPhi,5,-2.5,2.5));
       chargeMisID_vs_pt.push_back(dbe_->book2D("chargeMisID_vs_pt","chargeMisID_vs_pt",nintpT,minpT,maxpT,5,-2.5,2.5));
+
+      chargeMisID_vs_etaNum.push_back(dbe_->book1D("chargeMisID_vs_etaNum","chargeMisID_vs_etaNum",nint,min,max));
+      chargeMisID_vs_etaDen.push_back(dbe_->book1D("chargeMisID_vs_etaDen","chargeMisID_vs_etaDen",nint,min,max));
+      chargeMisID_vs_ptNum.push_back(dbe_->book1D("chargeMisID_vs_ptNum","chargeMisID_vs_ptNum",nintpT,minpT,maxpT));
+      chargeMisID_vs_ptDen.push_back(dbe_->book1D("chargeMisID_vs_ptDen","chargeMisID_vs_ptDen",nintpT,minpT,maxpT));
+      chargeMisID_vs_phiNum.push_back(dbe_->book1D("chargeMisID_vs_phiNum","chargeMisID_vs_phiNum",nintPhi,minPhi,maxPhi));
+      chargeMisID_vs_phiDen.push_back(dbe_->book1D("chargeMisID_vs_phoDen","chargeMisID_vs_phiDen",nintPhi,minPhi,maxPhi));
 
       cotThetares_vs_eta.push_back(dbe_->book2D("cotThetares_vs_eta","cotThetares_vs_eta",nint,min,max,cotThetaRes_nbin, cotThetaRes_rangeMin, cotThetaRes_rangeMax));
       cotThetares_vs_pt.push_back(dbe_->book2D("cotThetares_vs_pt","cotThetares_vs_pt",nintpT,minpT,maxpT, cotThetaRes_nbin, cotThetaRes_rangeMin, cotThetaRes_rangeMax));
@@ -389,7 +395,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	if(parametersDefiner=="LhcParametersDefinerForTP")
 	  {
 	    //if(! tpSelector(*tp)) continue;
-	    //if(! gpSelector(*tp)) continue;
+	    if(! gpSelector(*tp)) continue;
 	    momentumTP = tp->momentum();
 	    vertexTP = tp->vertex();
 	    //Calcualte the impact parameters w.r.t. PCA
@@ -944,6 +950,10 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
   int w=0;
   for (unsigned int ww=0;ww<associators.size();ww++){
     for (unsigned int www=0;www<label.size();www++){
+
+      extractCharge(chargeMisID_vs_eta[w], chargeMisID_vs_etaNum[w], chargeMisID_vs_etaDen[w]);
+      extractCharge(chargeMisID_vs_pt[w], chargeMisID_vs_ptNum[w], chargeMisID_vs_ptDen[w]);
+      extractCharge(chargeMisID_vs_phi[w], chargeMisID_vs_phiNum[w], chargeMisID_vs_phiDen[w]);
 
       //chi2 and #hit vs eta: get mean from 2D histos
       doProfileX(chi2_vs_eta[w],h_chi2meanh[w]);

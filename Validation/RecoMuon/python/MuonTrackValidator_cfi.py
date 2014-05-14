@@ -2,6 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 from SimTracker.TrackAssociation.LhcParametersDefinerForTP_cfi import *
 from SimTracker.TrackAssociation.CosmicParametersDefinerForTP_cfi import *
+from Validation.RecoMuon.selectors_cff import *
 
 muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     # input TrackingParticle collections
@@ -32,6 +33,15 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     lipTP = cms.double(30.0),
     # collision like tracks
     parametersDefiner = cms.string('LhcParametersDefinerForTP'),
+    # selection of GP for evaluation of efficiency
+    lipGP = cms.double(30.0),
+    chargedOnlyGP = cms.bool(True),
+    pdgIdGP = cms.vint32(13, -13),
+    minRapidityGP = cms.double(-2.5),
+    ptMinGP = cms.double(0.9),
+    maxRapidityGP = cms.double(2.5),
+    tipGP = cms.double(3.5),
+    statusGP = cms.int32(1),
     # cosmics tracks
     # parametersDefiner = cms.string('CosmicParametersDefinerForTP'), 
     #

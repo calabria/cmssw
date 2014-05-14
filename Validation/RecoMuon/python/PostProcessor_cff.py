@@ -21,7 +21,11 @@ postProcessorMuonMultiTrack = cms.EDAnalyzer("DQMGenericClient",
     "efficPt_Q05 'Efficiency vs p_{T} (Quality>0.5)' num_assoc(simToReco)_pT_Q05 num_simul_pT",
     "efficPt_Q075 'Efficiency vs p_{T} (Quality>0.75)' num_assoc(simToReco)_pT_Q075 num_simul_pT",
     "effic_vs_phi_Q05 'Efficiency vs #phi' num_assoc(simToReco)_phi_Q05 num_simul_phi",
-    "effic_vs_phi_Q075 'Efficiency vs #phi' num_assoc(simToReco)_phi_Q075 num_simul_phi"
+    "effic_vs_phi_Q075 'Efficiency vs #phi' num_assoc(simToReco)_phi_Q075 num_simul_phi",
+
+    "chargeMisIDProb_vs_eta 'Charge Mis-ID vs. #eta' chargeMisID_vs_etaNum chargeMisID_vs_etaDen",
+    "chargeMisIDProb_vs_phi 'Charge Mis-ID vs. #phi' chargeMisID_vs_phiNum chargeMisID_vs_phiDen",
+    "chargeMisIDProb_vs_pt 'Charge Mis-ID vs. p_{T}' chargeMisID_vs_ptNum chargeMisID_vs_ptDen"
     ),
     resolutionLimitedFit = cms.untracked.bool(False),
     resolution = cms.vstring("cotThetares_vs_eta '#sigma(cot(#theta)) vs #eta' cotThetares_vs_eta",
