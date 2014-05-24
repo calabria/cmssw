@@ -18,7 +18,8 @@ ME0PreRecoGaussianModel::ME0PreRecoGaussianModel(const edm::ParameterSet& config
     sigma_u(config.getParameter<double>("phiResolution")),
     sigma_v(config.getParameter<double>("etaResolution")),
     corr(config.getParameter<bool>("useCorrelation")),
-    etaproj(config.getParameter<bool>("useEtaProjectiveGEO"))
+    etaproj(config.getParameter<bool>("useEtaProjectiveGEO")),
+    digitizeOnlyMuons_(config.getParameter<bool> ("digitizeOnlyMuons"))
 {
 }
 
@@ -40,7 +41,7 @@ ME0PreRecoGaussianModel::simulateSignal(const ME0EtaPartition* roll,
 
   for (const auto & hit: simHits)
   {
-    if (std::abs(hit.particleType()) != 13) continue;
+    if (std::abs(hit.particleType()) != 13 and digitizeOnlyMuons_) continue;
     auto entry = hit.entryPoint();
     float x=gauss_->fire(entry.x(),sigma_u);
     float y=gauss_->fire(entry.y(),sigma_v); 
@@ -48,8 +49,9 @@ ME0PreRecoGaussianModel::simulateSignal(const ME0EtaPartition* roll,
     float ey=sigma_v;
     float corr=0.;
     float tof=gauss_->fire(hit.timeOfFlight(),sigma_t);
+    float pdgid=hit.particleType();
      // please keep hit time always 0 for this model
-    ME0DigiPreReco digi(x,y,ex,ey,corr,tof);
+    ME0DigiPreReco digi(x,y,ex,ey,corr,tof,pdgid);
     digi_.insert(digi);
   }
 }
