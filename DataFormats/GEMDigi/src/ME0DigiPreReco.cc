@@ -10,7 +10,7 @@
 #include "DataFormats/GEMDigi/interface/ME0DigiPreReco.h"
 #include <iostream>
 
-ME0DigiPreReco::ME0DigiPreReco (float x, float y, float ex, float ey, float corr, float tof, float pdgid) :
+ME0DigiPreReco::ME0DigiPreReco (float x, float y, float ex, float ey, float corr, float tof, int pdgid) :
   x_(x),
   y_(y),
   ex_(ex),
@@ -27,7 +27,7 @@ ME0DigiPreReco::ME0DigiPreReco ():
   ey_(0.),
   corr_(0.),
   tof_(-1.),
-  pdgid_(-1.)
+  pdgid_(0)
 {}
 
 

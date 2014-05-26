@@ -15,7 +15,7 @@
 class ME0DigiPreReco{
 
 public:
-  explicit ME0DigiPreReco (float x, float y, float ex, float ey, float corr, float tof, float pdgid);
+  explicit ME0DigiPreReco (float x, float y, float ex, float ey, float corr, float tof, int pdgid);
   ME0DigiPreReco ();
 
   bool operator==(const ME0DigiPreReco& digi) const;
@@ -28,7 +28,7 @@ public:
   float ey() const { return ey_; }
   float corr() const { return corr_; }
   float tof() const { return tof_;}
-  float pdgid() const { return pdgid_;}
+  int pdgid() const { return pdgid_;}
   void print() const;
 
 private:
@@ -38,7 +38,7 @@ private:
   float ey_;
   float corr_;
   float tof_;
-  float pdgid_;
+  int pdgid_;
 };
 
 std::ostream & operator<<(std::ostream & o, const ME0DigiPreReco& digi);
