@@ -179,7 +179,7 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       chargeMisID_vs_ptNum.push_back(dbe_->book1D("chargeMisID_vs_ptNum","chargeMisID_vs_ptNum",nintpT,minpT,maxpT));
       chargeMisID_vs_ptDen.push_back(dbe_->book1D("chargeMisID_vs_ptDen","chargeMisID_vs_ptDen",nintpT,minpT,maxpT));
       chargeMisID_vs_phiNum.push_back(dbe_->book1D("chargeMisID_vs_phiNum","chargeMisID_vs_phiNum",nintPhi,minPhi,maxPhi));
-      chargeMisID_vs_phiDen.push_back(dbe_->book1D("chargeMisID_vs_phoDen","chargeMisID_vs_phiDen",nintPhi,minPhi,maxPhi));
+      chargeMisID_vs_phiDen.push_back(dbe_->book1D("chargeMisID_vs_phiDen","chargeMisID_vs_phiDen",nintPhi,minPhi,maxPhi));
 
       cotThetares_vs_eta.push_back(dbe_->book2D("cotThetares_vs_eta","cotThetares_vs_eta",nint,min,max,cotThetaRes_nbin, cotThetaRes_rangeMin, cotThetaRes_rangeMax));
       cotThetares_vs_pt.push_back(dbe_->book2D("cotThetares_vs_pt","cotThetares_vs_pt",nintpT,minpT,maxpT, cotThetaRes_nbin, cotThetaRes_rangeMin, cotThetaRes_rangeMax));
