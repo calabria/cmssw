@@ -121,6 +121,8 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       h_pullQoverp.push_back( dbe_->book1D("pullQoverp","pull of qoverp parameter",250,-25,25) );
       h_Qoverptres.push_back( dbe_->book1D("qoverptres","qoverpt res.",250,-6,6) );
       h_invptres.push_back( dbe_->book1D("invptres","invpt res.",250,-6,6) );
+      h_Qoverptres_sim.push_back( dbe_->book1D("qoverptres_sim","qoverpt res. sim",250,-6,6) );
+      h_invptres_sim.push_back( dbe_->book1D("invptres_sim","invpt res. sim",250,-6,6) );
       
       if (associators[ww]=="TrackAssociatorByChi2"){
 	h_assochi2.push_back( dbe_->book1D("assocChi2","track association #chi^{2}",1000000,0,100000) );
@@ -174,12 +176,35 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       chargeMisID_vs_phi.push_back(dbe_->book2D("chargeMisID_vs_phi","chargeMisID vs #phi",nintPhi,minPhi,maxPhi,5,-2.5,2.5));
       chargeMisID_vs_pt.push_back(dbe_->book2D("chargeMisID_vs_pt","chargeMisID_vs_pt",nintpT,minpT,maxpT,5,-2.5,2.5));
 
+      ptres_vs_eta_sim.push_back(dbe_->book2D("ptres_vs_eta_sim","ptres_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      ptres_vs_phi_sim.push_back( dbe_->book2D("ptres_vs_phi_sim","p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      ptres_vs_pt_sim.push_back(dbe_->book2D("ptres_vs_pt_sim","ptres_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      invptres_vs_eta_sim.push_back(dbe_->book2D("invptres_vs_eta_sim","invptres_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      invptres_vs_phi_sim.push_back( dbe_->book2D("invptres_vs_phi_sim","1/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      invptres_vs_pt_sim.push_back(dbe_->book2D("invptres_vs_pt_sim","invptres_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      qOverPtres_vs_eta_sim.push_back(dbe_->book2D("qOverPtres_vs_eta_sim","qOverPtres_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres_vs_phi_sim.push_back( dbe_->book2D("qOverPtres_vs_phi_sim","q/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres_vs_pt_sim.push_back(dbe_->book2D("qOverPtres_vs_pt_sim","qOverPtres_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      chargeMisID_vs_eta_sim.push_back(dbe_->book2D("chargeMisID_vs_eta_sim","chargeMisID_vs_eta sim",nint,min,max,5,-2.5,2.5));
+      chargeMisID_vs_phi_sim.push_back(dbe_->book2D("chargeMisID_vs_phi_sim","chargeMisID vs #phi sim",nintPhi,minPhi,maxPhi,5,-2.5,2.5));
+      chargeMisID_vs_pt_sim.push_back(dbe_->book2D("chargeMisID_vs_pt_sim","chargeMisID_vs_pt sim",nintpT,minpT,maxpT,5,-2.5,2.5));
+
       chargeMisID_vs_etaNum.push_back(dbe_->book1D("chargeMisID_vs_etaNum","chargeMisID_vs_etaNum",nint,min,max));
       chargeMisID_vs_etaDen.push_back(dbe_->book1D("chargeMisID_vs_etaDen","chargeMisID_vs_etaDen",nint,min,max));
       chargeMisID_vs_ptNum.push_back(dbe_->book1D("chargeMisID_vs_ptNum","chargeMisID_vs_ptNum",nintpT,minpT,maxpT));
       chargeMisID_vs_ptDen.push_back(dbe_->book1D("chargeMisID_vs_ptDen","chargeMisID_vs_ptDen",nintpT,minpT,maxpT));
       chargeMisID_vs_phiNum.push_back(dbe_->book1D("chargeMisID_vs_phiNum","chargeMisID_vs_phiNum",nintPhi,minPhi,maxPhi));
       chargeMisID_vs_phiDen.push_back(dbe_->book1D("chargeMisID_vs_phiDen","chargeMisID_vs_phiDen",nintPhi,minPhi,maxPhi));
+
+      chargeMisID_vs_etaNum_sim.push_back(dbe_->book1D("chargeMisID_vs_etaNum_sim","chargeMisID_vs_etaNum sim",nint,min,max));
+      chargeMisID_vs_etaDen_sim.push_back(dbe_->book1D("chargeMisID_vs_etaDen_sim","chargeMisID_vs_etaDen sim",nint,min,max));
+      chargeMisID_vs_ptNum_sim.push_back(dbe_->book1D("chargeMisID_vs_ptNum_sim","chargeMisID_vs_ptNum sim",nintpT,minpT,maxpT));
+      chargeMisID_vs_ptDen_sim.push_back(dbe_->book1D("chargeMisID_vs_ptDen_sim","chargeMisID_vs_ptDen sim",nintpT,minpT,maxpT));
+      chargeMisID_vs_phiNum_sim.push_back(dbe_->book1D("chargeMisID_vs_phiNum_sim","chargeMisID_vs_phiNum sim",nintPhi,minPhi,maxPhi));
+      chargeMisID_vs_phiDen_sim.push_back(dbe_->book1D("chargeMisID_vs_phiDen_sim","chargeMisID_vs_phiDen sim",nintPhi,minPhi,maxPhi));
 
       cotThetares_vs_eta.push_back(dbe_->book2D("cotThetares_vs_eta","cotThetares_vs_eta",nint,min,max,cotThetaRes_nbin, cotThetaRes_rangeMin, cotThetaRes_rangeMax));
       cotThetares_vs_pt.push_back(dbe_->book2D("cotThetares_vs_pt","cotThetares_vs_pt",nintpT,minpT,maxpT, cotThetaRes_nbin, cotThetaRes_rangeMin, cotThetaRes_rangeMax));
@@ -849,13 +874,16 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  h_pullPhi[w]->Fill(phiPull);
 	  h_pullDxy[w]->Fill(dxyPull);
 	  h_pullDz[w]->Fill(dzPull);
-	  h_Qoverptres[w]->Fill((chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
-	  h_invptres[w]->Fill((1/ptRec-1/ptSim)/(1/ptSim));
+	  h_Qoverptres_sim[w]->Fill((chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  h_invptres_sim[w]->Fill((1/ptRec-1/ptSim)/(1/ptSim));
+	  h_Qoverptres[w]->Fill((chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+	  h_invptres[w]->Fill((1/ptRec-1/ptSim)/(1/ptRec));
 
 
 	  h_pt[w]->Fill(ptres/ptError);
 	  h_eta[w]->Fill(etares);
-	  etares_vs_eta[w]->Fill(getEta(etaSim),etares);
+  	  etares_vs_eta[w]->Fill(getEta(track->eta()),etares);
+	  //etares_vs_eta[w]->Fill(getEta(etaSim),etares);
  
 
 	  //chi2 and #hit vs eta: fill 2D histos
@@ -870,46 +898,83 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  nlosthits_vs_eta[w]->Fill(getEta(track->eta()),track->numberOfLostHits());
 
 	  //resolution of track params: fill 2D histos
-	  dxyres_vs_eta[w]->Fill(getEta(etaSim),dxyRec-dxySim);
-	  ptres_vs_eta[w]->Fill(getEta(etaSim),(ptRec-ptSim)/ptSim);
-	  invptres_vs_eta[w]->Fill(getEta(etaSim),(1/ptRec-1/ptSim)/(1/ptSim));
-	  qOverPtres_vs_eta[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
-	  dzres_vs_eta[w]->Fill(getEta(etaSim),dzRec-dzSim);
-	  phires_vs_eta[w]->Fill(getEta(etaSim),phiDiff);
-	  cotThetares_vs_eta[w]->Fill(getEta(etaSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
-	  
-	  //same as before but vs pT
-	  dxyres_vs_pt[w]->Fill(getPt(ptSim),dxyRec-dxySim);
-	  ptres_vs_pt[w]->Fill(getPt(ptSim),(ptRec-ptSim)/ptSim);
-	  invptres_vs_pt[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptSim));
-	  qOverPtres_vs_pt[w]->Fill(getEta(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
-	  dzres_vs_pt[w]->Fill(getPt(ptSim),dzRec-dzSim);
-	  phires_vs_pt[w]->Fill(getPt(ptSim),phiDiff);
- 	  cotThetares_vs_pt[w]->Fill(getPt(ptSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
 
-	  chargeMisID_vs_eta[w]->Fill(getEta(etaSim),chargeSim*chargeRec);
+	  dxyres_vs_eta[w]->Fill(getEta(track->eta()),dxyRec-dxySim);
+	  ptres_vs_eta[w]->Fill(getEta(track->eta()),(ptRec-ptSim)/ptRec);
+	  dzres_vs_eta[w]->Fill(getEta(track->eta()),dzRec-dzSim);
+	  phires_vs_eta[w]->Fill(getEta(track->eta()),phiDiff);
+	  cotThetares_vs_eta[w]->Fill(getEta(track->eta()), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
+	  invptres_vs_eta[w]->Fill(getEta(track->eta()),(1/ptRec-1/ptSim)/(1/ptRec));
+	  qOverPtres_vs_eta[w]->Fill(getEta(track->eta()),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+
+	  //dxyres_vs_eta[w]->Fill(getEta(etaSim),dxyRec-dxySim);
+	  ptres_vs_eta_sim[w]->Fill(getEta(etaSim),(ptRec-ptSim)/ptSim);
+	  invptres_vs_eta_sim[w]->Fill(getEta(etaSim),(1/ptRec-1/ptSim)/(1/ptSim));
+	  qOverPtres_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  //dzres_vs_eta[w]->Fill(getEta(etaSim),dzRec-dzSim);
+	  //phires_vs_eta[w]->Fill(getEta(etaSim),phiDiff);
+	  //cotThetares_vs_eta[w]->Fill(getEta(etaSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
+
+	  //same as before but vs pT
+
+	  dxyres_vs_pt[w]->Fill(getPt(ptRec),dxyRec-dxySim);
+	  ptres_vs_pt[w]->Fill(getPt(ptRec),(ptRec-ptSim)/ptRec);
+	  dzres_vs_pt[w]->Fill(getPt(ptRec),dzRec-dzSim);
+	  phires_vs_pt[w]->Fill(getPt(ptRec),phiDiff);
+ 	  cotThetares_vs_pt[w]->Fill(getPt(ptRec), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
+	  invptres_vs_pt[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptRec));
+	  qOverPtres_vs_pt[w]->Fill(getEta(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+
+	  chargeMisID_vs_eta[w]->Fill(getEta(track->eta()),chargeSim*chargeRec);
 	  chargeMisID_vs_pt[w]->Fill(getEta(ptSim),chargeSim*chargeRec);
-	  chargeMisID_vs_phi[w]->Fill(phiSim,chargeSim*chargeRec);
- 	   	 
+	  chargeMisID_vs_phi[w]->Fill(phiRec,chargeSim*chargeRec);
+	  //dxyres_vs_pt[w]->Fill(getPt(ptSim),dxyRec-dxySim);
+	  ptres_vs_pt_sim[w]->Fill(getPt(ptSim),(ptRec-ptSim)/ptSim);
+	  invptres_vs_pt_sim[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptSim));
+	  qOverPtres_vs_pt_sim[w]->Fill(getEta(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  //dzres_vs_pt[w]->Fill(getPt(ptSim),dzRec-dzSim);
+	  //phires_vs_pt[w]->Fill(getPt(ptSim),phiDiff);
+ 	  //cotThetares_vs_pt[w]->Fill(getPt(ptSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
+
+	  chargeMisID_vs_eta_sim[w]->Fill(getEta(etaSim),chargeSim*chargeRec);
+	  chargeMisID_vs_pt_sim[w]->Fill(getEta(ptSim),chargeSim*chargeRec);
+	  chargeMisID_vs_phi_sim[w]->Fill(phiSim,chargeSim*chargeRec);
+
 	  //pulls of track params vs eta: fill 2D histos
-	  dxypull_vs_eta[w]->Fill(getEta(etaSim),dxyPull);
-	  ptpull_vs_eta[w]->Fill(getEta(etaSim),ptres/ptError);
-	  dzpull_vs_eta[w]->Fill(getEta(etaSim),dzPull);
-	  phipull_vs_eta[w]->Fill(getEta(etaSim),phiPull);
-	  thetapull_vs_eta[w]->Fill(getEta(etaSim),thetaPull);
+
+	  dxypull_vs_eta[w]->Fill(getEta(track->eta()),dxyPull);
+	  ptpull_vs_eta[w]->Fill(getEta(track->eta()),ptres/ptError);
+	  dzpull_vs_eta[w]->Fill(getEta(track->eta()),dzPull);
+	  phipull_vs_eta[w]->Fill(getEta(track->eta()),phiPull);
+	  thetapull_vs_eta[w]->Fill(getEta(track->eta()),thetaPull);
+
+	  //dxypull_vs_eta[w]->Fill(getEta(etaSim),dxyPull);
+	  //ptpull_vs_eta[w]->Fill(getEta(etaSim),ptres/ptError);
+	  //dzpull_vs_eta[w]->Fill(getEta(etaSim),dzPull);
+	  //phipull_vs_eta[w]->Fill(getEta(etaSim),phiPull);
+	  //thetapull_vs_eta[w]->Fill(getEta(etaSim),thetaPull);
 
 	  //plots vs phi
+
 	  nhits_vs_phi[w]->Fill(phiRec,track->numberOfValidHits());
 	  chi2_vs_phi[w]->Fill(phiRec,track->normalizedChi2());
 	  ptmean_vs_eta_phi[w]->Fill(phiRec,getEta(track->eta()),ptRec);
 	  phimean_vs_eta_phi[w]->Fill(phiRec,getEta(track->eta()),phiRec);
-	  ptres_vs_phi[w]->Fill(phiSim,(ptRec-ptSim)/ptSim);
-	  invptres_vs_phi[w]->Fill(phiSim,(1/ptRec-1/ptSim)/(1/ptSim));
-	  qOverPtres_vs_phi[w]->Fill(phiSim,(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
-	  phires_vs_phi[w]->Fill(phiSim,phiDiff);
-	  ptpull_vs_phi[w]->Fill(phiSim,ptres/ptError);
-	  phipull_vs_phi[w]->Fill(phiSim,phiPull); 
-	  thetapull_vs_phi[w]->Fill(phiSim,thetaPull); 
+	  ptres_vs_phi[w]->Fill(phiRec,(ptRec-ptSim)/ptRec);
+	  phires_vs_phi[w]->Fill(phiRec,phiDiff);
+	  ptpull_vs_phi[w]->Fill(phiRec,ptres/ptError);
+	  phipull_vs_phi[w]->Fill(phiRec,phiPull); 
+	  thetapull_vs_phi[w]->Fill(phiRec,thetaPull); 
+	  invptres_vs_phi[w]->Fill(phiRec,(1/ptRec-1/ptSim)/(1/ptRec));
+	  qOverPtres_vs_phi[w]->Fill(phiRec,(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+
+	  ptres_vs_phi_sim[w]->Fill(phiSim,(ptRec-ptSim)/ptSim);
+	  invptres_vs_phi_sim[w]->Fill(phiSim,(1/ptRec-1/ptSim)/(1/ptSim));
+	  qOverPtres_vs_phi_sim[w]->Fill(phiSim,(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  //phires_vs_phi[w]->Fill(phiSim,phiDiff);
+	  //ptpull_vs_phi[w]->Fill(phiSim,ptres/ptError);
+	  //phipull_vs_phi[w]->Fill(phiSim,phiPull); 
+	  //thetapull_vs_phi[w]->Fill(phiSim,thetaPull); 
 	  
 	  int nSimHits = 0;
 	  if (usetracker && usemuon) {
@@ -954,6 +1019,10 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
       extractCharge(chargeMisID_vs_eta[w], chargeMisID_vs_etaNum[w], chargeMisID_vs_etaDen[w]);
       extractCharge(chargeMisID_vs_pt[w], chargeMisID_vs_ptNum[w], chargeMisID_vs_ptDen[w]);
       extractCharge(chargeMisID_vs_phi[w], chargeMisID_vs_phiNum[w], chargeMisID_vs_phiDen[w]);
+
+      extractCharge(chargeMisID_vs_eta_sim[w], chargeMisID_vs_etaNum_sim[w], chargeMisID_vs_etaDen_sim[w]);
+      extractCharge(chargeMisID_vs_pt_sim[w], chargeMisID_vs_ptNum_sim[w], chargeMisID_vs_ptDen_sim[w]);
+      extractCharge(chargeMisID_vs_phi_sim[w], chargeMisID_vs_phiNum_sim[w], chargeMisID_vs_phiDen_sim[w]);
 
       //chi2 and #hit vs eta: get mean from 2D histos
       doProfileX(chi2_vs_eta[w],h_chi2meanh[w]);

@@ -401,6 +401,7 @@ class MuonTrackValidatorBase {
   std::vector<MonitorElement*> h_recodz, h_assocdz, h_assoc2dz, h_simuldz;
   std::vector<MonitorElement*> h_assocvertpos, h_simulvertpos, h_assoczpos, h_simulzpos;
   std::vector<MonitorElement*> h_pt, h_eta, h_pullTheta,h_pullPhi,h_pullDxy,h_pullDz,h_pullQoverp, h_Qoverptres, h_invptres;
+  std::vector<MonitorElement*> h_Qoverptres_sim, h_invptres_sim;
 
   std::vector<MonitorElement*> h_assoceta_Quality05, h_assoceta_Quality075;
   std::vector<MonitorElement*> h_assocpT_Quality05, h_assocpT_Quality075;

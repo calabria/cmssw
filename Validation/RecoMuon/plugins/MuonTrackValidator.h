@@ -168,12 +168,17 @@ private:
 
   std::vector<MonitorElement*> chargeMisID_vs_etaNum, chargeMisID_vs_etaDen, chargeMisID_vs_ptNum;
   std::vector<MonitorElement*> chargeMisID_vs_ptDen, chargeMisID_vs_phiNum, chargeMisID_vs_phiDen;
+  std::vector<MonitorElement*> chargeMisID_vs_etaNum_sim, chargeMisID_vs_etaDen_sim, chargeMisID_vs_ptNum_sim;
+  std::vector<MonitorElement*> chargeMisID_vs_ptDen_sim, chargeMisID_vs_phiNum_sim, chargeMisID_vs_phiDen_sim;
 
   //2D  
   std::vector<MonitorElement*> chi2_vs_nhits, etares_vs_eta;
   std::vector<MonitorElement*> h_ptshifteta;
   std::vector<MonitorElement*> ptres_vs_phi, invptres_vs_phi, qOverPtres_vs_phi, chi2_vs_phi, nhits_vs_phi, phires_vs_phi;
   std::vector<MonitorElement*> chargeMisID_vs_eta, chargeMisID_vs_pt, chargeMisID_vs_phi;
+
+  std::vector<MonitorElement*> ptres_vs_phi_sim, invptres_vs_phi_sim, qOverPtres_vs_phi_sim;
+  std::vector<MonitorElement*> chargeMisID_vs_eta_sim, chargeMisID_vs_pt_sim, chargeMisID_vs_phi_sim;
 
   //Profile2D
   std::vector<MonitorElement*> ptmean_vs_eta_phi, phimean_vs_eta_phi;
@@ -190,6 +195,9 @@ private:
   //resolution of track params: to be used with fitslicesytool
   std::vector<MonitorElement*> dxyres_vs_eta, ptres_vs_eta, invptres_vs_eta, qOverPtres_vs_eta, dzres_vs_eta, phires_vs_eta, cotThetares_vs_eta;
   std::vector<MonitorElement*> dxyres_vs_pt, ptres_vs_pt, invptres_vs_pt, qOverPtres_vs_pt, dzres_vs_pt, phires_vs_pt, cotThetares_vs_pt;
+
+  std::vector<MonitorElement*> ptres_vs_eta_sim, invptres_vs_eta_sim, qOverPtres_vs_eta_sim;
+  std::vector<MonitorElement*> ptres_vs_pt_sim, invptres_vs_pt_sim, qOverPtres_vs_pt_sim;
 
   //pulls of track params vs eta: to be used with fitslicesytool
   std::vector<MonitorElement*> dxypull_vs_eta, ptpull_vs_eta, dzpull_vs_eta, phipull_vs_eta, thetapull_vs_eta;
