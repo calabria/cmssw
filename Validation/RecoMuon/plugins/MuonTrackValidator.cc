@@ -302,7 +302,24 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
   
   edm::Handle<reco::BeamSpot> recoBeamSpotHandle;
   event.getByLabel(bsSrc,recoBeamSpotHandle);
-  reco::BeamSpot bs = *recoBeamSpotHandle;      
+  reco::BeamSpot bs = *recoBeamSpotHandle;
+
+  /*Handle<reco::MuonCollection> muons;
+  event.getByLabel("muons", muons);
+  reco::MuonCollection::const_iterator muon;
+
+  std::auto_ptr< reco::TrackCollection > recoMuonTrackCollection( new reco::TrackCollection() ) ;
+
+  for (muon = muons->begin(); muon != muons->end(); ++muon){
+
+	reco::Muon::MuonTrackType tmpType = muon->tunePMuonBestTrackType();
+
+	TrackRef bestTunePRef = muon->tunePMuonBestTrack();
+	//TrackRef bestRef = muon->muonBestTrack();
+
+        recoMuonTrackCollection->push_back(*bestTunePRef);
+
+  }*/
   
   int w=0;
   for (unsigned int ww=0;ww<associators.size();ww++){
@@ -923,21 +940,21 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  phires_vs_pt[w]->Fill(getPt(ptRec),phiDiff);
  	  cotThetares_vs_pt[w]->Fill(getPt(ptRec), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
 	  invptres_vs_pt[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptRec));
-	  qOverPtres_vs_pt[w]->Fill(getEta(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+	  qOverPtres_vs_pt[w]->Fill(getPt(ptRec),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
 
 	  chargeMisID_vs_eta[w]->Fill(getEta(track->eta()),chargeSim*chargeRec);
-	  chargeMisID_vs_pt[w]->Fill(getEta(ptSim),chargeSim*chargeRec);
+	  chargeMisID_vs_pt[w]->Fill(getPt(ptRec),chargeSim*chargeRec);
 	  chargeMisID_vs_phi[w]->Fill(phiRec,chargeSim*chargeRec);
 	  //dxyres_vs_pt[w]->Fill(getPt(ptSim),dxyRec-dxySim);
 	  ptres_vs_pt_sim[w]->Fill(getPt(ptSim),(ptRec-ptSim)/ptSim);
 	  invptres_vs_pt_sim[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptSim));
-	  qOverPtres_vs_pt_sim[w]->Fill(getEta(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  qOverPtres_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  //dzres_vs_pt[w]->Fill(getPt(ptSim),dzRec-dzSim);
 	  //phires_vs_pt[w]->Fill(getPt(ptSim),phiDiff);
  	  //cotThetares_vs_pt[w]->Fill(getPt(ptSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
 
 	  chargeMisID_vs_eta_sim[w]->Fill(getEta(etaSim),chargeSim*chargeRec);
-	  chargeMisID_vs_pt_sim[w]->Fill(getEta(ptSim),chargeSim*chargeRec);
+	  chargeMisID_vs_pt_sim[w]->Fill(getPt(ptSim),chargeSim*chargeRec);
 	  chargeMisID_vs_phi_sim[w]->Fill(phiSim,chargeSim*chargeRec);
 
 	  //pulls of track params vs eta: fill 2D histos
