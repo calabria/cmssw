@@ -25,7 +25,7 @@ postProcessorMuonMultiTrack = cms.EDAnalyzer("DQMGenericClient",
 
     "chargeMisIDProb_vs_eta 'Charge Mis-ID vs. #eta' chargeMisID_vs_etaNum chargeMisID_vs_etaDen",
     "chargeMisIDProb_vs_phi 'Charge Mis-ID vs. #phi' chargeMisID_vs_phiNum chargeMisID_vs_phiDen",
-    "chargeMisIDProb_vs_pt 'Charge Mis-ID vs. p_{T}' chargeMisID_vs_ptNum chargeMisID_vs_ptDen"
+    "chargeMisIDProb_vs_pt 'Charge Mis-ID vs. p_{T}' chargeMisID_vs_ptNum chargeMisID_vs_ptDen",
 
     "chargeMisIDProb_vs_eta_sim 'Charge Mis-ID vs. #eta Sim' chargeMisID_vs_etaNum_sim chargeMisID_vs_etaDen_sim",
     "chargeMisIDProb_vs_phi_sim 'Charge Mis-ID vs. #phi Sim' chargeMisID_vs_phiNum_sim chargeMisID_vs_phiDen_sim",
