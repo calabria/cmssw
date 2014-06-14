@@ -172,6 +172,10 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       qOverPtres_vs_phi.push_back( dbe_->book2D("qOverPtres_vs_phi","q/p_{t} res vs #phi",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       qOverPtres_vs_pt.push_back(dbe_->book2D("qOverPtres_vs_pt","qOverPtres_vs_pt",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
 
+      qOverPtresXL_vs_eta.push_back(dbe_->book2D("qOverPtresXL_vs_eta","qOverPtres_vs_eta",nint,min,max, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL_vs_phi.push_back( dbe_->book2D("qOverPtresXL_vs_phi","q/p_{t} res vs #phi",nintPhi,minPhi,maxPhi, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL_vs_pt.push_back(dbe_->book2D("qOverPtresXL_vs_pt","qOverPtres_vs_pt",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+
       chargeMisID_vs_eta.push_back(dbe_->book2D("chargeMisID_vs_eta","chargeMisID_vs_eta",nint,min,max,5,-2.5,2.5));
       chargeMisID_vs_phi.push_back(dbe_->book2D("chargeMisID_vs_phi","chargeMisID vs #phi",nintPhi,minPhi,maxPhi,5,-2.5,2.5));
       chargeMisID_vs_pt.push_back(dbe_->book2D("chargeMisID_vs_pt","chargeMisID_vs_pt",nintpT,minpT,maxpT,5,-2.5,2.5));
@@ -187,6 +191,10 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       qOverPtres_vs_eta_sim.push_back(dbe_->book2D("qOverPtres_vs_eta_sim","qOverPtres_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       qOverPtres_vs_phi_sim.push_back( dbe_->book2D("qOverPtres_vs_phi_sim","q/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       qOverPtres_vs_pt_sim.push_back(dbe_->book2D("qOverPtres_vs_pt_sim","qOverPtres_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      qOverPtresXL_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL_vs_eta_sim","qOverPtres_vs_eta sim",nint,min,max, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL_vs_phi_sim.push_back( dbe_->book2D("qOverPtresXL_vs_phi_sim","q/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL_vs_pt_sim.push_back(dbe_->book2D("qOverPtresXL_vs_pt_sim","qOverPtres_vs_pt sim",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
 
       chargeMisID_vs_eta_sim.push_back(dbe_->book2D("chargeMisID_vs_eta_sim","chargeMisID_vs_eta sim",nint,min,max,5,-2.5,2.5));
       chargeMisID_vs_phi_sim.push_back(dbe_->book2D("chargeMisID_vs_phi_sim","chargeMisID vs #phi sim",nintPhi,minPhi,maxPhi,5,-2.5,2.5));
@@ -303,23 +311,6 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
   edm::Handle<reco::BeamSpot> recoBeamSpotHandle;
   event.getByLabel(bsSrc,recoBeamSpotHandle);
   reco::BeamSpot bs = *recoBeamSpotHandle;
-
-  /*Handle<reco::MuonCollection> muons;
-  event.getByLabel("muons", muons);
-  reco::MuonCollection::const_iterator muon;
-
-  std::auto_ptr< reco::TrackCollection > recoMuonTrackCollection( new reco::TrackCollection() ) ;
-
-  for (muon = muons->begin(); muon != muons->end(); ++muon){
-
-	reco::Muon::MuonTrackType tmpType = muon->tunePMuonBestTrackType();
-
-	TrackRef bestTunePRef = muon->tunePMuonBestTrack();
-	//TrackRef bestRef = muon->muonBestTrack();
-
-        recoMuonTrackCollection->push_back(*bestTunePRef);
-
-  }*/
   
   int w=0;
   for (unsigned int ww=0;ww<associators.size();ww++){
@@ -923,11 +914,13 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  cotThetares_vs_eta[w]->Fill(getEta(track->eta()), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
 	  invptres_vs_eta[w]->Fill(getEta(track->eta()),(1/ptRec-1/ptSim)/(1/ptRec));
 	  qOverPtres_vs_eta[w]->Fill(getEta(track->eta()),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+	  qOverPtresXL_vs_eta[w]->Fill(getEta(track->eta()),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
 
 	  //dxyres_vs_eta[w]->Fill(getEta(etaSim),dxyRec-dxySim);
 	  ptres_vs_eta_sim[w]->Fill(getEta(etaSim),(ptRec-ptSim)/ptSim);
 	  invptres_vs_eta_sim[w]->Fill(getEta(etaSim),(1/ptRec-1/ptSim)/(1/ptSim));
 	  qOverPtres_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  qOverPtresXL_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  //dzres_vs_eta[w]->Fill(getEta(etaSim),dzRec-dzSim);
 	  //phires_vs_eta[w]->Fill(getEta(etaSim),phiDiff);
 	  //cotThetares_vs_eta[w]->Fill(getEta(etaSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
@@ -941,6 +934,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
  	  cotThetares_vs_pt[w]->Fill(getPt(ptRec), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
 	  invptres_vs_pt[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptRec));
 	  qOverPtres_vs_pt[w]->Fill(getPt(ptRec),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+	  qOverPtresXL_vs_pt[w]->Fill(getPt(ptRec),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
 
 	  chargeMisID_vs_eta[w]->Fill(getEta(track->eta()),chargeSim*chargeRec);
 	  chargeMisID_vs_pt[w]->Fill(getPt(ptRec),chargeSim*chargeRec);
@@ -949,6 +943,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  ptres_vs_pt_sim[w]->Fill(getPt(ptSim),(ptRec-ptSim)/ptSim);
 	  invptres_vs_pt_sim[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptSim));
 	  qOverPtres_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  qOverPtresXL_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  //dzres_vs_pt[w]->Fill(getPt(ptSim),dzRec-dzSim);
 	  //phires_vs_pt[w]->Fill(getPt(ptSim),phiDiff);
  	  //cotThetares_vs_pt[w]->Fill(getPt(ptSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
@@ -984,10 +979,12 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  thetapull_vs_phi[w]->Fill(phiRec,thetaPull); 
 	  invptres_vs_phi[w]->Fill(phiRec,(1/ptRec-1/ptSim)/(1/ptRec));
 	  qOverPtres_vs_phi[w]->Fill(phiRec,(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+	  qOverPtresXL_vs_phi[w]->Fill(phiRec,(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
 
 	  ptres_vs_phi_sim[w]->Fill(phiSim,(ptRec-ptSim)/ptSim);
 	  invptres_vs_phi_sim[w]->Fill(phiSim,(1/ptRec-1/ptSim)/(1/ptSim));
 	  qOverPtres_vs_phi_sim[w]->Fill(phiSim,(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  qOverPtresXL_vs_phi_sim[w]->Fill(phiSim,(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  //phires_vs_phi[w]->Fill(phiSim,phiDiff);
 	  //ptpull_vs_phi[w]->Fill(phiSim,ptres/ptError);
 	  //phipull_vs_phi[w]->Fill(phiSim,phiPull); 

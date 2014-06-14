@@ -239,7 +239,7 @@ staUpdMuonTrackVSelMuonAssoc.usemuon = True
 glbMuonTrackVSelMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 glbMuonTrackVSelMuonAssoc.associatormap = 'tpToGlbSelMuonAssociation'
 glbMuonTrackVSelMuonAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
-glbMuonTrackVSelMuonAssoc.label = ('extractedGlobalMuonsWithVtx',)
+glbMuonTrackVSelMuonAssoc.label = ('extractedGlobalMuons',)
 glbMuonTrackVSelMuonAssoc.usetracker = True
 glbMuonTrackVSelMuonAssoc.usemuon = True
 ###
