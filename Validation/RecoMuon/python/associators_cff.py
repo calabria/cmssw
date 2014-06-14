@@ -26,11 +26,80 @@ TrackAssociatorByPosDeltaR.ConsiderAllSimHits = cms.bool(True)
 # Configuration for Muon track extractor
 #
 
-import SimMuon.MCTruth.MuonTrackProducer_cfi
-extractedGlobalMuons = SimMuon.MCTruth.MuonTrackProducer_cfi.muonTrackProducer.clone()
-extractedGlobalMuons.selectionTags = ('AllGlobalMuons',)
-extractedGlobalMuons.trackType = "globalTrack"
+selectedVertices = cms.EDFilter("VertexSelector",
+    src = cms.InputTag('offlinePrimaryVertices'),
+    cut = cms.string("isValid & ndof >= 4 & chi2 > 0 & tracksSize > 0 & abs(z) < 24 & abs(position.Rho) < 2."),
+    filter = cms.bool(False)
+)
+
+selectedFirstPrimaryVertex = cms.EDFilter("PATSingleVertexSelector",
+    mode = cms.string('firstVertex'),
+    vertices = cms.InputTag('selectedVertices'),
+    filter = cms.bool(False)
+)
+
+trackWithVertexSelector = cms.EDProducer("TrackWithVertexSelector",
+    # -- module configuration --
+    src = cms.InputTag('generalTracks'),
+    quality = cms.string("highPurity"),
+    useVtx = cms.bool(False),
+    vertexTag = cms.InputTag('selectedFirstPrimaryVertex'),
+    nVertices = cms.uint32(1),
+    vtxFallback = cms.bool(True),
+    copyExtras = cms.untracked.bool(False),
+    copyTrajectories = cms.untracked.bool(False),
+    # --------------------------
+    # -- these are the vertex compatibility cuts --
+    zetaVtx = cms.double(0.2),
+    rhoVtx = cms.double(0.1),
+    # ---------------------------------------------
+    # -- dummy selection on tracks --
+    etaMin = cms.double(0.0),
+    etaMax = cms.double(5.0),
+    ptMin = cms.double(0.00001),
+    ptMax = cms.double(999999.),
+    d0Max = cms.double(999999.),
+    dzMax = cms.double(999999.),
+    normalizedChi2 = cms.double(999999.),
+    numberOfValidHits = cms.uint32(0),
+    numberOfLostHits = cms.uint32(999),
+    numberOfValidPixelHits = cms.uint32(0),
+    ptErrorCut = cms.double(999999.)
+    # ------------------------------
+)
+
+#import SimMuon.MCTruth.MuonTrackProducer_cfi
+#extractedGlobalMuons = SimMuon.MCTruth.MuonTrackProducer_cfi.muonTrackProducer.clone()
+#extractedGlobalMuons.selectionTags = ('AllGlobalMuons',)
+#extractedGlobalMuons.trackType = "globalTrack"
+
+extractedGlobalMuons = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muons"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('cocktailBest')
+)
+
+bestMuon = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muons"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('cocktailBest')
+)
+
+bestMuonTuneP = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muons"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('cocktailTuneP')
+)
+
+extractedGlobalMuonsWithVtx = trackWithVertexSelector.clone()
+extractedGlobalMuonsWithVtx.src = cms.InputTag('extractedGlobalMuons')
+staWithVertexSelector = trackWithVertexSelector.clone()
+staWithVertexSelector.src = cms.InputTag('standAloneMuons:UpdatedAtVtx')
+
+#extractedMuonTracks_seq = cms.Sequence( selectedVertices * selectedFirstPrimaryVertex * extractedGlobalMuons * extractedGlobalMuonsWithVtx)
 extractedMuonTracks_seq = cms.Sequence( extractedGlobalMuons )
+bestMuon_seq = cms.Sequence( bestMuon )
+bestMuonTuneP_seq = cms.Sequence( bestMuonTuneP )
 
 #
 # Configuration for Seed track extractor
@@ -48,8 +117,8 @@ probeTracks.quality = cms.vstring('highPurity')
 probeTracks.tip = cms.double(3.5)
 probeTracks.lip = cms.double(30.)
 probeTracks.ptMin = cms.double(4.0)
-probeTracks.minRapidity = cms.double(-2.4)
-probeTracks.maxRapidity = cms.double(2.4)
+probeTracks.minRapidity = cms.double(-2.5)
+probeTracks.maxRapidity = cms.double(2.5)
 probeTracks_seq = cms.Sequence( probeTracks )
 
 #
