@@ -75,8 +75,8 @@ trackWithVertexSelector = cms.EDProducer("TrackWithVertexSelector",
 
 extractedGlobalMuons = cms.EDProducer("MuonTrackCollProducer",
    muonsTag = cms.InputTag("muons"),
-   selectionTags = cms.vstring('All'),
-   trackType = cms.string('cocktailBest')
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrack')
 )
 
 bestMuon = cms.EDProducer("MuonTrackCollProducer",

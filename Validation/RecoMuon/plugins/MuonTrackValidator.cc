@@ -20,6 +20,9 @@
 #include "SimTracker/TrackAssociation/plugins/ParametersDefinerForTPESProducer.h"
 #include "SimTracker/TrackAssociation/plugins/CosmicParametersDefinerForTPESProducer.h"
 
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+
 #include "TMath.h"
 #include <TF1.h>
 
@@ -77,8 +80,16 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       /// this are needed to calculate efficiency during tha harvesting for the automated validation
       h_recoeta.push_back( dbe_->book1D("num_reco_eta","N of reco track vs eta",nint,min,max) );
       h_assoceta.push_back( dbe_->book1D("num_assoc(simToReco)_eta","N of associated tracks (simToReco) vs eta",nint,min,max) );
+      h_assocvtx.push_back( dbe_->book1D("num_assoc(simToReco)_vtx","N of associated tracks (simToReco) vs vtx",nintVtx,minVtx,maxVtx) );
+      h_assocvtxBarrel.push_back( dbe_->book1D("num_assoc(simToReco)_vtx_barrel","N of associated tracks (simToReco) vs vtx barrel",nintVtx,minVtx,maxVtx) );
+      h_assocvtxEndcap.push_back( dbe_->book1D("num_assoc(simToReco)_vtx_endcap","N of associated tracks (simToReco) vs vtx endcap",nintVtx,minVtx,maxVtx) );
+      h_assocvtxOverlap.push_back( dbe_->book1D("num_assoc(simToReco)_vtx_overlap","N of associated tracks (simToReco) vs vtx overlap",nintVtx,minVtx,maxVtx) );
       h_assoc2eta.push_back( dbe_->book1D("num_assoc(recoToSim)_eta","N of associated (recoToSim) tracks vs eta",nint,min,max) );
       h_simuleta.push_back( dbe_->book1D("num_simul_eta","N of simulated tracks vs eta",nint,min,max) );
+      h_simulvtx.push_back( dbe_->book1D("num_simul_vtx","N of simulated tracks vs vtx",nintVtx,minVtx,maxVtx) );
+      h_simulvtxBarrel.push_back( dbe_->book1D("num_simul_vtx_barrel","N of simulated tracks vs vtx barrel",nintVtx,minVtx,maxVtx) );
+      h_simulvtxEndcap.push_back( dbe_->book1D("num_simul_vtx_endcap","N of simulated tracks vs vtx endcap",nintVtx,minVtx,maxVtx) );
+      h_simulvtxOverlap.push_back( dbe_->book1D("num_simul_vtx_overlap","N of simulated tracks vs vtx overlap",nintVtx,minVtx,maxVtx) );
       h_recopT.push_back( dbe_->book1D("num_reco_pT","N of reco track vs pT",nintpT,minpT,maxpT) );
       h_assocpT.push_back( dbe_->book1D("num_assoc(simToReco)_pT","N of associated tracks (simToReco) vs pT",nintpT,minpT,maxpT) );
       h_assoc2pT.push_back( dbe_->book1D("num_assoc(recoToSim)_pT","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
@@ -311,6 +322,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
   edm::Handle<reco::BeamSpot> recoBeamSpotHandle;
   event.getByLabel(bsSrc,recoBeamSpotHandle);
   reco::BeamSpot bs = *recoBeamSpotHandle;
+
+  edm::Handle<reco::VertexCollection> primaryVertices;
+  event.getByLabel(vtxInputTag, primaryVertices);
+
+  int nVertices = primaryVertices->size();
   
   int w=0;
   for (unsigned int ww=0;ww<associators.size();ww++){
@@ -490,6 +506,32 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    << momentumTP.phi() << " , "
 	    << " NOT associated to any reco::Track" << "\n";
 	}
+
+	for (unsigned int f=0; f<vtxintervals[w].size()-1; f++){
+	  if (nVertices>=vtxintervals[w][f]&&
+	      nVertices<=vtxintervals[w][f+1]) {
+	    totSIMvtx[w][f]++;
+	    if(fabs(momentumTP.eta()) < 1.2) totSIMvtxBarrel[w][f]++;
+	    else if(fabs(momentumTP.eta()) > 1.2 && fabs(momentumTP.eta()) < 1.7) totSIMvtxOverlap[w][f]++;
+	    else if(fabs(momentumTP.eta()) > 1.7) totSIMvtxEndcap[w][f]++;
+	    if (TP_is_matched) {
+	      totASSvtx[w][f]++;
+	      if(fabs(momentumTP.eta()) < 1.2) totASSvtxBarrel[w][f]++;
+	      else if(fabs(momentumTP.eta()) > 1.2 && fabs(momentumTP.eta()) < 1.7) totASSvtxOverlap[w][f]++;
+	      else if(fabs(momentumTP.eta()) > 1.7) totASSvtxEndcap[w][f]++;
+
+	      /*if (MABH) {
+		if (Quality075) {
+		  totASSeta_Quality075[w][f]++;
+		  totASSeta_Quality05[w][f]++;
+		}
+		else if (Quality05) {
+		  totASSeta_Quality05[w][f]++;
+		}
+	      }*/
+	    }
+	  }
+	} // END for (unsigned int f=0; f<vtxintervals[w].size()-1; f++){
 	
 	for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
 	  if (getEta(momentumTP.eta())>etaintervals[w][f]&&
@@ -1054,7 +1096,15 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
 
       fillPlotFromVector(h_recoeta[w],totRECeta[w]);
       fillPlotFromVector(h_simuleta[w],totSIMeta[w]);
+      fillPlotFromVector(h_simulvtx[w],totSIMvtx[w]);
+      fillPlotFromVector(h_simulvtxBarrel[w],totSIMvtxBarrel[w]);
+      fillPlotFromVector(h_simulvtxEndcap[w],totSIMvtxEndcap[w]);
+      fillPlotFromVector(h_simulvtxOverlap[w],totSIMvtxOverlap[w]);
       fillPlotFromVector(h_assoceta[w],totASSeta[w]);
+      fillPlotFromVector(h_assocvtx[w],totASSvtx[w]);
+      fillPlotFromVector(h_assocvtxBarrel[w],totASSvtxBarrel[w]);
+      fillPlotFromVector(h_assocvtxEndcap[w],totASSvtxEndcap[w]);
+      fillPlotFromVector(h_assocvtxOverlap[w],totASSvtxOverlap[w]);
       fillPlotFromVector(h_assoc2eta[w],totASS2eta[w]);
 
       fillPlotFromVector(h_recopT[w],totRECpT[w]);

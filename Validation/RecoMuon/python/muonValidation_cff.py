@@ -44,19 +44,19 @@ staMuonTrackVTrackAssoc.label = ('standAloneMuons',)
 staMuonTrackVTrackAssoc.usetracker = False
 staMuonTrackVTrackAssoc.usemuon = True
 
+glbMuonTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+glbMuonTrackVTrackAssoc.associatormap = 'tpToStaTrackAssociation'
+glbMuonTrackVTrackAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+glbMuonTrackVTrackAssoc.label = ('globalMuons',)
+glbMuonTrackVTrackAssoc.usetracker = True
+glbMuonTrackVTrackAssoc.usemuon = True
+
 staUpdMuonTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 staUpdMuonTrackVTrackAssoc.associatormap = 'tpToStaUpdTrackAssociation'
 staUpdMuonTrackVTrackAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
 staUpdMuonTrackVTrackAssoc.label = ('standAloneMuons:UpdatedAtVtx',)
 staUpdMuonTrackVTrackAssoc.usetracker = False
 staUpdMuonTrackVTrackAssoc.usemuon = True
-
-glbMuonTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
-glbMuonTrackVTrackAssoc.associatormap = 'tpToGlbTrackAssociation'
-glbMuonTrackVTrackAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
-glbMuonTrackVTrackAssoc.label = ('globalMuons',)
-glbMuonTrackVTrackAssoc.usetracker = True
-glbMuonTrackVTrackAssoc.usemuon = True
 
 staSETMuonTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 staSETMuonTrackVTrackAssoc.associatormap = 'tpToStaSETTrackAssociation'
@@ -359,7 +359,7 @@ recoMuonVMuAssoc_tgt.primaryVertex = 'offlinePrimaryVertices'
 
 muonValidation_seq = cms.Sequence(#trkProbeTrackVMuonAssoc+ trkMuonTrackVTrackAssoc
 #                                 +staSeedTrackVMuonAssoc+
-                                  staMuonTrackVMuonAssoc+staUpdMuonTrackVMuonAssoc+glbMuonTrackVMuonAssoc
+                                  staMuonTrackVMuonAssoc+staUpdMuonTrackVMuonAssoc+glbMuonTrackVTrackAssoc+glbMuonTrackVMuonAssoc
 				  +bestMuonTrackVTrackAssoc+bestMuonTunePTrackVTrackAssoc
                                   #+trkProbeTrackVSelMuonAssoc
 				  +staUpdMuonTrackVSelMuonAssoc+glbMuonTrackVSelMuonAssoc)
@@ -377,6 +377,7 @@ muonValidationCosmic_seq = cms.Sequence(trkCosmicMuonTrackVTrackAssoc+staCosmicM
 # The muon association and validation sequence
 
 recoMuonValidation = cms.Sequence(#probeTracks_seq*
+				 (selectedVertices * selectedFirstPrimaryVertex) * 
 				 extractedMuonTracks_seq*bestMuon_seq*bestMuonTuneP_seq*
 				 ((muonValidation_seq)
                                  +(muonValidationTEV_seq)

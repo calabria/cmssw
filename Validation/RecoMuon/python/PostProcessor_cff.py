@@ -3,6 +3,10 @@ import FWCore.ParameterSet.Config as cms
 postProcessorMuonMultiTrack = cms.EDAnalyzer("DQMGenericClient",
     subDirs = cms.untracked.vstring("Muons/RecoMuonV/MultiTrack/*"),
     efficiency = cms.vstring(
+    "efficVtx 'Efficiency vs # vtx' num_assoc(simToReco)_vtx num_simul_vtx",
+    "efficVtx_barrel 'Efficiency vs # vtx barrel' num_assoc(simToReco)_vtx_barrel num_simul_vtx_barrel",
+    "efficVtx_overlap 'Efficiency vs # vtx overlap' num_assoc(simToReco)_vtx_overlap num_simul_vtx_overlap",
+    "efficVtx_endcap 'Efficiency vs # vtx endcap' num_assoc(simToReco)_vtx_endcap num_simul_vtx_endcap",
     "effic 'Efficiency vs #eta' num_assoc(simToReco)_eta num_simul_eta",
     "efficPt 'Efficiency vs p_{T}' num_assoc(simToReco)_pT num_simul_pT",
     "effic_vs_hit 'Efficiency vs n Hits' num_assoc(simToReco)_hit num_simul_hit",
