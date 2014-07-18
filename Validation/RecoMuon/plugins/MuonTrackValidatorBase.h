@@ -209,6 +209,8 @@ class MuonTrackValidatorBase {
     totSIMeta.push_back(totSIMveta);
     totASSeta.push_back(totASSveta);
     totASS2eta.push_back(totASS2veta);
+    totASS2eta_075.push_back(totASS2veta);
+    totASS2eta_050.push_back(totASS2veta);
     totRECeta.push_back(totRECveta);
     //
     totASSeta_Quality05.push_back(totASSveta_Quality05);
@@ -378,7 +380,7 @@ class MuonTrackValidatorBase {
 
   //1D
   std::vector<MonitorElement*> h_tracks, h_fakes, h_hits, h_charge;
-  std::vector<MonitorElement*> h_recoeta, h_assoceta, h_assoc2eta, h_simuleta;
+  std::vector<MonitorElement*> h_recoeta, h_assoceta, h_assoc2eta, h_assoc2eta_075, h_assoc2eta_050 , h_simuleta;
   std::vector<MonitorElement*> h_recopT, h_assocpT, h_assoc2pT, h_simulpT;
   std::vector<MonitorElement*> h_recohit, h_assochit, h_assoc2hit, h_simulhit;
   std::vector<MonitorElement*> h_recophi, h_assocphi, h_assoc2phi, h_simulphi;
@@ -415,7 +417,7 @@ class MuonTrackValidatorBase {
   std::vector< std::vector<double> > dzintervals;
   std::vector< std::vector<double> > vertposintervals;
   std::vector< std::vector<double> > zposintervals;
-  std::vector< std::vector<int> > totSIMeta,totRECeta,totASSeta,totASS2eta;
+  std::vector< std::vector<int> > totSIMeta,totRECeta,totASSeta,totASS2eta,totASS2eta_075,totASS2eta_050;
   std::vector< std::vector<int> > totSIMpT,totRECpT,totASSpT,totASS2pT;
   std::vector< std::vector<int> > totSIM_hit,totREC_hit,totASS_hit,totASS2_hit;
   std::vector< std::vector<int> > totSIM_phi,totREC_phi,totASS_phi,totASS2_phi;

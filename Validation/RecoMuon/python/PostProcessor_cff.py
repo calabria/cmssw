@@ -10,6 +10,10 @@ postProcessorMuonMultiTrack = cms.EDAnalyzer("DQMGenericClient",
     "effic_vs_dxy 'Efficiency vs Dxy' num_assoc(simToReco)_dxy num_simul_dxy",
     "effic_vs_dz 'Efficiency vs Dz' num_assoc(simToReco)_dz num_simul_dz",
     "fakerate 'Fake rate vs #eta' num_assoc(recoToSim)_eta num_reco_eta fake",
+
+    "fakerate075 'Fake rate vs #eta Q>75%' num_assoc(recoToSim)_eta_075 num_reco_eta fake",
+    "fakerate050 'Fake rate vs #eta Q>50%' num_assoc(recoToSim)_eta_050 num_reco_eta fake",
+
     "fakeratePt 'Fake rate vs p_{T}' num_assoc(recoToSim)_pT num_reco_pT fake",
     "fakerate_vs_hit 'Fake rate vs hit' num_assoc(recoToSim)_hit num_reco_hit fake",
     "fakerate_vs_phi 'Fake rate vs phi' num_assoc(recoToSim)_phi num_reco_phi fake",
