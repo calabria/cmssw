@@ -184,7 +184,7 @@ private:
   std::vector<MonitorElement*> ptmean_vs_eta_phi, phimean_vs_eta_phi;
 
   //assoc chi2
-  std::vector<MonitorElement*> h_assochi2, h_assochi2_prob;
+  std::vector<MonitorElement*> h_assochi2, h_assoPull, h_assochi2_prob;
 
   //chi2 and # lost hits vs eta: to be used with doProfileX
   std::vector<MonitorElement*> chi2_vs_eta, nlosthits_vs_eta;

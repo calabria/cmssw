@@ -138,6 +138,8 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       if (associators[ww]=="TrackAssociatorByChi2"){
 	h_assochi2.push_back( dbe_->book1D("assocChi2","track association #chi^{2}",1000000,0,100000) );
 	h_assochi2_prob.push_back(dbe_->book1D("assocChi2_prob","probability of association #chi^{2}",100,0,1));
+      }else if (associators[ww]=="TrackAssociatorByPull"){
+	h_assoPull.push_back( dbe_->book1D("assoPull","track association pull",100,0,100) );
       } else if (associators[ww]=="TrackAssociatorByHits"){
 	h_assocFraction.push_back( dbe_->book1D("assocFraction","fraction of shared hits",200,0,2) );
 	h_assocSharedHit.push_back(dbe_->book1D("assocSharedHit","number of shared hits",20,0,20));
@@ -799,6 +801,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    double assocChi2 = -tp.begin()->second;//in association map is stored -chi2
 	    h_assochi2[www]->Fill(assocChi2);
 	    h_assochi2_prob[www]->Fill(TMath::Prob((assocChi2)*5,5));
+	  }
+	  if (associators[ww]=="TrackAssociatorByPull"){
+	    //association pull
+	    double assocChi2 = -tp.begin()->second;//in association map is stored -pull
+	    h_assoPull[www]->Fill(assocChi2);
 	  }
 	  else if (associators[ww]=="TrackAssociatorByHits"){
 	    double fraction = tp.begin()->second;

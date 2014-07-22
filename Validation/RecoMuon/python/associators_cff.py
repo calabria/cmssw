@@ -68,6 +68,91 @@ trackWithVertexSelector = cms.EDProducer("TrackWithVertexSelector",
     # ------------------------------
 )
 
+muonPt3 = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 3."),
+    filter = cms.bool(False)
+)
+
+muonPt5 = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 5."),
+    filter = cms.bool(False)
+)
+
+muonPt10 = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 10."),
+    filter = cms.bool(False)
+)
+
+muonPt15 = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 15."),
+    filter = cms.bool(False)
+)
+
+muonPt20 = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 20."),
+    filter = cms.bool(False)
+)
+
+muonPt50 = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 50."),
+    filter = cms.bool(False)
+)
+
+import PhysicsTools.RecoAlgos.recoTrackSelector_cfi
+staMuonsPt3 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+staMuonsPt3.ptMin = cms.double(3.0)
+staMuonsPt3.quality = cms.vstring('')
+staMuonsPt3.minHit = cms.int32(0)
+staMuonsPt3.src = cms.InputTag("standAloneMuons:UpdatedAtVtx")
+
+staMuonsPt5 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+staMuonsPt5.ptMin = cms.double(5.0)
+staMuonsPt5.quality = cms.vstring('')
+staMuonsPt5.minHit = cms.int32(0)
+staMuonsPt5.src = cms.InputTag("standAloneMuons:UpdatedAtVtx")
+
+staMuonsPt10 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+staMuonsPt10.ptMin = cms.double(10.0)
+staMuonsPt10.quality = cms.vstring('')
+staMuonsPt10.minHit = cms.int32(0)
+staMuonsPt10.src = cms.InputTag("standAloneMuons:UpdatedAtVtx")
+
+staMuonsPt15 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+staMuonsPt15.ptMin = cms.double(15.0)
+staMuonsPt15.quality = cms.vstring('')
+staMuonsPt15.minHit = cms.int32(0)
+staMuonsPt15.src = cms.InputTag("standAloneMuons:UpdatedAtVtx")
+
+staMuonsPt20 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+staMuonsPt20.ptMin = cms.double(20.0)
+staMuonsPt20.quality = cms.vstring('')
+staMuonsPt20.minHit = cms.int32(0)
+staMuonsPt20.src = cms.InputTag("standAloneMuons:UpdatedAtVtx")
+
+staMuonsPt50 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+staMuonsPt50.ptMin = cms.double(50.0)
+staMuonsPt50.quality = cms.vstring('')
+staMuonsPt50.minHit = cms.int32(0)
+staMuonsPt50.src = cms.InputTag("standAloneMuons:UpdatedAtVtx")
+
+tevMuonsFirstHit20 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+tevMuonsFirstHit20.ptMin = cms.double(20.0)
+tevMuonsFirstHit20.quality = cms.vstring('')
+tevMuonsFirstHit20.minHit = cms.int32(0)
+tevMuonsFirstHit20.src = cms.InputTag("tevMuons:firstHit")
+
+tevMuonsPicky20 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+tevMuonsPicky20.ptMin = cms.double(20.0)
+tevMuonsPicky20.quality = cms.vstring('')
+tevMuonsPicky20.minHit = cms.int32(0)
+tevMuonsPicky20.src = cms.InputTag("tevMuons:picky")
+
 #import SimMuon.MCTruth.MuonTrackProducer_cfi
 #extractedGlobalMuons = SimMuon.MCTruth.MuonTrackProducer_cfi.muonTrackProducer.clone()
 #extractedGlobalMuons.selectionTags = ('AllGlobalMuons',)
@@ -75,20 +160,212 @@ trackWithVertexSelector = cms.EDProducer("TrackWithVertexSelector",
 
 extractedGlobalMuons = cms.EDProducer("MuonTrackCollProducer",
    muonsTag = cms.InputTag("muons"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrack')
+)
+
+extractedGlobalMuons3 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt3"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrack')
+)
+
+extractedGlobalMuons5 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt5"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrack')
+)
+
+extractedGlobalMuons10 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt10"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrack')
+)
+
+extractedGlobalMuons15 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt15"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrack')
+)
+
+extractedGlobalMuons20 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   vxtTag = cms.InputTag("selectedVertices"),
    selectionTags = cms.vstring('AllGlobalMuons'),
    trackType = cms.string('globalTrack')
 )
 
 bestMuon = cms.EDProducer("MuonTrackCollProducer",
    muonsTag = cms.InputTag("muons"),
+   vxtTag = cms.InputTag("selectedVertices"),
    selectionTags = cms.vstring('All'),
-   trackType = cms.string('cocktailBest')
+   trackType = cms.string('bestMuon')
+)
+
+bestMuon3 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt3"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuon')
+)
+
+bestMuon5 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt5"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuon')
+)
+
+bestMuon10 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt10"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuon')
+)
+
+bestMuon15 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt15"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuon')
+)
+
+bestMuon20 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuon')
+)
+
+bestMuon50 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt50"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuon')
+)
+
+bestMuonLoose = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muons"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose')
+)
+
+bestMuonLoose3 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt3"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose')
+)
+
+bestMuonLoose5 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt5"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose')
+)
+
+bestMuonLoose10 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt10"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose')
+)
+
+bestMuonLoose15 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt15"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose')
+)
+
+bestMuonLoose20 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose')
+)
+
+bestMuonTight = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muons"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonTight')
+)
+
+bestMuonTight3 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt3"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonTight')
+)
+
+bestMuonTight5 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt5"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonTight')
+)
+
+bestMuonTight10 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt10"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonTight')
+)
+
+bestMuonTight15 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt15"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonTight')
+)
+
+bestMuonTight20 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonTight')
 )
 
 bestMuonTuneP = cms.EDProducer("MuonTrackCollProducer",
    muonsTag = cms.InputTag("muons"),
+   vxtTag = cms.InputTag("selectedVertices"),
    selectionTags = cms.vstring('All'),
-   trackType = cms.string('cocktailTuneP')
+   trackType = cms.string('bestMuonTuneP')
+)
+
+trackerMuons = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllTrackerMuons'),
+   trackType = cms.string('bestMuon')
+)
+
+TMOneStationTight = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('TMOneStationTight'),
+   trackType = cms.string('bestMuon')
+)
+
+TMLastStationAngTight = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('TMLastStationAngTight'),
+   trackType = cms.string('bestMuon')
+)
+
+TrackerMuonArbitrated = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('TrackerMuonArbitrated'),
+   trackType = cms.string('bestMuon')
 )
 
 extractedGlobalMuonsWithVtx = trackWithVertexSelector.clone()
@@ -97,10 +374,12 @@ staWithVertexSelector = trackWithVertexSelector.clone()
 staWithVertexSelector.src = cms.InputTag('standAloneMuons:UpdatedAtVtx')
 
 #extractedMuonTracks_seq = cms.Sequence( selectedVertices * selectedFirstPrimaryVertex * extractedGlobalMuons * extractedGlobalMuonsWithVtx)
-extractedMuonTracks_seq = cms.Sequence( extractedGlobalMuons )
-bestMuon_seq = cms.Sequence( bestMuon )
+muonColl_seq = cms.Sequence(muonPt20 * muonPt50)
+trackColl_seq = cms.Sequence(staMuonsPt20 * staMuonsPt50)
+extractedMuonTracks_seq = cms.Sequence( extractedGlobalMuons * extractedGlobalMuons20)
+bestMuon_seq = cms.Sequence( bestMuon * bestMuon20 * bestMuon50 * bestMuonLoose * bestMuonLoose20 * bestMuonTight * bestMuonTight20)
 bestMuonTuneP_seq = cms.Sequence( bestMuonTuneP )
-
+trackerMuon_seq = cms.Sequence(trackerMuons * TrackerMuonArbitrated * TMOneStationTight * TMLastStationAngTight)
 #
 # Configuration for Seed track extractor
 #
@@ -111,7 +390,7 @@ bestMuonTuneP_seq = cms.Sequence( bestMuonTuneP )
 #seedsOfSTAmuons_seq = cms.Sequence( seedsOfSTAmuons )
 
 # select probe tracks
-import PhysicsTools.RecoAlgos.recoTrackSelector_cfi
+#import PhysicsTools.RecoAlgos.recoTrackSelector_cfi
 probeTracks = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
 probeTracks.quality = cms.vstring('highPurity')
 probeTracks.tip = cms.double(3.5)

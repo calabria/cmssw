@@ -7,10 +7,69 @@
 #include "DataFormats/MuonDetId/interface/DTChamberId.h"
 #include "DataFormats/MuonDetId/interface/MuonSubdetId.h"
 #include "DataFormats/MuonReco/interface/MuonSelectors.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+#include "DataFormats/MuonReco/interface/Muon.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h" 
 #include <sstream>
+
+bool MuonTrackCollProducer::isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP = true)
+{
+  bool result = false;
+
+  if (muon->muonBestTrack().isNonnull() && muon->innerTrack().isNonnull()){
+
+ 	edm::Handle<reco::VertexCollection> vertexHandle;
+  	iEvent.getByLabel(vxtTag,vertexHandle);
+  	const reco::VertexCollection* vertexes = vertexHandle.product();
+
+	bool isGood = muon::isGoodMuon((*muon), muon::TMOneStationTight); 
+	bool trkLayMeas = muon->muonBestTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
+	bool pxlLayMeas = muon->innerTrack()->hitPattern().pixelLayersWithMeasurement() > 0; 
+	bool quality = muon->innerTrack()->quality(reco::Track::highPurity);
+	bool ip = false;
+	if(vertexes->size()!=0 && useIP) ip = fabs(muon->innerTrack()->dxy((*vertexes)[0].position())) < 0.3 && fabs(muon->innerTrack()->dz((*vertexes)[0].position())) < 20.;
+	else ip  = true;
+	if(isGood && trkLayMeas && pxlLayMeas && quality && ip) result = true;
+
+  }
+
+  return result;
+}
+
+bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP = true)
+{
+  bool result = false;
+
+  if (muon->muonBestTrack().isNonnull() && muon->innerTrack().isNonnull() && muon->globalTrack().isNonnull()){
+		
+ 	edm::Handle<reco::VertexCollection> vertexHandle;
+  	iEvent.getByLabel(vxtTag,vertexHandle);
+  	const reco::VertexCollection* vertexes = vertexHandle.product();
+
+	bool trkLayMeas = muon->muonBestTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
+	bool isGlb = muon->isGlobalMuon(); 
+	bool isPF = muon->isPFMuon(); 
+	bool chi2 = muon->globalTrack()->normalizedChi2() < 10.; 
+	bool validHits = muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0; 
+	bool matchedSt = muon->numberOfMatchedStations() > 1; 
+	bool ip2 = false;
+	if(vertexes->size()!=0 && useIP) ip2 = fabs(muon->muonBestTrack()->dxy((*vertexes)[0].position())) < 0.2 && fabs(muon->muonBestTrack()->dz((*vertexes)[0].position())) < 0.5;
+	else ip2 = true;
+	bool validPxlHit = muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0;
+
+	if(trkLayMeas && isGlb && isPF && chi2 && validHits && matchedSt && ip2 && validPxlHit) result = true;
+
+  }
+
+  return result;
+}
 
 MuonTrackCollProducer::MuonTrackCollProducer(const edm::ParameterSet& parset) :
   muonsTag(parset.getParameter< edm::InputTag >("muonsTag")),
+  vxtTag(parset.getParameter< edm::InputTag >("vxtTag")),
+  useIP(parset.getParameter< bool >("useIP")),
   selectionTags(parset.getParameter< std::vector<std::string> >("selectionTags")),
   trackType(parset.getParameter< std::string >("trackType")),
   parset_(parset)
@@ -61,6 +120,8 @@ void MuonTrackCollProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
     if (isGoodResult) {
       // new copy of Track
       reco::TrackRef trackref;
+      bool loose = isLoose(iEvent, muon, useIP);
+      bool tight = isTight(iEvent, muon, useIP);
       if (trackType == "innerTrack") {
         if (muon->innerTrack().isNonnull()) trackref = muon->innerTrack();
         else continue;
@@ -81,6 +142,14 @@ void MuonTrackCollProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
 	if (muon->muonBestTrack().isNonnull()) trackref = muon->muonBestTrack();
 	else continue;
       }
+      else if (trackType == "bestMuonLoose") {
+	if (muon->muonBestTrack().isNonnull() && loose) trackref = muon->muonBestTrack();
+	else continue;
+      }
+      else if (trackType == "bestMuonTight") {
+	if (muon->muonBestTrack().isNonnull() && tight) trackref = muon->muonBestTrack();
+	else continue;
+      }
       else if (trackType == "bestMuonTuneP") {
 	if (muon->tunePMuonBestTrack().isNonnull()) trackref = muon->tunePMuonBestTrack();
 	else continue;
@@ -89,7 +158,7 @@ void MuonTrackCollProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
 
   	//None, InnerTrack, OuterTrack, CombinedTrack,TPFMS, Picky, DYT
 	reco::Muon::MuonTrackType type = muon->muonBestTrackType();
-	
+
 	switch((int) type){
 
 		case 1: 

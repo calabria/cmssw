@@ -23,12 +23,166 @@ bestMuonTrackVTrackAssoc.label = ('bestMuon',)
 bestMuonTrackVTrackAssoc.usetracker = True
 bestMuonTrackVTrackAssoc.usemuon = True
 
+bestMuonTrackVTrackAssoc3 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTrackVTrackAssoc3.associatormap = ''
+bestMuonTrackVTrackAssoc3.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTrackVTrackAssoc3.label = ('bestMuon3',)
+bestMuonTrackVTrackAssoc3.usetracker = True
+bestMuonTrackVTrackAssoc3.usemuon = True
+
+bestMuonTrackVTrackAssoc5 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTrackVTrackAssoc5.associatormap = ''
+bestMuonTrackVTrackAssoc5.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTrackVTrackAssoc5.label = ('bestMuon5',)
+bestMuonTrackVTrackAssoc5.usetracker = True
+bestMuonTrackVTrackAssoc5.usemuon = True
+
+bestMuonTrackVTrackAssoc10 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTrackVTrackAssoc10.associatormap = ''
+bestMuonTrackVTrackAssoc10.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTrackVTrackAssoc10.label = ('bestMuon10',)
+bestMuonTrackVTrackAssoc10.usetracker = True
+bestMuonTrackVTrackAssoc10.usemuon = True
+
+bestMuonTrackVTrackAssoc15 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTrackVTrackAssoc15.associatormap = ''
+bestMuonTrackVTrackAssoc15.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTrackVTrackAssoc15.label = ('bestMuon15',)
+bestMuonTrackVTrackAssoc15.usetracker = True
+bestMuonTrackVTrackAssoc15.usemuon = True
+
+bestMuonTrackVTrackAssoc20 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTrackVTrackAssoc20.associatormap = ''
+bestMuonTrackVTrackAssoc20.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTrackVTrackAssoc20.label = ('bestMuon20',)
+bestMuonTrackVTrackAssoc20.usetracker = True
+bestMuonTrackVTrackAssoc20.usemuon = True
+
+bestMuonTrackVTrackAssoc50 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTrackVTrackAssoc50.associatormap = ''
+bestMuonTrackVTrackAssoc50.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTrackVTrackAssoc50.label = ('bestMuon50',)
+bestMuonTrackVTrackAssoc50.usetracker = True
+bestMuonTrackVTrackAssoc50.usemuon = True
+
+bestMuonLooseTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonLooseTrackVTrackAssoc.associatormap = ''
+bestMuonLooseTrackVTrackAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonLooseTrackVTrackAssoc.label = ('bestMuonLoose',)
+bestMuonLooseTrackVTrackAssoc.usetracker = True
+bestMuonLooseTrackVTrackAssoc.usemuon = True
+
+bestMuonLooseTrackVTrackAssoc3 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonLooseTrackVTrackAssoc3.associatormap = ''
+bestMuonLooseTrackVTrackAssoc3.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonLooseTrackVTrackAssoc3.label = ('bestMuonLoose3',)
+bestMuonLooseTrackVTrackAssoc3.usetracker = True
+bestMuonLooseTrackVTrackAssoc3.usemuon = True
+
+bestMuonLooseTrackVTrackAssoc5 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonLooseTrackVTrackAssoc5.associatormap = ''
+bestMuonLooseTrackVTrackAssoc5.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonLooseTrackVTrackAssoc5.label = ('bestMuonLoose5',)
+bestMuonLooseTrackVTrackAssoc5.usetracker = True
+bestMuonLooseTrackVTrackAssoc5.usemuon = True
+
+bestMuonLooseTrackVTrackAssoc10 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonLooseTrackVTrackAssoc10.associatormap = ''
+bestMuonLooseTrackVTrackAssoc10.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonLooseTrackVTrackAssoc10.label = ('bestMuonLoose10',)
+bestMuonLooseTrackVTrackAssoc10.usetracker = True
+bestMuonLooseTrackVTrackAssoc10.usemuon = True
+
+bestMuonLooseTrackVTrackAssoc15 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonLooseTrackVTrackAssoc15.associatormap = ''
+bestMuonLooseTrackVTrackAssoc15.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonLooseTrackVTrackAssoc15.label = ('bestMuonLoose15',)
+bestMuonLooseTrackVTrackAssoc15.usetracker = True
+bestMuonLooseTrackVTrackAssoc15.usemuon = True
+
+bestMuonLooseTrackVTrackAssoc20 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonLooseTrackVTrackAssoc20.associatormap = ''
+bestMuonLooseTrackVTrackAssoc20.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonLooseTrackVTrackAssoc20.label = ('bestMuonLoose20',)
+bestMuonLooseTrackVTrackAssoc20.usetracker = True
+bestMuonLooseTrackVTrackAssoc20.usemuon = True
+
+bestMuonTightTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTightTrackVTrackAssoc.associatormap = ''
+bestMuonTightTrackVTrackAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTightTrackVTrackAssoc.label = ('bestMuonTight',)
+bestMuonTightTrackVTrackAssoc.usetracker = True
+bestMuonTightTrackVTrackAssoc.usemuon = True
+
+bestMuonTightTrackVTrackAssoc3 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTightTrackVTrackAssoc3.associatormap = ''
+bestMuonTightTrackVTrackAssoc3.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTightTrackVTrackAssoc3.label = ('bestMuonTight3',)
+bestMuonTightTrackVTrackAssoc3.usetracker = True
+bestMuonTightTrackVTrackAssoc3.usemuon = True
+
+bestMuonTightTrackVTrackAssoc5 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTightTrackVTrackAssoc5.associatormap = ''
+bestMuonTightTrackVTrackAssoc5.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTightTrackVTrackAssoc5.label = ('bestMuonTight5',)
+bestMuonTightTrackVTrackAssoc5.usetracker = True
+bestMuonTightTrackVTrackAssoc5.usemuon = True
+
+bestMuonTightTrackVTrackAssoc10 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTightTrackVTrackAssoc10.associatormap = ''
+bestMuonTightTrackVTrackAssoc10.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTightTrackVTrackAssoc10.label = ('bestMuonTight10',)
+bestMuonTightTrackVTrackAssoc10.usetracker = True
+bestMuonTightTrackVTrackAssoc10.usemuon = True
+
+bestMuonTightTrackVTrackAssoc15 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTightTrackVTrackAssoc15.associatormap = ''
+bestMuonTightTrackVTrackAssoc15.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTightTrackVTrackAssoc15.label = ('bestMuonTight15',)
+bestMuonTightTrackVTrackAssoc15.usetracker = True
+bestMuonTightTrackVTrackAssoc15.usemuon = True
+
+bestMuonTightTrackVTrackAssoc20 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestMuonTightTrackVTrackAssoc20.associatormap = ''
+bestMuonTightTrackVTrackAssoc20.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+bestMuonTightTrackVTrackAssoc20.label = ('bestMuonTight20',)
+bestMuonTightTrackVTrackAssoc20.usetracker = True
+bestMuonTightTrackVTrackAssoc20.usemuon = True
+
 bestMuonTunePTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 bestMuonTunePTrackVTrackAssoc.associatormap = ''
 bestMuonTunePTrackVTrackAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
 bestMuonTunePTrackVTrackAssoc.label = ('bestMuonTuneP',)
 bestMuonTunePTrackVTrackAssoc.usetracker = True
 bestMuonTunePTrackVTrackAssoc.usemuon = True
+
+trackerMuonTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+trackerMuonTrackVTrackAssoc.associatormap = ''
+trackerMuonTrackVTrackAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+trackerMuonTrackVTrackAssoc.label = ('trackerMuons',)
+trackerMuonTrackVTrackAssoc.usetracker = True
+trackerMuonTrackVTrackAssoc.usemuon = False
+
+trackerMuonTMOneTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+trackerMuonTMOneTrackVTrackAssoc.associatormap = ''
+trackerMuonTMOneTrackVTrackAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+trackerMuonTMOneTrackVTrackAssoc.label = ('TMOneStationTight',)
+trackerMuonTMOneTrackVTrackAssoc.usetracker = True
+trackerMuonTMOneTrackVTrackAssoc.usemuon = False
+
+trackerMuonTMLastTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+trackerMuonTMLastTrackVTrackAssoc.associatormap = ''
+trackerMuonTMLastTrackVTrackAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+trackerMuonTMLastTrackVTrackAssoc.label = ('TMLastStationAngTight',)
+trackerMuonTMLastTrackVTrackAssoc.usetracker = True
+trackerMuonTMLastTrackVTrackAssoc.usemuon = False
+
+trackerMuonArbTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+trackerMuonArbTrackVTrackAssoc.associatormap = ''
+trackerMuonArbTrackVTrackAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+trackerMuonArbTrackVTrackAssoc.label = ('TrackerMuonArbitrated',)
+trackerMuonArbTrackVTrackAssoc.usetracker = True
+trackerMuonArbTrackVTrackAssoc.usemuon = False
 
 trkCosmicMuonTrackVTrackAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 trkCosmicMuonTrackVTrackAssoc.associatormap = 'tpToTkCosmicTrackAssociation'
@@ -137,6 +291,48 @@ staMuonTrackVMuonAssoc.label = ('standAloneMuons',)
 staMuonTrackVMuonAssoc.usetracker = False
 staMuonTrackVMuonAssoc.usemuon = True
 
+staUpdMuonTrackVMuonAssoc3 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVMuonAssoc3.associatormap = 'tpToStaMuonAssociation'
+staUpdMuonTrackVMuonAssoc3.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+staUpdMuonTrackVMuonAssoc3.label = ('staMuonsPt3',)
+staUpdMuonTrackVMuonAssoc3.usetracker = False
+staUpdMuonTrackVMuonAssoc3.usemuon = True
+
+staUpdMuonTrackVMuonAssoc5 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVMuonAssoc5.associatormap = 'tpToStaMuonAssociation'
+staUpdMuonTrackVMuonAssoc5.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+staUpdMuonTrackVMuonAssoc5.label = ('staMuonsPt5',)
+staUpdMuonTrackVMuonAssoc5.usetracker = False
+staUpdMuonTrackVMuonAssoc5.usemuon = True
+
+staUpdMuonTrackVMuonAssoc10 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVMuonAssoc10.associatormap = 'tpToStaMuonAssociation'
+staUpdMuonTrackVMuonAssoc10.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+staUpdMuonTrackVMuonAssoc10.label = ('staMuonsPt10',)
+staUpdMuonTrackVMuonAssoc10.usetracker = False
+staUpdMuonTrackVMuonAssoc10.usemuon = True
+
+staUpdMuonTrackVMuonAssoc15 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVMuonAssoc15.associatormap = 'tpToStaMuonAssociation'
+staUpdMuonTrackVMuonAssoc15.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+staUpdMuonTrackVMuonAssoc15.label = ('staMuonsPt15',)
+staUpdMuonTrackVMuonAssoc15.usetracker = False
+staUpdMuonTrackVMuonAssoc15.usemuon = True
+
+staUpdMuonTrackVMuonAssoc20 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVMuonAssoc20.associatormap = 'tpToStaMuonAssociation'
+staUpdMuonTrackVMuonAssoc20.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+staUpdMuonTrackVMuonAssoc20.label = ('staMuonsPt20',)
+staUpdMuonTrackVMuonAssoc20.usetracker = False
+staUpdMuonTrackVMuonAssoc20.usemuon = True
+
+staUpdMuonTrackVMuonAssoc50 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVMuonAssoc50.associatormap = 'tpToStaMuonAssociation'
+staUpdMuonTrackVMuonAssoc50.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+staUpdMuonTrackVMuonAssoc50.label = ('staMuonsPt50',)
+staUpdMuonTrackVMuonAssoc50.usetracker = False
+staUpdMuonTrackVMuonAssoc50.usemuon = True
+
 staUpdMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 staUpdMuonTrackVMuonAssoc.associatormap = 'tpToStaUpdMuonAssociation'
 staUpdMuonTrackVMuonAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
@@ -150,6 +346,41 @@ glbMuonTrackVMuonAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorBy
 glbMuonTrackVMuonAssoc.label = ('extractedGlobalMuons',)
 glbMuonTrackVMuonAssoc.usetracker = True
 glbMuonTrackVMuonAssoc.usemuon = True
+
+glbMuonTrackVMuonAssoc3 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+glbMuonTrackVMuonAssoc3.associatormap = 'tpToGlbMuonAssociation'
+glbMuonTrackVMuonAssoc3.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+glbMuonTrackVMuonAssoc3.label = ('extractedGlobalMuons3',)
+glbMuonTrackVMuonAssoc3.usetracker = True
+glbMuonTrackVMuonAssoc3.usemuon = True
+
+glbMuonTrackVMuonAssoc5 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+glbMuonTrackVMuonAssoc5.associatormap = 'tpToGlbMuonAssociation'
+glbMuonTrackVMuonAssoc5.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+glbMuonTrackVMuonAssoc5.label = ('extractedGlobalMuons5',)
+glbMuonTrackVMuonAssoc5.usetracker = True
+glbMuonTrackVMuonAssoc5.usemuon = True
+
+glbMuonTrackVMuonAssoc10 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+glbMuonTrackVMuonAssoc10.associatormap = 'tpToGlbMuonAssociation'
+glbMuonTrackVMuonAssoc10.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+glbMuonTrackVMuonAssoc10.label = ('extractedGlobalMuons10',)
+glbMuonTrackVMuonAssoc10.usetracker = True
+glbMuonTrackVMuonAssoc10.usemuon = True
+
+glbMuonTrackVMuonAssoc15 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+glbMuonTrackVMuonAssoc15.associatormap = 'tpToGlbMuonAssociation'
+glbMuonTrackVMuonAssoc15.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+glbMuonTrackVMuonAssoc15.label = ('extractedGlobalMuons15',)
+glbMuonTrackVMuonAssoc15.usetracker = True
+glbMuonTrackVMuonAssoc15.usemuon = True
+
+glbMuonTrackVMuonAssoc20 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+glbMuonTrackVMuonAssoc20.associatormap = 'tpToGlbMuonAssociation'
+glbMuonTrackVMuonAssoc20.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+glbMuonTrackVMuonAssoc20.label = ('extractedGlobalMuons20',)
+glbMuonTrackVMuonAssoc20.usetracker = True
+glbMuonTrackVMuonAssoc20.usemuon = True
 
 staRefitMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 staRefitMuonTrackVMuonAssoc.associatormap = 'tpToStaRefitMuonAssociation'
@@ -357,16 +588,25 @@ recoMuonVMuAssoc_tgt.primaryVertex = 'offlinePrimaryVertices'
 
 # Muon validation sequence
 
-muonValidation_seq = cms.Sequence(#trkProbeTrackVMuonAssoc+ trkMuonTrackVTrackAssoc
-#                                 +staSeedTrackVMuonAssoc+
-                                  staMuonTrackVMuonAssoc+staUpdMuonTrackVMuonAssoc+glbMuonTrackVTrackAssoc+glbMuonTrackVMuonAssoc
-				  +bestMuonTrackVTrackAssoc+bestMuonTunePTrackVTrackAssoc
-                                  #+trkProbeTrackVSelMuonAssoc
-				  +staUpdMuonTrackVSelMuonAssoc+glbMuonTrackVSelMuonAssoc)
-#
-                                  #+recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt)
+muonValidation_seq = cms.Sequence(
+	#trkProbeTrackVMuonAssoc+ trkMuonTrackVTrackAssoc
+	#+staSeedTrackVMuonAssoc+
+	#staMuonTrackVMuonAssoc + 
+	staUpdMuonTrackVMuonAssoc + staUpdMuonTrackVMuonAssoc20
+	#+ glbMuonTrackVTrackAssoc 
+	+ glbMuonTrackVMuonAssoc + glbMuonTrackVMuonAssoc20
+	+ bestMuonTrackVTrackAssoc + bestMuonTrackVTrackAssoc20 + bestMuonTrackVTrackAssoc50
+	+ bestMuonLooseTrackVTrackAssoc + bestMuonLooseTrackVTrackAssoc20
+	+ bestMuonTightTrackVTrackAssoc + bestMuonTightTrackVTrackAssoc20
+	#+ bestMuonTunePTrackVTrackAssoc
+	+ trackerMuonTrackVTrackAssoc + trackerMuonArbTrackVTrackAssoc 
+	+ trackerMuonTMOneTrackVTrackAssoc + trackerMuonTMLastTrackVTrackAssoc 
+	#+trkProbeTrackVSelMuonAssoc
+	#+ staUpdMuonTrackVSelMuonAssoc + glbMuonTrackVSelMuonAssoc
+	)
+	#+recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt)
                                   
-muonValidationTEV_seq = cms.Sequence(tevMuonFirstTrackVMuonAssoc+tevMuonPickyTrackVMuonAssoc+tevMuonDytTrackVMuonAssoc)
+muonValidationTEV_seq = cms.Sequence(tevMuonFirstTrackVMuonAssoc+tevMuonPickyTrackVMuonAssoc)#+tevMuonDytTrackVMuonAssoc)
 
 muonValidationRefit_seq = cms.Sequence(staRefitMuonTrackVMuonAssoc+staRefitUpdMuonTrackVMuonAssoc)
 
@@ -378,11 +618,12 @@ muonValidationCosmic_seq = cms.Sequence(trkCosmicMuonTrackVTrackAssoc+staCosmicM
 
 recoMuonValidation = cms.Sequence(#probeTracks_seq*
 				 (selectedVertices * selectedFirstPrimaryVertex) * 
-				 extractedMuonTracks_seq*bestMuon_seq*bestMuonTuneP_seq*
+				 bestMuonTuneP_seq*muonColl_seq*trackColl_seq*extractedMuonTracks_seq*bestMuon_seq*trackerMuon_seq*
 				 ((muonValidation_seq)
                                  +(muonValidationTEV_seq)
                                  #+(muonValidationSET_seq)
-                                 +(muonValidationRefit_seq))
+                                 #+(muonValidationRefit_seq)
+				 )
                                  )
 
 recoCosmicMuonValidation = cms.Sequence(muonAssociationCosmic_seq*muonValidationCosmic_seq)

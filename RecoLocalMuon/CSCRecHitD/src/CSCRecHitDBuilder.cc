@@ -201,20 +201,37 @@ void CSCRecHitDBuilder::build( const CSCStripDigiCollection* stripdc, const CSCW
 
     		switch(stationToUse_){
 
-              		case 0: if(station != 1 || ring != 1){
-				hitsInLayer.push_back( rechit );
-              			hits_in_layer++;}
-				break;
-
-              		case 1:
+		        // case 0  :: all detectors in
+		        // case 1  :: ME1/1 switched off
+                        // case 2  :: ME2/1 switched off
+		        // case 3  :: ME3/1 switched off       
+		        // case 4  :: ME4/1 switched off       
+		        // default :: all detectors in
+              		case 0:
 				hitsInLayer.push_back( rechit );
               			hits_in_layer++;
 				break;
-
+              		case 1: if(station != 1 || ring != 1){
+				hitsInLayer.push_back( rechit );
+              			hits_in_layer++;}
+				break;
+              		case 2: if(station != 2 || ring != 1){
+				hitsInLayer.push_back( rechit );
+              			hits_in_layer++;}
+				break;
+              		case 3: if(station != 3 || ring != 1){
+				hitsInLayer.push_back( rechit );
+              			hits_in_layer++;}
+				break;
+              		case 4: if(station != 4 || ring != 1){
+				hitsInLayer.push_back( rechit );
+              			hits_in_layer++;}
+				break;
               		default:
 				hitsInLayer.push_back( rechit );
               			hits_in_layer++;
 				break;
+
 		}
             }
           }

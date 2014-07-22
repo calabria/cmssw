@@ -14,6 +14,8 @@
 class MuonTrackCollProducer : public edm::EDProducer {
   public:
     explicit MuonTrackCollProducer(const edm::ParameterSet&);
+     bool isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP);
+     bool isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP);
     ~MuonTrackCollProducer();
 
   private:
@@ -21,6 +23,8 @@ class MuonTrackCollProducer : public edm::EDProducer {
   
     edm::Handle<reco::MuonCollection> muonCollectionH;
     edm::InputTag muonsTag;
+    edm::InputTag vxtTag;
+    bool useIP;
     std::vector<std::string> selectionTags;
     std::string trackType;
     const edm::ParameterSet parset_;
