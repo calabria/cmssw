@@ -174,6 +174,26 @@ def cust_2023SHCal(process):
         process.towerMakerPF.EEThreshold = cms.double(0.035)
         process.towerMakerWithHO.EEThreshold = cms.double(0.035)
 
+	process.muons1stStep.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+	process.muons1stStep.CaloExtractorPSet.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+	process.muons1stStep.JetExtractorPSet.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+
+	process.earlyMuons.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+	process.earlyMuons.CaloExtractorPSet.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+	process.earlyMuons.JetExtractorPSet.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+
+    	if hasattr(process,'muonsFromCosmics'):
+		process.muonsFromCosmics.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+		process.muonsFromCosmics.CaloExtractorPSet.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+		process.muonsFromCosmics.JetExtractorPSet.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+
+    	if hasattr(process,'muonsFromCosmics1Leg'):
+		process.muonsFromCosmics1Leg.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+		process.muonsFromCosmics1Leg.CaloExtractorPSet.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+		process.muonsFromCosmics1Leg.JetExtractorPSet.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+
+	process.calomuons.TrackAssociatorParameters.EERecHitCollectionLabel = cms.InputTag("ecalRecHit","EcalRecHitsEK")
+
     return process
 
 def cust_2023HGCal(process):
