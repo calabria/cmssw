@@ -69,7 +69,7 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
 MuonTrackCollProducer::MuonTrackCollProducer(const edm::ParameterSet& parset) :
   muonsTag(parset.getParameter< edm::InputTag >("muonsTag")),
   vxtTag(parset.getParameter< edm::InputTag >("vxtTag")),
-  useIP(parset.getParameter< bool >("useIP")),
+  useIP(parset.getUntrackedParameter< bool >("useIP", false)),
   selectionTags(parset.getParameter< std::vector<std::string> >("selectionTags")),
   trackType(parset.getParameter< std::string >("trackType")),
   parset_(parset)
