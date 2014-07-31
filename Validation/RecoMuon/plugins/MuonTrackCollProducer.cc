@@ -14,7 +14,16 @@
 #include "DataFormats/TrackReco/interface/TrackFwd.h" 
 #include <sstream>
 
-bool MuonTrackCollProducer::isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP = true)
+bool MuonTrackCollProducer::isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon)
+{
+  bool isPF = muon->isPFMuon();
+  bool isGLB = muon->isGlobalMuon();
+  bool isTrk = muon->isTrackerMuon();
+
+  return (isPF && (isGLB || isTrk) );
+}
+
+bool MuonTrackCollProducer::isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP = true)
 {
   bool result = false;
 
@@ -120,7 +129,8 @@ void MuonTrackCollProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
     if (isGoodResult) {
       // new copy of Track
       reco::TrackRef trackref;
-      bool loose = isLoose(iEvent, muon, useIP);
+      bool loose = isLoose(iEvent, muon);
+      bool soft = isSoft(iEvent, muon, useIP);
       bool tight = isTight(iEvent, muon, useIP);
       if (trackType == "innerTrack") {
         if (muon->innerTrack().isNonnull()) trackref = muon->innerTrack();
@@ -144,6 +154,10 @@ void MuonTrackCollProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
       }
       else if (trackType == "bestMuonLoose") {
 	if (muon->muonBestTrack().isNonnull() && loose) trackref = muon->muonBestTrack();
+	else continue;
+      }
+      else if (trackType == "bestMuonSoft") {
+	if (muon->muonBestTrack().isNonnull() && soft) trackref = muon->muonBestTrack();
 	else continue;
       }
       else if (trackType == "bestMuonTight") {

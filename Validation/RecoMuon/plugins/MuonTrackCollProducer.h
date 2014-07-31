@@ -14,7 +14,8 @@
 class MuonTrackCollProducer : public edm::EDProducer {
   public:
     explicit MuonTrackCollProducer(const edm::ParameterSet&);
-     bool isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP);
+     bool isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
+     bool isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP);
      bool isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP);
     ~MuonTrackCollProducer();
 
