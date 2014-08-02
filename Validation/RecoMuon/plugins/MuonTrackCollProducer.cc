@@ -23,7 +23,7 @@ bool MuonTrackCollProducer::isLoose(edm::Event& iEvent, reco::MuonCollection::co
   return (isPF && (isGLB || isTrk) );
 }
 
-bool MuonTrackCollProducer::isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP = true)
+bool MuonTrackCollProducer::isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz)
 {
   bool result = false;
 
@@ -37,17 +37,20 @@ bool MuonTrackCollProducer::isSoft(edm::Event& iEvent, reco::MuonCollection::con
 	bool trkLayMeas = muon->muonBestTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
 	bool pxlLayMeas = muon->innerTrack()->hitPattern().pixelLayersWithMeasurement() > 0; 
 	bool quality = muon->innerTrack()->quality(reco::Track::highPurity);
-	bool ip = false;
-	if(vertexes->size()!=0 && useIP) ip = fabs(muon->innerTrack()->dxy((*vertexes)[0].position())) < 0.3 && fabs(muon->innerTrack()->dz((*vertexes)[0].position())) < 20.;
-	else ip  = true;
-	if(isGood && trkLayMeas && pxlLayMeas && quality && ip) result = true;
+	bool ipxy = false;
+	bool ipz = false;
+	if(vertexes->size()!=0 && useIPxy) ipxy = fabs(muon->muonBestTrack()->dxy((*vertexes)[0].position())) < 0.2;
+	else ipxy = true;
+ 	if(vertexes->size()!=0 && useIPz) ipz = fabs(muon->muonBestTrack()->dz((*vertexes)[0].position())) < 0.5;
+	else ipz = true;
+	if(isGood && trkLayMeas && pxlLayMeas && quality && ipxy && ipz) result = true;
 
   }
 
   return result;
 }
 
-bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIP = true)
+bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz)
 {
   bool result = false;
 
@@ -63,12 +66,15 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
 	bool chi2 = muon->globalTrack()->normalizedChi2() < 10.; 
 	bool validHits = muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0; 
 	bool matchedSt = muon->numberOfMatchedStations() > 1; 
-	bool ip2 = false;
-	if(vertexes->size()!=0 && useIP) ip2 = fabs(muon->muonBestTrack()->dxy((*vertexes)[0].position())) < 0.2 && fabs(muon->muonBestTrack()->dz((*vertexes)[0].position())) < 0.5;
-	else ip2 = true;
+	bool ipxy = false;
+	bool ipz = false;
+	if(vertexes->size()!=0 && useIPxy) ipxy = fabs(muon->muonBestTrack()->dxy((*vertexes)[0].position())) < 0.2;
+	else ipxy = true;
+ 	if(vertexes->size()!=0 && useIPz) ipz = fabs(muon->muonBestTrack()->dz((*vertexes)[0].position())) < 0.5;
+	else ipz = true;
 	bool validPxlHit = muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0;
 
-	if(trkLayMeas && isGlb && isPF && chi2 && validHits && matchedSt && ip2 && validPxlHit) result = true;
+	if(trkLayMeas && isGlb && isPF && chi2 && validHits && matchedSt && ipxy && ipz && validPxlHit) result = true;
 
   }
 
@@ -78,7 +84,8 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
 MuonTrackCollProducer::MuonTrackCollProducer(const edm::ParameterSet& parset) :
   muonsTag(parset.getParameter< edm::InputTag >("muonsTag")),
   vxtTag(parset.getParameter< edm::InputTag >("vxtTag")),
-  useIP(parset.getUntrackedParameter< bool >("useIP", false)),
+  useIPxy(parset.getUntrackedParameter< bool >("useIPxy", true)),
+  useIPz(parset.getUntrackedParameter< bool >("useIPz", true)),
   selectionTags(parset.getParameter< std::vector<std::string> >("selectionTags")),
   trackType(parset.getParameter< std::string >("trackType")),
   parset_(parset)
@@ -130,8 +137,8 @@ void MuonTrackCollProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
       // new copy of Track
       reco::TrackRef trackref;
       bool loose = isLoose(iEvent, muon);
-      bool soft = isSoft(iEvent, muon, useIP);
-      bool tight = isTight(iEvent, muon, useIP);
+      bool soft = isSoft(iEvent, muon, useIPxy, useIPz);
+      bool tight = isTight(iEvent, muon, useIPxy, useIPz);
       if (trackType == "innerTrack") {
         if (muon->innerTrack().isNonnull()) trackref = muon->innerTrack();
         else continue;

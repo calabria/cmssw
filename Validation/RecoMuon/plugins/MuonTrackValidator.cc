@@ -22,7 +22,7 @@
 
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
-
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h" 
 #include "TMath.h"
 #include <TF1.h>
 
@@ -84,6 +84,15 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       h_assocvtxBarrel.push_back( dbe_->book1D("num_assoc(simToReco)_vtx_barrel","N of associated tracks (simToReco) vs vtx barrel",nintVtx,minVtx,maxVtx) );
       h_assocvtxEndcap.push_back( dbe_->book1D("num_assoc(simToReco)_vtx_endcap","N of associated tracks (simToReco) vs vtx endcap",nintVtx,minVtx,maxVtx) );
       h_assocvtxOverlap.push_back( dbe_->book1D("num_assoc(simToReco)_vtx_overlap","N of associated tracks (simToReco) vs vtx overlap",nintVtx,minVtx,maxVtx) );
+
+      h_numRecVtx.push_back( dbe_->book1D("num_rec_vtx","N of reco vtx",nintVtx,minVtx,maxVtx) );
+      h_numSimVtx.push_back( dbe_->book1D("num_sim_vtx","N of sim vtx",nintVtx,minVtx,maxVtx) );
+      h_numSimVtxBx.push_back( dbe_->book1D("num_sim_vtx_bx","N of sim vtx BX = 0",nintVtx,minVtx,maxVtx) );
+      h_numTrueInt.push_back( dbe_->book1D("num_trueInt","N of true interactions",nintVtx,minVtx,maxVtx) );
+
+      h_dxyDistr.push_back( dbe_->book1D("distr_reco_dxy","dxy distributions",nintDxy,minDxy,maxDxy) );
+      h_dzDistr.push_back( dbe_->book1D("distr_reco_dz","dz distribution",nintDz,minDz,maxDz) );
+
       h_assoc2eta.push_back( dbe_->book1D("num_assoc(recoToSim)_eta","N of associated (recoToSim) tracks vs eta",nint,min,max) );
       h_simuleta.push_back( dbe_->book1D("num_simul_eta","N of simulated tracks vs eta",nint,min,max) );
       h_simulvtx.push_back( dbe_->book1D("num_simul_vtx","N of simulated tracks vs vtx",nintVtx,minVtx,maxVtx) );
@@ -325,6 +334,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
   event.getByLabel(bsSrc,recoBeamSpotHandle);
   reco::BeamSpot bs = *recoBeamSpotHandle;
 
+  Handle<std::vector< PileupSummaryInfo > > PupInfo;
+  event.getByLabel(edm::InputTag("addPileupInfo"), PupInfo);
+
+  std::vector<PileupSummaryInfo>::const_iterator PVI;
+
   edm::Handle<reco::VertexCollection> primaryVertices;
   event.getByLabel(vtxInputTag, primaryVertices);
 
@@ -418,7 +432,21 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
       }//end else
 
-      
+      int npv = -1;
+      int trueInt = -1;
+      //int trueInt_BX = -1;
+      for(PVI = PupInfo->begin(); PVI != PupInfo->end(); ++PVI) {
+
+		int BX = PVI->getBunchCrossing();
+		trueInt = PVI->getTrueNumInteractions();
+		npv = PVI->getPU_NumInteractions();
+		h_numSimVtx[w]->Fill(npv);
+		h_numTrueInt[w]->Fill(trueInt);
+		if(BX == 0) h_numSimVtxBx[w]->Fill(npv);
+
+      }
+
+      h_numRecVtx[w]->Fill(nVertices);
       //
       //fill simulation histograms
       //compute number of tracks per eta interval
@@ -680,6 +708,24 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
         bool Track_is_matched = false; 
 	RefToBase<Track> track(trackCollection, i);
 	rT++;
+
+  	double ipxy = -1, ipz = -1;
+
+  	if (track.isNonnull()){
+		
+  		const reco::VertexCollection* vertexes = primaryVertices.product();
+
+		if(vertexes->size()!=0){ 
+
+			ipxy = fabs(track->dxy((*vertexes)[0].position()));
+ 			ipz = fabs(track->dz((*vertexes)[0].position()));
+
+		}
+
+  	}
+
+	h_dxyDistr[w]->Fill(ipxy);
+	h_dzDistr[w]->Fill(ipz);
 
 	//std::vector<std::pair<TrackingParticleRef, double> > tp;
 	std::vector<std::pair<GenParticleRef, double> > tp;

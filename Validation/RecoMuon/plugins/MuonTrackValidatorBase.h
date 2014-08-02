@@ -460,15 +460,15 @@ class MuonTrackValidatorBase {
   //1D
   std::vector<MonitorElement*> h_tracks, h_fakes, h_hits, h_charge;
   std::vector<MonitorElement*> h_recoeta, h_assoceta, h_assoc2eta, h_simuleta;
-  std::vector<MonitorElement*> h_recovtx, h_assocvtx, h_assoc2vtx, h_simulvtx;
+  std::vector<MonitorElement*> h_recovtx, h_assocvtx, h_assoc2vtx, h_simulvtx, h_numSimVtx, h_numSimVtxBx, h_numRecVtx, h_numTrueInt;
   std::vector<MonitorElement*> h_recovtxBarrel, h_assocvtxBarrel, h_assoc2vtxBarrel, h_simulvtxBarrel;
   std::vector<MonitorElement*> h_recovtxEndcap, h_assocvtxEndcap, h_assoc2vtxEndcap, h_simulvtxEndcap;
   std::vector<MonitorElement*> h_recovtxOverlap, h_assocvtxOverlap, h_assoc2vtxOverlap, h_simulvtxOverlap;
   std::vector<MonitorElement*> h_recopT, h_assocpT, h_assoc2pT, h_simulpT;
   std::vector<MonitorElement*> h_recohit, h_assochit, h_assoc2hit, h_simulhit;
   std::vector<MonitorElement*> h_recophi, h_assocphi, h_assoc2phi, h_simulphi;
-  std::vector<MonitorElement*> h_recodxy, h_assocdxy, h_assoc2dxy, h_simuldxy;
-  std::vector<MonitorElement*> h_recodz, h_assocdz, h_assoc2dz, h_simuldz;
+  std::vector<MonitorElement*> h_recodxy, h_dxyDistr, h_assocdxy, h_assoc2dxy, h_simuldxy;
+  std::vector<MonitorElement*> h_recodz, h_dzDistr, h_assocdz, h_assoc2dz, h_simuldz;
   std::vector<MonitorElement*> h_assocvertpos, h_simulvertpos, h_assoczpos, h_simulzpos;
   std::vector<MonitorElement*> h_pt, h_eta, h_pullTheta,h_pullPhi,h_pullDxy,h_pullDz,h_pullQoverp, h_Qoverptres, h_invptres;
   std::vector<MonitorElement*> h_Qoverptres_sim, h_invptres_sim;
