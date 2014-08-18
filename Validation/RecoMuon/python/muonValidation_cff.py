@@ -770,8 +770,7 @@ muonValidation_seq = cms.Sequence(
 	#trkProbeTrackVMuonAssoc+ trkMuonTrackVTrackAssoc
 	#+staSeedTrackVMuonAssoc+
 	#staMuonTrackVMuonAssoc + 
-	staUpdMuonTrackVMuonAssoc
-	#+ staUpdMuonTrackVMuonAssoc20
+	staUpdMuonTrackVMuonAssoc + staUpdMuonTrackVMuonAssoc20
 	#+ glbMuonTrackVTrackAssoc 
 	+ glbMuonTrackVMuonAssoc + glbMuonTrackVMuonAssoc20
 	#+ bestMuonTrackVTrackAssoc + bestMuonTrackVTrackAssoc20

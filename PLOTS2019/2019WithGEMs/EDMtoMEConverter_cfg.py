@@ -18,10 +18,7 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring(
-	"file:validationEDM.root",
-	#"file:validationEDM_minus.root"
-    )
+    fileNames = cms.untracked.vstring("file:validationEDM.root")
 )
 
 process.DQMStore.referenceFileName = ""

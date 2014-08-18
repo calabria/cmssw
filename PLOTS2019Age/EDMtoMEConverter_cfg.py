@@ -9,7 +9,8 @@ process.load("DQMServices.Components.DQMEnvironment_cfi")
 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'PH1_1K_FB_V1::All', '')
 process.load("Validation.Configuration.postValidation_cff")
 process.load("Validation.RecoMuon.PostProcessorHLT_cff")
 
@@ -18,10 +19,7 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring(
-	"file:validationEDM.root",
-	#"file:validationEDM_minus.root"
-    )
+    fileNames = cms.untracked.vstring("file:validationEDM.root")
 )
 
 process.DQMStore.referenceFileName = ""
