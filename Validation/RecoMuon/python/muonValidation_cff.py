@@ -815,7 +815,7 @@ recoMuonValidation = cms.Sequence(#probeTracks_seq*
 				 #bestMuonTuneP_seq*
 				 muonColl_seq*trackColl_seq*extractedMuonTracks_seq*bestMuon_seq*trackerMuon_seq*
 				 ((muonValidation_seq)
-                                 +(muonValidationTEV_seq)
+                                 #+(muonValidationTEV_seq)
                                  #+(muonValidationSET_seq)
                                  #+(muonValidationRefit_seq)
 				 )
