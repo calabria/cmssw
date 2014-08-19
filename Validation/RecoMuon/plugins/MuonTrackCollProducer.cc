@@ -31,7 +31,6 @@ std::vector<double> MuonTrackCollProducer::findSimVtx(edm::Event& iEvent){
 		//int nDaughters = itg->numberOfDaughters();
 		//double phiGen = itg->phi();
 		//double etaGen = itg->eta();
-
 		//std::cout<<"id "<<id<<" "<<phiGen<<" "<<etaGen<<std::endl;
 
 		if(fabs(id) == 23 && status == 3) vtxCoord[0] = 1;
@@ -49,7 +48,7 @@ std::vector<double> MuonTrackCollProducer::findSimVtx(edm::Event& iEvent){
   }
 
 
-  std::cout<<vtxCoord.size()<<" "<<vtxCoord[0]<<std::endl;
+  //std::cout<<vtxCoord.size()<<" "<<vtxCoord[0]<<std::endl;
   return vtxCoord;
 
 }
@@ -105,7 +104,7 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
 
         double ipxySim = fabs(muon->muonBestTrack()->dxy(math::XYZPoint(point.x(),point.y(),point.z())));
 	bool ipxySimBool = ipxySim < 0.2;
-        std::cout<<point.x()<<" "<<point.y()<<" "<<point.z()<<" "<<ipxySim<<" "<<ipxySimBool<<std::endl;
+        //std::cout<<point.x()<<" "<<point.y()<<" "<<point.z()<<" "<<ipxySim<<" "<<ipxySimBool<<std::endl;
 
 	bool trkLayMeas = muon->muonBestTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
 	bool isGlb = muon->isGlobalMuon(); 

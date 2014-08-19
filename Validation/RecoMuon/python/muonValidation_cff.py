@@ -507,6 +507,15 @@ staUpdMuonTrackVMuonAssoc.usemuon = True
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+trkStaMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+trkStaMuonTrackVMuonAssoc.associatormap = 'tpToGlbMuonAssociation'
+trkStaMuonTrackVMuonAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+trkStaMuonTrackVMuonAssoc.label = ('extractedTRKSTAMuons',)
+trkStaMuonTrackVMuonAssoc.usetracker = True
+trkStaMuonTrackVMuonAssoc.usemuon = True
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 glbMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 glbMuonTrackVMuonAssoc.associatormap = 'tpToGlbMuonAssociation'
 glbMuonTrackVMuonAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
@@ -772,14 +781,14 @@ muonValidation_seq = cms.Sequence(
 	#staMuonTrackVMuonAssoc + 
 	staUpdMuonTrackVMuonAssoc + staUpdMuonTrackVMuonAssoc20
 	#+ glbMuonTrackVTrackAssoc 
-	+ glbMuonTrackVMuonAssoc + glbMuonTrackVMuonAssoc20
+	+ glbMuonTrackVMuonAssoc + glbMuonTrackVMuonAssoc20 * trkStaMuonTrackVMuonAssoc
 	#+ bestMuonTrackVTrackAssoc + bestMuonTrackVTrackAssoc20
 	+ bestMuonLooseTrackVTrackAssoc + bestMuonLooseTrackVTrackAssoc20
-	+ bestMuonTightTrackVTrackAssoc + bestMuonTightTrackVTrackAssoc20
+	#+ bestMuonTightTrackVTrackAssoc + bestMuonTightTrackVTrackAssoc20
 	+ bestMuonTightNoIPzTrackVTrackAssoc + bestMuonTightNoIPzTrackVTrackAssoc20
 	#+ bestMuonTunePTrackVTrackAssoc
-	#+ trackerMuonTrackVTrackAssoc + trackerMuonArbTrackVTrackAssoc 
-	#+ trackerMuonTMOneTrackVTrackAssoc + trackerMuonTMLastTrackVTrackAssoc
+	+ trackerMuonTrackVTrackAssoc + trackerMuonArbTrackVTrackAssoc 
+	+ trackerMuonTMOneTrackVTrackAssoc + trackerMuonTMLastTrackVTrackAssoc
 	#+ trackerMuonTrackVTrackAssoc5 + trackerMuonArbTrackVTrackAssoc5 
 	#+ trackerMuonTMOneTrackVTrackAssoc5 + trackerMuonTMLastTrackVTrackAssoc5 
 	#+ trackerMuonTrackVTrackAssoc10 + trackerMuonArbTrackVTrackAssoc10 
