@@ -774,9 +774,9 @@ muonValidation_seq = cms.Sequence(
 	#+ glbMuonTrackVTrackAssoc 
 	+ glbMuonTrackVMuonAssoc + glbMuonTrackVMuonAssoc20
 	#+ bestMuonTrackVTrackAssoc + bestMuonTrackVTrackAssoc20
-	+ bestMuonLooseTrackVTrackAssoc + bestMuonLooseTrackVTrackAssoc5 + bestMuonLooseTrackVTrackAssoc10 + bestMuonLooseTrackVTrackAssoc20
-	+ bestMuonTightTrackVTrackAssoc + bestMuonTightTrackVTrackAssoc5 + bestMuonTightTrackVTrackAssoc10 + bestMuonTightTrackVTrackAssoc20
-	+ bestMuonTightNoIPzTrackVTrackAssoc + bestMuonTightNoIPzTrackVTrackAssoc5 + bestMuonTightNoIPzTrackVTrackAssoc10 + bestMuonTightNoIPzTrackVTrackAssoc20
+	+ bestMuonLooseTrackVTrackAssoc + bestMuonLooseTrackVTrackAssoc20
+	+ bestMuonTightTrackVTrackAssoc + bestMuonTightTrackVTrackAssoc20
+	+ bestMuonTightNoIPzTrackVTrackAssoc + bestMuonTightNoIPzTrackVTrackAssoc20
 	#+ bestMuonTunePTrackVTrackAssoc
 	#+ trackerMuonTrackVTrackAssoc + trackerMuonArbTrackVTrackAssoc 
 	#+ trackerMuonTMOneTrackVTrackAssoc + trackerMuonTMLastTrackVTrackAssoc

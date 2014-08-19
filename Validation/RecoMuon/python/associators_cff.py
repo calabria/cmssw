@@ -507,20 +507,26 @@ TrackerMuonArbitrated20 = cms.EDProducer("MuonTrackCollProducer",
 
 #-----------------------------------------------------------------------------------------------------------------------
 
-muonColl_seq = cms.Sequence(muonPt5 * muonPt10 * muonPt20)
+muonColl_seq = cms.Sequence(
+			     #muonPt5 * 
+			     #muonPt10 * 
+			     muonPt20)
 trackColl_seq = cms.Sequence(staMuonsPt20)
-extractedMuonTracks_seq = cms.Sequence( extractedGlobalMuons * extractedGlobalMuons5 * extractedGlobalMuons10 * extractedGlobalMuons20)
+extractedMuonTracks_seq = cms.Sequence( extractedGlobalMuons * 
+					#extractedGlobalMuons5 * 
+					#extractedGlobalMuons10 * 
+					extractedGlobalMuons20)
 bestMuon_seq = cms.Sequence( 
-			     bestMuon * bestMuon5 * bestMuon10 * bestMuon20 * 
-		             bestMuonLoose * bestMuonLoose5 * bestMuonLoose10 * bestMuonLoose20 * 
-			     bestMuonTight * bestMuonTight5 * bestMuonTight10 * bestMuonTight20 *
-			     bestMuonTightNoIPz * bestMuonTightNoIPz5 * bestMuonTightNoIPz10 * bestMuonTightNoIPz20
+			     bestMuon * bestMuonLoose * bestMuonTight * bestMuonTightNoIPz * 
+			     #bestMuon5 * bestMuonLoose5 * bestMuonTight5 * bestMuonTightNoIPz5 *
+			     #bestMuon10 * bestMuonLoose10 * bestMuonTight10 * bestMuonTightNoIPz10 *
+			     bestMuon20 * bestMuonLoose20 * bestMuonTight20 * bestMuonTightNoIPz20
 			   )
 bestMuonTuneP_seq = cms.Sequence( bestMuonTuneP )
 trackerMuon_seq = cms.Sequence(
 			       trackerMuons * TrackerMuonArbitrated * TMOneStationTight * TMLastStationAngTight *
-			       trackerMuons5 * TrackerMuonArbitrated5 * TMOneStationTight5 * TMLastStationAngTight5 *
-			       trackerMuons10 * TrackerMuonArbitrated10 * TMOneStationTight10 * TMLastStationAngTight10 *
+			       #trackerMuons5 * TrackerMuonArbitrated5 * TMOneStationTight5 * TMLastStationAngTight5 *
+			       #trackerMuons10 * TrackerMuonArbitrated10 * TMOneStationTight10 * TMLastStationAngTight10 *
 			       trackerMuons20 * TrackerMuonArbitrated20 * TMOneStationTight20 * TMLastStationAngTight20
 		   	      )
 #

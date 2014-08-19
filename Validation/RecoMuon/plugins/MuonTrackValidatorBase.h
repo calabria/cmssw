@@ -233,8 +233,20 @@ class MuonTrackValidatorBase {
     }   
     etaintervals.push_back(etaintervalsv);
     totSIMeta.push_back(totSIMveta);
+    totSIMetaBin1.push_back(totSIMveta);
+    totSIMetaBin2.push_back(totSIMveta);
+    totSIMetaBin3.push_back(totSIMveta);
+    totSIMetaBin4.push_back(totSIMveta);
     totASSeta.push_back(totASSveta);
+    totASSetaBin1.push_back(totASSveta);
+    totASSetaBin2.push_back(totASSveta);
+    totASSetaBin3.push_back(totASSveta);
+    totASSetaBin4.push_back(totASSveta);
     totASS2eta.push_back(totASS2veta);
+    totASS2etaBin1.push_back(totASS2veta);
+    totASS2etaBin2.push_back(totASS2veta);
+    totASS2etaBin3.push_back(totASS2veta);
+    totASS2etaBin4.push_back(totASS2veta);
     totRECeta.push_back(totRECveta);
     //
     totASSeta_Quality05.push_back(totASSveta_Quality05);
@@ -309,8 +321,17 @@ class MuonTrackValidatorBase {
     }
     pTintervals.push_back(pTintervalsv);
     totSIMpT.push_back(totSIMvpT);
+    totSIMpTBin1.push_back(totSIMvpT);
+    totSIMpTBin2.push_back(totSIMvpT);
+    totSIMpTBin3.push_back(totSIMvpT);
     totASSpT.push_back(totASSvpT);
+    totASSpTBin1.push_back(totASSvpT);
+    totASSpTBin2.push_back(totASSvpT);
+    totASSpTBin3.push_back(totASSvpT);
     totASS2pT.push_back(totASS2vpT);
+    totASS2pTBin1.push_back(totASS2vpT);
+    totASS2pTBin2.push_back(totASS2vpT);
+    totASS2pTBin3.push_back(totASS2vpT);
     totRECpT.push_back(totRECvpT);
     //
     totASSpT_Quality05.push_back(totASSvpT_Quality05); 
@@ -459,12 +480,15 @@ class MuonTrackValidatorBase {
 
   //1D
   std::vector<MonitorElement*> h_tracks, h_fakes, h_hits, h_charge;
-  std::vector<MonitorElement*> h_recoeta, h_assoceta, h_assoc2eta, h_simuleta;
+  std::vector<MonitorElement*> h_recoeta, h_assoc2eta, h_assoc2etaBin1, h_assoc2etaBin2, h_assoc2etaBin3, h_assoc2etaBin4;
+  std::vector<MonitorElement*> h_assoceta, h_assocetaBin1, h_assocetaBin2, h_assocetaBin3, h_assocetaBin4;
+  std::vector<MonitorElement*> h_simuleta, h_simuletaBin1, h_simuletaBin2, h_simuletaBin3, h_simuletaBin4;
   std::vector<MonitorElement*> h_recovtx, h_assocvtx, h_assoc2vtx, h_simulvtx, h_numSimVtx, h_numSimVtxBx, h_numRecVtx, h_numTrueInt;
   std::vector<MonitorElement*> h_recovtxBarrel, h_assocvtxBarrel, h_assoc2vtxBarrel, h_simulvtxBarrel;
   std::vector<MonitorElement*> h_recovtxEndcap, h_assocvtxEndcap, h_assoc2vtxEndcap, h_simulvtxEndcap;
   std::vector<MonitorElement*> h_recovtxOverlap, h_assocvtxOverlap, h_assoc2vtxOverlap, h_simulvtxOverlap;
-  std::vector<MonitorElement*> h_recopT, h_assocpT, h_assoc2pT, h_simulpT;
+  std::vector<MonitorElement*> h_recopT, h_assocpT, h_assoc2pT, h_assoc2pTBin1, h_assoc2pTBin2, h_assoc2pTBin3, h_simulpT;
+  std::vector<MonitorElement*> h_assocpTBin1, h_assocpTBin2, h_assocpTBin3, h_simulpTBin1, h_simulpTBin2, h_simulpTBin3;
   std::vector<MonitorElement*> h_recohit, h_assochit, h_assoc2hit, h_simulhit;
   std::vector<MonitorElement*> h_recophi, h_assocphi, h_assoc2phi, h_simulphi;
   std::vector<MonitorElement*> h_recodxy, h_dxyDistr, h_assocdxy, h_assoc2dxy, h_simuldxy;
@@ -502,12 +526,14 @@ class MuonTrackValidatorBase {
   std::vector< std::vector<double> > dzintervals;
   std::vector< std::vector<double> > vertposintervals;
   std::vector< std::vector<double> > zposintervals;
-  std::vector< std::vector<int> > totSIMeta,totRECeta,totASSeta,totASS2eta;
+  std::vector< std::vector<int> > totSIMeta,totRECeta,totASSeta,totASS2eta,totASS2etaBin1,totASS2etaBin2,totASS2etaBin3,totASS2etaBin4;
+  std::vector< std::vector<int> > totSIMetaBin1,totSIMetaBin2,totSIMetaBin3,totSIMetaBin4,totASSetaBin1,totASSetaBin2,totASSetaBin3,totASSetaBin4;
   std::vector< std::vector<int> > totSIMvtxBarrel,totRECvtxBarrel,totASSvtxBarrel,totASS2vtxBarrel;
   std::vector< std::vector<int> > totSIMvtxEndcap,totRECvtxEndcap,totASSvtxEndcap,totASS2vtxEndcap;
   std::vector< std::vector<int> > totSIMvtxOverlap,totRECvtxOverlap,totASSvtxOverlap,totASS2vtxOverlap;
   std::vector< std::vector<int> > totSIMvtx,totRECvtx,totASSvtx,totASS2vtx;
-  std::vector< std::vector<int> > totSIMpT,totRECpT,totASSpT,totASS2pT;
+  std::vector< std::vector<int> > totSIMpT,totRECpT,totASSpT,totASS2pT,totASS2pTBin1,totASS2pTBin2,totASS2pTBin3;
+  std::vector< std::vector<int> > totSIMpTBin1,totSIMpTBin2,totSIMpTBin3,totASSpTBin1,totASSpTBin2,totASSpTBin3;
   std::vector< std::vector<int> > totSIM_hit,totREC_hit,totASS_hit,totASS2_hit;
   std::vector< std::vector<int> > totSIM_phi,totREC_phi,totASS_phi,totASS2_phi;
   std::vector< std::vector<int> > totSIM_dxy,totREC_dxy,totASS_dxy,totASS2_dxy;
