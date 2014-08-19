@@ -10,10 +10,12 @@
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/CSCRecHit/interface/CSCSegmentCollection.h"
 #include "DataFormats/DTRecHit/interface/DTRecSegment4DCollection.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 class MuonTrackCollProducer : public edm::EDProducer {
   public:
     explicit MuonTrackCollProducer(const edm::ParameterSet&);
+     std::vector<double> findSimVtx(edm::Event& iEvent);
      bool isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
      bool isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
      bool isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);

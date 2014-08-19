@@ -14,6 +14,46 @@
 #include "DataFormats/TrackReco/interface/TrackFwd.h" 
 #include <sstream>
 
+std::vector<double> MuonTrackCollProducer::findSimVtx(edm::Event& iEvent){
+
+  edm::Handle<reco::GenParticleCollection> genParticles;
+  iEvent.getByLabel("genParticles", genParticles);
+  std::vector<double> vtxCoord;
+  vtxCoord.push_back(0);
+
+  if(genParticles.isValid()){
+
+  	for(reco::GenParticleCollection::const_iterator itg = genParticles->begin(); itg != genParticles->end(); ++itg ){
+
+		int id = itg->pdgId();
+		int status = itg->status();
+		//std::cout<<"Id = "<<id<<std::endl;
+		//int nDaughters = itg->numberOfDaughters();
+		//double phiGen = itg->phi();
+		//double etaGen = itg->eta();
+
+		//std::cout<<"id "<<id<<" "<<phiGen<<" "<<etaGen<<std::endl;
+
+		if(fabs(id) == 23 && status == 3) vtxCoord[0] = 1;
+
+		if(fabs(id) == 13 && status == 3){
+
+			vtxCoord.push_back(itg->vx()); 
+			vtxCoord.push_back(itg->vy());
+			vtxCoord.push_back(itg->vz());
+
+		}
+
+	}
+
+  }
+
+
+  std::cout<<vtxCoord.size()<<" "<<vtxCoord[0]<<std::endl;
+  return vtxCoord;
+
+}
+
 bool MuonTrackCollProducer::isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon)
 {
   bool isPF = muon->isPFMuon();
@@ -60,6 +100,13 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
   	iEvent.getByLabel(vxtTag,vertexHandle);
   	const reco::VertexCollection* vertexes = vertexHandle.product();
 
+	std::vector<double> vtxCoord = findSimVtx(iEvent);
+        GlobalPoint point(vtxCoord[1],vtxCoord[2],vtxCoord[3]);
+
+        double ipxySim = fabs(muon->muonBestTrack()->dxy(math::XYZPoint(point.x(),point.y(),point.z())));
+	bool ipxySimBool = ipxySim < 0.2;
+        std::cout<<point.x()<<" "<<point.y()<<" "<<point.z()<<" "<<ipxySim<<" "<<ipxySimBool<<std::endl;
+
 	bool trkLayMeas = muon->muonBestTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
 	bool isGlb = muon->isGlobalMuon(); 
 	bool isPF = muon->isPFMuon(); 
@@ -68,7 +115,11 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
 	bool matchedSt = muon->numberOfMatchedStations() > 1; 
 	bool ipxy = false;
 	bool ipz = false;
-	if(vertexes->size()!=0 && useIPxy) ipxy = fabs(muon->muonBestTrack()->dxy((*vertexes)[0].position())) < 0.2;
+	if(vertexes->size()!=0 && useIPxy){
+
+		if(vtxCoord[0] == 1) ipxy = fabs(muon->muonBestTrack()->dxy((*vertexes)[0].position())) < 0.2;
+		else ipxy = ipxySimBool;
+	}
 	else ipxy = true;
  	if(vertexes->size()!=0 && useIPz) ipz = fabs(muon->muonBestTrack()->dz((*vertexes)[0].position())) < 0.5;
 	else ipz = true;
@@ -136,6 +187,7 @@ void MuonTrackCollProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
     if (isGoodResult) {
       // new copy of Track
       reco::TrackRef trackref;
+
       bool loose = isLoose(iEvent, muon);
       bool soft = isSoft(iEvent, muon, useIPxy, useIPz);
       bool tight = isTight(iEvent, muon, useIPxy, useIPz);
