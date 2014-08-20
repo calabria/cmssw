@@ -78,7 +78,13 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       h_nchi2_prob.push_back( dbe_->book1D("chi2_prob", "normalized #chi^{2} probability",100,0,1));
 
       /// this are needed to calculate efficiency during tha harvesting for the automated validation
+      h_numEvt.push_back( dbe_->book1D("numEvt","N of events",2,0,2) );
       h_recoeta.push_back( dbe_->book1D("num_reco_eta","N of reco track vs eta",nint,min,max) );
+      h_recoetaBin1.push_back( dbe_->book1D("num_reco_eta_bin1","N of reco track vs eta bin1",nint,min,max) );
+      h_recoetaBin2.push_back( dbe_->book1D("num_reco_eta_bin2","N of reco track vs eta bin2",nint,min,max) );
+      h_recoetaBin3.push_back( dbe_->book1D("num_reco_eta_bin3","N of reco track vs eta bin3",nint,min,max) );
+      h_recoetaBin4.push_back( dbe_->book1D("num_reco_eta_bin4","N of reco track vs eta bin4",nint,min,max) );
+
       h_assoceta.push_back( dbe_->book1D("num_assoc(simToReco)_eta","N of associated tracks (simToReco) vs eta",nint,min,max) );
       h_assocetaBin1.push_back( dbe_->book1D("num_assoc(simToReco)_eta_bin1","N of associated tracks (simToReco) vs eta bin1",nint,min,max) );
       h_assocetaBin2.push_back( dbe_->book1D("num_assoc(simToReco)_eta_bin2","N of associated tracks (simToReco) vs eta bin2",nint,min,max) );
@@ -115,6 +121,10 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       h_simulvtxEndcap.push_back( dbe_->book1D("num_simul_vtx_endcap","N of simulated tracks vs vtx endcap",nintVtx,minVtx,maxVtx) );
       h_simulvtxOverlap.push_back( dbe_->book1D("num_simul_vtx_overlap","N of simulated tracks vs vtx overlap",nintVtx,minVtx,maxVtx) );
       h_recopT.push_back( dbe_->book1D("num_reco_pT","N of reco track vs pT",nintpT,minpT,maxpT) );
+      h_recopTBin1.push_back( dbe_->book1D("num_reco_pT_barrel","N of reco track vs pT barrel",nintpT,minpT,maxpT) );
+      h_recopTBin2.push_back( dbe_->book1D("num_reco_pT_overlap","N of reco track vs pT overlap",nintpT,minpT,maxpT) );
+      h_recopTBin3.push_back( dbe_->book1D("num_reco_pT_endcap","N of reco track vs pT endcap",nintpT,minpT,maxpT) );
+
       h_assocpT.push_back( dbe_->book1D("num_assoc(simToReco)_pT","N of associated tracks (simToReco) vs pT",nintpT,minpT,maxpT) );
       h_assocpTBin1.push_back( dbe_->book1D("num_assoc(simToReco)_pT_barrel","N of associated tracks (simToReco) vs pT barrel",nintpT,minpT,maxpT) );
       h_assocpTBin2.push_back( dbe_->book1D("num_assoc(simToReco)_pT_overlap","N of associated tracks (simToReco) vs pT overlap",nintpT,minpT,maxpT) );
@@ -310,6 +320,9 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
 	BinLogX(cotThetares_vs_pt[j]->getTH2F());
 	BinLogX(ptres_vs_pt[j]->getTH2F());
 	BinLogX(h_recopT[j]->getTH1F());
+	BinLogX(h_recopTBin1[j]->getTH1F());
+	BinLogX(h_recopTBin2[j]->getTH1F());
+	BinLogX(h_recopTBin3[j]->getTH1F());
 	BinLogX(h_assocpT[j]->getTH1F());
 	BinLogX(h_assocpTBin1[j]->getTH1F());
 	BinLogX(h_assocpTBin2[j]->getTH1F());
@@ -480,6 +493,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
       }//end else
 
+      h_numEvt[w]->Fill(1);
       h_numSimVtx[w]->Fill(npv);
       h_numTrueInt[w]->Fill(trueInt);
       h_numSimVtxBx[w]->Fill(trueInt_BX);
@@ -605,16 +619,16 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  if (getEta(momentumTP.eta())>etaintervals[w][f]&&
 	      getEta(momentumTP.eta())<etaintervals[w][f+1]) {
 	    totSIMeta[w][f]++;
-	    if(momentumTP.perp2() > 5 && momentumTP.perp2() < 10) totSIMetaBin1[w][f]++;
-	    if(momentumTP.perp2() > 10 && momentumTP.perp2() < 20) totSIMetaBin2[w][f]++;
-	    if(momentumTP.perp2() > 20 && momentumTP.perp2() < 40) totSIMetaBin3[w][f]++;
-	    if(momentumTP.perp2() > 40) totSIMetaBin4[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 5 && sqrt(momentumTP.perp2()) < 10) totSIMetaBin1[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 10 && sqrt(momentumTP.perp2()) < 20) totSIMetaBin2[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 20 && sqrt(momentumTP.perp2()) < 40) totSIMetaBin3[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 40) totSIMetaBin4[w][f]++;
 	    if (TP_is_matched) {
 	      totASSeta[w][f]++;
-	      if(momentumTP.perp2() > 5 && momentumTP.perp2() < 10) totASSetaBin1[w][f]++;
-	      if(momentumTP.perp2() > 10 && momentumTP.perp2() < 20) totASSetaBin2[w][f]++;
-	      if(momentumTP.perp2() > 20 && momentumTP.perp2() < 40) totASSetaBin3[w][f]++;
-	      if(momentumTP.perp2() > 40) totASSetaBin4[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 5 && sqrt(momentumTP.perp2()) < 10) totASSetaBin1[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 10 && sqrt(momentumTP.perp2()) < 20) totASSetaBin2[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 20 && sqrt(momentumTP.perp2()) < 40) totASSetaBin3[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 40) totASSetaBin4[w][f]++;
 
 	      if (MABH) {
 		if (Quality075) {
@@ -836,13 +850,17 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
 	  if (getEta(track->momentum().eta())>etaintervals[w][f]&&
 	      getEta(track->momentum().eta())<etaintervals[w][f+1]) {
-	    totRECeta[w][f]++; 
+	    totRECeta[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 5 && sqrt(track->momentum().perp2()) < 10) totRECetaBin1[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 10 && sqrt(track->momentum().perp2()) < 20) totRECetaBin2[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 20 && sqrt(track->momentum().perp2()) < 40) totRECetaBin3[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 40) totRECetaBin4[w][f]++;
 	    if (Track_is_matched) {
 	      totASS2eta[w][f]++;
-	      if(track->momentum().perp2() > 5 && track->momentum().perp2() < 10) totASS2etaBin1[w][f]++;
-	      if(track->momentum().perp2() > 10 && track->momentum().perp2() < 20) totASS2etaBin2[w][f]++;
-	      if(track->momentum().perp2() > 20 && track->momentum().perp2() < 40) totASS2etaBin3[w][f]++;
-	      if(track->momentum().perp2() > 40) totASS2etaBin4[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 5 && sqrt(track->momentum().perp2()) < 10) totASS2etaBin1[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 10 && sqrt(track->momentum().perp2()) < 20) totASS2etaBin2[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 20 && sqrt(track->momentum().perp2()) < 40) totASS2etaBin3[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 40) totASS2etaBin4[w][f]++;
 	    }		
 	  }
 	} // End for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
@@ -861,7 +879,10 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	for (unsigned int f=0; f<pTintervals[w].size()-1; f++){
 	  if (getPt(sqrt(track->momentum().perp2()))>pTintervals[w][f]&&
 	      getPt(sqrt(track->momentum().perp2()))<pTintervals[w][f+1]) {
-	    totRECpT[w][f]++; 
+	    totRECpT[w][f]++;
+	    if(track->momentum().eta() < 1.2) totRECpTBin1[w][f]++;
+	    if(track->momentum().eta() > 1.2 && track->momentum().eta() < 1.7) totRECpTBin2[w][f]++;
+	    if(track->momentum().eta() > 1.7) totRECpTBin3[w][f]++;
 	    if (Track_is_matched) {
 	      totASS2pT[w][f]++;
 	      if(track->momentum().eta() < 1.2) totASS2pTBin1[w][f]++;
@@ -1207,6 +1228,11 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
       doProfileX(nhits_vs_phi[w],h_hits_phi[w]);
 
       fillPlotFromVector(h_recoeta[w],totRECeta[w]);
+      fillPlotFromVector(h_recoetaBin1[w],totRECetaBin1[w]);
+      fillPlotFromVector(h_recoetaBin2[w],totRECetaBin2[w]);
+      fillPlotFromVector(h_recoetaBin3[w],totRECetaBin3[w]);
+      fillPlotFromVector(h_recoetaBin4[w],totRECetaBin4[w]);
+
       fillPlotFromVector(h_simuleta[w],totSIMeta[w]);
       fillPlotFromVector(h_simuletaBin1[w],totSIMetaBin1[w]);
       fillPlotFromVector(h_simuletaBin2[w],totSIMetaBin2[w]);
@@ -1234,6 +1260,10 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
       fillPlotFromVector(h_assoc2etaBin4[w],totASS2etaBin4[w]);
 
       fillPlotFromVector(h_recopT[w],totRECpT[w]);
+      fillPlotFromVector(h_recopTBin1[w],totRECpTBin1[w]);
+      fillPlotFromVector(h_recopTBin2[w],totRECpTBin2[w]);
+      fillPlotFromVector(h_recopTBin3[w],totRECpTBin3[w]);
+
       fillPlotFromVector(h_simulpT[w],totSIMpT[w]);
       fillPlotFromVector(h_simulpTBin1[w],totSIMpTBin1[w]);
       fillPlotFromVector(h_simulpTBin2[w],totSIMpTBin2[w]);
