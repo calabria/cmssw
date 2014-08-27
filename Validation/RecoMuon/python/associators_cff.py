@@ -74,6 +74,12 @@ muonTRKSTA = cms.EDFilter("MuonSelector",
     filter = cms.bool(False)
 )
 
+muonTRKSTA20 = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 20 && isTrackerMuon && isStandAloneMuon"),
+    filter = cms.bool(False)
+)
+
 muonPt3 = cms.EDFilter("MuonSelector",
     src = cms.InputTag("muons"),
     cut = cms.string("pt > 3."),
@@ -160,6 +166,13 @@ tevMuonsPicky20.src = cms.InputTag("tevMuons:picky")
 
 extractedTRKSTAMuons = cms.EDProducer("MuonTrackCollProducer",
    muonsTag = cms.InputTag("muonTRKSTA"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuon')
+)
+
+extractedTRKSTAMuons20 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonTRKSTA20"),
    vxtTag = cms.InputTag("selectedVertices"),
    selectionTags = cms.vstring('All'),
    trackType = cms.string('bestMuon')
@@ -521,12 +534,14 @@ TrackerMuonArbitrated20 = cms.EDProducer("MuonTrackCollProducer",
 #-----------------------------------------------------------------------------------------------------------------------
 
 muonColl_seq = cms.Sequence(
-			     muonTRKSTA *
+			     muonTRKSTA * 
+			     #muonTRKSTA20 *
 			     #muonPt5 * 
 			     #muonPt10 *
 			     muonPt20)
 trackColl_seq = cms.Sequence(staMuonsPt20)
-extractedMuonTracks_seq = cms.Sequence( extractedTRKSTAMuons *
+extractedMuonTracks_seq = cms.Sequence( extractedTRKSTAMuons * 
+					#extractedTRKSTAMuons20 *
 				        extractedGlobalMuons * 
 					#extractedGlobalMuons5 * 
 					#extractedGlobalMuons10 * 

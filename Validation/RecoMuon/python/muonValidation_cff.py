@@ -514,6 +514,15 @@ trkStaMuonTrackVMuonAssoc.label = ('extractedTRKSTAMuons',)
 trkStaMuonTrackVMuonAssoc.usetracker = True
 trkStaMuonTrackVMuonAssoc.usemuon = True
 
+trkStaMuonTrackVMuonAssoc20 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+trkStaMuonTrackVMuonAssoc20.associatormap = 'tpToGlbMuonAssociation'
+trkStaMuonTrackVMuonAssoc20.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+trkStaMuonTrackVMuonAssoc20.label = ('extractedTRKSTAMuons20',)
+trkStaMuonTrackVMuonAssoc20.ptMinGP = 20.0
+trkStaMuonTrackVMuonAssoc20.usetracker = True
+trkStaMuonTrackVMuonAssoc20.usemuon = True
+
+
 #-----------------------------------------------------------------------------------------------------------------------
 
 glbMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
@@ -781,7 +790,8 @@ muonValidation_seq = cms.Sequence(
 	#staMuonTrackVMuonAssoc + 
 	staUpdMuonTrackVMuonAssoc + staUpdMuonTrackVMuonAssoc20
 	#+ glbMuonTrackVTrackAssoc 
-	+ glbMuonTrackVMuonAssoc + glbMuonTrackVMuonAssoc20 * trkStaMuonTrackVMuonAssoc
+	+ glbMuonTrackVMuonAssoc + glbMuonTrackVMuonAssoc20 
+        + trkStaMuonTrackVMuonAssoc
 	#+ bestMuonTrackVTrackAssoc + bestMuonTrackVTrackAssoc20
 	+ bestMuonLooseTrackVTrackAssoc + bestMuonLooseTrackVTrackAssoc20
 	#+ bestMuonTightTrackVTrackAssoc + bestMuonTightTrackVTrackAssoc20

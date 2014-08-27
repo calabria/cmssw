@@ -110,10 +110,21 @@ postProcessorMuonMultiTrackComp = cms.EDAnalyzer("DQMGenericClient",
     "Eff_GlbSta_Pt_byChi2 'Eff_{GLB,STA} vs p_{T}' extractedGlobalMuons_AssociatorByChi2/efficPt standAloneMuons_UpdatedAtVtx_AssociatorByChi2/efficPt",
     "Eff_GlbSta_Hit_byChi2 'Eff_{GLB,STA} vs n Hits' extractedGlobalMuons_AssociatorByChi2/effic_vs_hit standAloneMuons_UpdatedAtVtx_AssociatorByChi2/effic_vs_hit",
 
-    "Eff_GlbTkSta_Eta_byChi2 'Eff_{GLB,TKSTA} vs #eta' extractedGlobalMuons_AssociatorByChi2/num_reco_eta extractedTRKSTAMuons_AssociatorByChi2/num_reco_eta",
-    "Eff_GlbTkSta_Eta_byPull 'Eff_{GLB,TKSTA} vs #eta' extractedGlobalMuons_AssociatorByPull/num_reco_eta extractedTRKSTAMuons_AssociatorByPull/num_reco_eta",
-    "Eff_GlbTkSta_Pt_byChi2 'Eff_{GLB,TKSTA} vs p_{T}' extractedGlobalMuons_AssociatorByChi2/num_reco_pT extractedTRKSTAMuons_AssociatorByChi2/num_reco_pT",
-    "Eff_GlbTkSta_Pt_byPull 'Eff_{GLB,TKSTA} vs p_{T}' extractedGlobalMuons_AssociatorByPull/num_reco_pT extractedTRKSTAMuons_AssociatorByPull/num_reco_pT",
+    "Eff_GlbTkSta_Eta_byChi2 'Eff_{GLB,TKSTA} vs #eta' extractedGlobalMuons_AssociatorByChi2/num_assoc(simToReco)_eta extractedTRKSTAMuons_AssociatorByChi2/num_assoc(simToReco)_eta",
+    "Eff_GlbTkSta_Eta_byPull 'Eff_{GLB,TKSTA} vs #eta' extractedGlobalMuons_AssociatorByPull/num_assoc(simToReco)_eta extractedTRKSTAMuons_AssociatorByPull/num_assoc(simToReco)_eta",
+
+    "Eff_GlbTkSta_vtx_byPull 'Eff_{GLB,TKSTA} vs #vtx' extractedGlobalMuons_AssociatorByPull/num_assoc(simToReco)_vtx extractedTRKSTAMuons_AssociatorByPull/num_assoc(simToReco)_vtx",
+    "Eff_GlbTkSta_vtx_barrel_byPull 'Eff_{GLB,TKSTA} vs #vtx barrel' extractedGlobalMuons_AssociatorByPull/num_assoc(simToReco)_vtx_barrel extractedTRKSTAMuons_AssociatorByPull/num_assoc(simToReco)_vtx_barrel",
+    "Eff_GlbTkSta_vtx_endcap_byPull 'Eff_{GLB,TKSTA} vs #vtx endcap' extractedGlobalMuons_AssociatorByPull/num_assoc(simToReco)_vtx_endcap extractedTRKSTAMuons_AssociatorByPull/num_assoc(simToReco)_vtx_endcap",
+    "Eff_GlbTkSta_vtx_overlap_byPull 'Eff_{GLB,TKSTA} vs #vtx overlap' extractedGlobalMuons_AssociatorByPull/num_assoc(simToReco)_vtx_overlap extractedTRKSTAMuons_AssociatorByPull/num_assoc(simToReco)_vtx_overlap",
+
+    "Eff_GlbTkSta_vtx_byChi2 'Eff_{GLB,TKSTA} vs #vtx' extractedGlobalMuons_AssociatorByPull/num_assoc(simToReco)_vtx extractedTRKSTAMuons_AssociatorByPull/num_assoc(simToReco)_vtx",
+    "Eff_GlbTkSta_vtx_barrel_byChi2 'Eff_{GLB,TKSTA} vs #vtx barrel' extractedGlobalMuons_AssociatorByPull/num_assoc(simToReco)_vtx_barrel extractedTRKSTAMuons_AssociatorByPull/num_assoc(simToReco)_vtx_barrel",
+    "Eff_GlbTkSta_vtx_endcap_byChi2 'Eff_{GLB,TKSTA} vs #vtx endcap' extractedGlobalMuons_AssociatorByPull/num_assoc(simToReco)_vtx_endcap extractedTRKSTAMuons_AssociatorByPull/num_assoc(simToReco)_vtx_endcap",
+    "Eff_GlbTkSta_vtx_overlap_byChi2 'Eff_{GLB,TKSTA} vs #vtx overlap' extractedGlobalMuons_AssociatorByPull/num_assoc(simToReco)_vtx_overlap extractedTRKSTAMuons_AssociatorByPull/num_assoc(simToReco)_vtx_overlap",
+
+    "Eff_GlbTkSta_Pt_byChi2 'Eff_{GLB,TKSTA} vs p_{T}' extractedGlobalMuons_AssociatorByChi2/num_assoc(simToReco)_pT extractedTRKSTAMuons_AssociatorByChi2/num_assoc(simToReco)_pT",
+    "Eff_GlbTkSta_Pt_byPull 'Eff_{GLB,TKSTA} vs p_{T}' extractedGlobalMuons_AssociatorByPull/num_assoc(simToReco)_pT extractedTRKSTAMuons_AssociatorByPull/num_assoc(simToReco)_pT",
     ),
     resolution = cms.vstring(""),
     outputFileName = cms.untracked.string("")

@@ -521,7 +521,7 @@ class MuonTrackValidatorBase {
 
   //#hit vs eta: to be used with doProfileX
   std::vector<MonitorElement*> nhits_vs_eta, 
-    nDThits_vs_eta,nCSChits_vs_eta,nRPChits_vs_eta,nGEMhits_vs_eta;
+    nDThits_vs_eta,nCSChits_vs_eta,nRPChits_vs_eta,nGEMhits_vs_eta, n_trkLayersOld, n_pxlHitsOld, n_pxlHitsNew, n_pxlHitsNew43Inn, n_pxlHitsNew32Inn;
 
   std::vector<MonitorElement*> h_hits_eta,
     h_DThits_eta,h_CSChits_eta,h_RPChits_eta,h_GEMhits_eta;

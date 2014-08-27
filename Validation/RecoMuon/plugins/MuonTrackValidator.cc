@@ -201,6 +201,12 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       chi2_vs_phi.push_back( dbe_->book2D("chi2_vs_phi","#chi^{2} vs #phi",nintPhi,minPhi,maxPhi, 200, 0, 20 ) );
       h_chi2mean_vs_phi.push_back( dbe_->bookProfile("chi2mean_vs_phi","mean of #chi^{2} vs #phi",nintPhi,minPhi,maxPhi, 200, 0, 20) );
 
+      n_trkLayersOld.push_back( dbe_->book1D("nhits_trkLayersOld","nhits trkLayersOld",nintHit,minHit,maxHit) );
+      n_pxlHitsOld.push_back( dbe_->book1D("nhits_pxlHitsOld","nhits pixelHitsOld",nintHit,minHit,maxHit) );
+      n_pxlHitsNew.push_back( dbe_->book1D("nhits_pxlHitsNew","nhits pxlHitsNew",nintHit,minHit,maxHit) );
+      n_pxlHitsNew43Inn.push_back( dbe_->book1D("nhits_pxlHitsNew43Inn","nhits pxlHitsNew43Inn",nintHit,minHit,maxHit) );
+      n_pxlHitsNew32Inn.push_back( dbe_->book1D("nhits_pxlHitsNew32Inn","nhits pxlHitsNew32Inn",nintHit,minHit,maxHit) );
+
       nhits_vs_eta.push_back( dbe_->book2D("nhits_vs_eta","nhits vs eta",nint,min,max,nintHit,minHit,maxHit) );
       nDThits_vs_eta.push_back( dbe_->book2D("nDThits_vs_eta","# DT hits vs eta",nint,min,max,nintHit,minHit,maxHit) );
       nCSChits_vs_eta.push_back( dbe_->book2D("nCSChits_vs_eta","# CSC hits vs eta",nint,min,max,nintHit,minHit,maxHit) );
@@ -569,6 +575,45 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    edm::LogVerbatim("MuonTrackValidator") << "TrackingParticle #" <<tpr.key()  
 						   << " with pt=" << sqrt(momentumTP.perp2()) 
 						   << " associated with quality:" << quality <<"\n";
+
+	    /*int motherID = tp->mother(0)->pdgId();
+	    int motherStatus = tp->mother(0)->status();
+
+	    std::cout<<"Muon id: "<<tp->pdgId()<<" Muon status: "<<tp->status()<<std::endl;
+	    std::cout<<"Num. mothers: "<<tp->numberOfMothers()<<std::endl;
+	    std::cout<<"Mother id: "<<tp->mother(0)->pdgId()<<std::endl;
+
+	    std::cout<<"Mother status: "<<tp->mother(0)->status()<<std::endl;
+	    std::cout<<"Granny id: "<<tp->mother(0)->mother(0)->pdgId()<<std::endl;
+
+	    std::cout<<"Granny status: "<<tp->mother(0)->mother(0)->status()<<std::endl;
+	    std::cout<<"La vera bisnonna id: "<<tp->mother(0)->mother(0)->mother(0)->pdgId()<<std::endl;
+
+	    if(fabs(motherID) == 13){
+
+		motherID = tp->mother(0)->mother(0)->pdgId(), 
+	    	motherStatus = tp->mother(0)->mother(0)->status();
+
+	    	if(fabs(motherID) == 13){
+
+			motherID = tp->mother(0)->mother(0)->mother(0)->pdgId(), 
+	    		motherStatus = tp->mother(0)->mother(0)->mother(0)->status();
+
+	    		if(fabs(motherID) == 13){
+
+				motherID = tp->mother(0)->mother(0)->mother(0)->mother(0)->pdgId(), 
+	    			motherStatus = tp->mother(0)->mother(0)->mother(0)->mother(0)->status();
+
+			}
+
+		}
+
+	    }
+
+	    std::cout<<"Mother id: "<<motherID<<std::endl;
+	    std::cout<<"Mother status: "<<motherStatus<<std::endl;*/
+	
+
 	    if (MABH) {
 	      if (quality > 0.75) {
 		Quality075 = true;
@@ -1077,6 +1122,12 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  nRPChits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonRPCHits());
 	  //	  std::cout<<track->eta()<<" "<<track->hitPattern().numberOfValidMuonGEMHits()<<std::endl;
 	  if(useGEMs_) nGEMhits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonGEMHits());
+
+	  n_trkLayersOld[w]->Fill(track->hitPattern().trackerLayersWithMeasurement());
+	  n_pxlHitsOld[w]->Fill(track->hitPattern().numberOfValidPixelHits());
+	  n_pxlHitsNew[w]->Fill(track->hitPattern().pixelLayersWithMeasurement());
+	  n_pxlHitsNew43Inn[w]->Fill(track->hitPattern().pixelLayersWithMeasurement(4,3));
+	  n_pxlHitsNew32Inn[w]->Fill(track->hitPattern().pixelLayersWithMeasurement(3,2));
 
 	  nlosthits_vs_eta[w]->Fill(getEta(track->eta()),track->numberOfLostHits());
 
