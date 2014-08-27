@@ -122,7 +122,9 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
 	else ipxy = true;
  	if(vertexes->size()!=0 && useIPz) ipz = fabs(muon->muonBestTrack()->dz((*vertexes)[0].position())) < 0.5;
 	else ipz = true;
-	bool validPxlHit = muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0;
+	//bool validPxlHit = muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0;
+	bool validPxlHit = muon->innerTrack()->hitPattern().pixelLayersWithMeasurement(3,2) > 0;
+	//bool validPxlHit = muon->innerTrack()->hitPattern().pixelLayersWithMeasurement(4,3) > 0;
 
 	if(trkLayMeas && isGlb && isPF && chi2 && validHits && matchedSt && ipxy && ipz && validPxlHit) result = true;
 

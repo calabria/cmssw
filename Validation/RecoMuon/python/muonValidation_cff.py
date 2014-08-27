@@ -514,6 +514,13 @@ trkStaMuonTrackVMuonAssoc.label = ('extractedTRKSTAMuons',)
 trkStaMuonTrackVMuonAssoc.usetracker = True
 trkStaMuonTrackVMuonAssoc.usemuon = True
 
+trkStaGlbMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+trkStaGlbMuonTrackVMuonAssoc.associatormap = 'tpToGlbMuonAssociation'
+trkStaGlbMuonTrackVMuonAssoc.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
+trkStaGlbMuonTrackVMuonAssoc.label = ('extractedTRKSTAGLBMuons',)
+trkStaGlbMuonTrackVMuonAssoc.usetracker = True
+trkStaGlbMuonTrackVMuonAssoc.usemuon = True
+
 trkStaMuonTrackVMuonAssoc20 = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 trkStaMuonTrackVMuonAssoc20.associatormap = 'tpToGlbMuonAssociation'
 trkStaMuonTrackVMuonAssoc20.associators = ['TrackAssociatorByChi2','TrackAssociatorByPull']
@@ -521,7 +528,6 @@ trkStaMuonTrackVMuonAssoc20.label = ('extractedTRKSTAMuons20',)
 trkStaMuonTrackVMuonAssoc20.ptMinGP = 20.0
 trkStaMuonTrackVMuonAssoc20.usetracker = True
 trkStaMuonTrackVMuonAssoc20.usemuon = True
-
 
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -791,7 +797,7 @@ muonValidation_seq = cms.Sequence(
 	staUpdMuonTrackVMuonAssoc + staUpdMuonTrackVMuonAssoc20
 	#+ glbMuonTrackVTrackAssoc 
 	+ glbMuonTrackVMuonAssoc + glbMuonTrackVMuonAssoc20 
-        + trkStaMuonTrackVMuonAssoc
+        + trkStaMuonTrackVMuonAssoc + trkStaGlbMuonTrackVMuonAssoc
 	#+ bestMuonTrackVTrackAssoc + bestMuonTrackVTrackAssoc20
 	+ bestMuonLooseTrackVTrackAssoc + bestMuonLooseTrackVTrackAssoc20
 	#+ bestMuonTightTrackVTrackAssoc + bestMuonTightTrackVTrackAssoc20
@@ -803,8 +809,8 @@ muonValidation_seq = cms.Sequence(
 	#+ trackerMuonTMOneTrackVTrackAssoc5 + trackerMuonTMLastTrackVTrackAssoc5 
 	#+ trackerMuonTrackVTrackAssoc10 + trackerMuonArbTrackVTrackAssoc10 
 	#+ trackerMuonTMOneTrackVTrackAssoc10 + trackerMuonTMLastTrackVTrackAssoc10 
-	+ trackerMuonTrackVTrackAssoc20 + trackerMuonArbTrackVTrackAssoc20 
-	+ trackerMuonTMOneTrackVTrackAssoc20 + trackerMuonTMLastTrackVTrackAssoc20 
+	#+ trackerMuonTrackVTrackAssoc20 + trackerMuonArbTrackVTrackAssoc20 
+	#+ trackerMuonTMOneTrackVTrackAssoc20 + trackerMuonTMLastTrackVTrackAssoc20 
 	#+trkProbeTrackVSelMuonAssoc
 	#+ staUpdMuonTrackVSelMuonAssoc + glbMuonTrackVSelMuonAssoc
 	)
