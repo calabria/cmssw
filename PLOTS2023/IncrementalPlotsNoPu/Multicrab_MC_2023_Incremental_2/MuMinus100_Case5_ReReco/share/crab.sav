@@ -1,0 +1,12 @@
+-USER.user_remote_dir=Data/OfficialValidation/MuMinus100_Case5_ReReco
+-CMSSW.total_number_of_events=200000
+-USER.publish_data_name=calabria_MuMinus100_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2023Scenario_VALNOPU2_Case5
+-USER.ui_working_dir=Multicrab_MC_2023_Incremental_2/MuMinus100_Case5_ReReco
+-USER.storage_element=T2_IT_Bari
+-CMSSW.datasetpath=/calabria_SingleMuPt100_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2023Scenario_Case5/calabria-calabria_SingleMuPt100_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2023Scenario_Case5-a26c687b08a0d489fe253a4ed92f9da7/USER
+-jobtype=cmssw
+-CMSSW.events_per_job=10000
+-use_server=0
+-cfg=crab_MC_SingleMuPt40Fwd.cfg
+-scheduler=remoteGlidein
+-CMSSW.pset=muonValidation_cfg.py
