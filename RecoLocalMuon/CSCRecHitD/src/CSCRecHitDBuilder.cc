@@ -211,7 +211,7 @@ void CSCRecHitDBuilder::build( const CSCStripDigiCollection* stripdc, const CSCW
 				hitsInLayer.push_back( rechit );
               			hits_in_layer++;
 				break;
-              		case 1: if(station != 1 || ring != 1){
+              		case 1: if(!(station == 1 && (ring == 1 || ring == 4))){
 				hitsInLayer.push_back( rechit );
               			hits_in_layer++;}
 				break;
