@@ -20,6 +20,12 @@ std::vector<double> MuonTrackCollProducer::findSimVtx(edm::Event& iEvent){
   iEvent.getByLabel("genParticles", genParticles);
   std::vector<double> vtxCoord;
   vtxCoord.push_back(0);
+  vtxCoord.push_back(0);
+  vtxCoord.push_back(0);
+  vtxCoord.push_back(0);
+  vtxCoord.push_back(0);
+  vtxCoord.push_back(0);
+  vtxCoord.push_back(0);
 
   if(genParticles.isValid()){
 
@@ -33,13 +39,23 @@ std::vector<double> MuonTrackCollProducer::findSimVtx(edm::Event& iEvent){
 		//double etaGen = itg->eta();
 		//std::cout<<"id "<<id<<" "<<phiGen<<" "<<etaGen<<std::endl;
 
-		if(fabs(id) == 23 && status == 3) vtxCoord[0] = 1;
+		if(fabs(id) == 23 && status == 3){
 
-		if(fabs(id) == 13 && status == 3){
+	 		vtxCoord[0] = 1;
 
-			vtxCoord.push_back(itg->vx()); 
-			vtxCoord.push_back(itg->vy());
-			vtxCoord.push_back(itg->vz());
+			vtxCoord[4] = (double)(itg->vx()); 
+			vtxCoord[5] = (double)(itg->vy());
+			vtxCoord[6] = (double)(itg->vz());
+
+		}
+
+		//if(fabs(id) == 13) std::cout<<"ID "<<id<<" Status "<<status<<std::endl;
+
+		if(fabs(id) == 13 && status == 1){
+
+			vtxCoord[1] = (double)(itg->vx()); 
+			vtxCoord[2] = (double)(itg->vy());
+			vtxCoord[3] = (double)(itg->vz());
 
 		}
 
@@ -95,9 +111,15 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
 
   if (muon->muonBestTrack().isNonnull() && muon->innerTrack().isNonnull() && muon->globalTrack().isNonnull()){
 
+	std::vector<double> vtxCoord = findSimVtx(iEvent);
+        GlobalPoint point(vtxCoord[1],vtxCoord[2],vtxCoord[3]);
+        GlobalPoint pointDY(vtxCoord[4],vtxCoord[5],vtxCoord[6]);
+
 	//float muonX = muon->vx();
 	//float muonY = muon->vy();
-	float muonZ = muon->vz();
+	//float muonZ = muon->vz();
+
+	float muonZ = pointDY.z();
 		
  	edm::Handle<reco::VertexCollection> vertexHandle;
   	iEvent.getByLabel(vxtTag,vertexHandle);
@@ -125,14 +147,24 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
 	}
 	//std::cout<<distInit<<" "<<indexFinal<<std::endl;
 
-	std::vector<double> vtxCoord = findSimVtx(iEvent);
-        GlobalPoint point(vtxCoord[1],vtxCoord[2],vtxCoord[3]);
+	double ipxySim = 0;
+	double ipzSim = 0;
+	
+	if(vtxCoord[0] == 0){
 
-        double ipxySim = fabs(muon->muonBestTrack()->dxy(math::XYZPoint(point.x(),point.y(),point.z())));
-        double ipzSim = fabs(muon->muonBestTrack()->dz(math::XYZPoint(point.x(),point.y(),point.z())));
+        	ipxySim = fabs(muon->muonBestTrack()->dxy(math::XYZPoint(point.x(),point.y(),point.z())));
+        	ipzSim = fabs(muon->muonBestTrack()->dz(math::XYZPoint(point.x(),point.y(),point.z())));
+	}
+	else if(vtxCoord[0] == 1){
+
+		ipxySim = fabs(muon->muonBestTrack()->dxy(math::XYZPoint(pointDY.x(),pointDY.y(),pointDY.z())));
+        	ipzSim = fabs(muon->muonBestTrack()->dz(math::XYZPoint(pointDY.x(),pointDY.y(),pointDY.z())));
+
+	}
 	bool ipxySimBool = ipxySim < 0.2;
 	bool ipzSimBool = ipzSim < 0.5;
-        //std::cout<<point.x()<<" "<<point.y()<<" "<<point.z()<<" "<<ipxySim<<" "<<ipxySimBool<<std::endl;
+        //std::cout<<"vx: "<<point.x()<<" vy: "<<point.y()<<" vz: "<<point.z()<<" |Dxy|: "<<ipxySim<<" "<<ipxySimBool<<" |Dz|: "<<ipzSim<<" "<<ipzSimBool<<std::endl;
+        //std::cout<<"vx: "<<pointDY.x()<<" vy: "<<pointDY.y()<<" vz: "<<pointDY.z()<<" |Dxy|: "<<ipxySim<<" "<<ipxySimBool<<" |Dz|: "<<ipzSim<<" "<<ipzSimBool<<std::endl;
 
 	bool trkLayMeas = muon->muonBestTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
 	bool isGlb = muon->isGlobalMuon(); 
@@ -143,16 +175,22 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
 	bool ipxy = false;
 	bool ipz = false;
 	if(vertices->size()!=0 && useIPxy){
+	//if(useIPxy){
 
 		if(vtxCoord[0] == 1) ipxy = fabs(muon->muonBestTrack()->dxy((*vertices)[indexFinal].position())) < 0.2;
 		else ipxy = ipxySimBool;
+		//ipxy = ipxySimBool;
 
 	}
 	else ipxy = true;
  	if(vertices->size()!=0 && useIPz){
+ 	//if(useIPz){
 
 		if(vtxCoord[0] == 1) ipz = fabs(muon->muonBestTrack()->dz((*vertices)[indexFinal].position())) < 0.5;	
 		else ipz = ipzSimBool;
+		//ipz = ipzSimBool;
+
+        	//std::cout<<"vx: "<<pointDY.x()<<" vy: "<<pointDY.y()<<" vz: "<<pointDY.z()<<" |Dz|: "<<fabs(muon->muonBestTrack()->dz((*vertices)[indexFinal].position()))<<" "<<ipz<<std::endl;
 
 	}
 	else ipz = true;

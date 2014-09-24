@@ -547,32 +547,37 @@ TrackerMuonArbitrated20 = cms.EDProducer("MuonTrackCollProducer",
 #-----------------------------------------------------------------------------------------------------------------------
 
 muonColl_seq = cms.Sequence(
-			     muonTRKSTA * 
-			     muonTRKSTAGLB * 
+			     #muonTRKSTA * 
+			     #muonTRKSTAGLB * 
 			     #muonTRKSTA20 *
-			     #muonPt5 * 
-			     #muonPt10 *
+			     muonPt5 * 
+			     muonPt10 *
 			     muonPt20)
 trackColl_seq = cms.Sequence(staMuonsPt20)
-extractedMuonTracks_seq = cms.Sequence( extractedTRKSTAMuons * 
-				  	extractedTRKSTAGLBMuons *
+extractedMuonTracks_seq = cms.Sequence( #extractedTRKSTAMuons * 
+				  	#extractedTRKSTAGLBMuons *
 					#extractedTRKSTAMuons20 *
 				        extractedGlobalMuons * 
-					#extractedGlobalMuons5 * 
-					#extractedGlobalMuons10 * 
+					extractedGlobalMuons5 * 
+					extractedGlobalMuons10 * 
 					extractedGlobalMuons20)
 bestMuon_seq = cms.Sequence( 
-			     bestMuon * bestMuonLoose * bestMuonTight * bestMuonTightNoIPz * 
+			     #bestMuon * bestMuonLoose * bestMuonTight * bestMuonTightNoIPz * 
 			     #bestMuon5 * bestMuonLoose5 * bestMuonTight5 * bestMuonTightNoIPz5 *
 			     #bestMuon10 * bestMuonLoose10 * bestMuonTight10 * bestMuonTightNoIPz10 *
-			     bestMuon20 * bestMuonLoose20 * bestMuonTight20 * bestMuonTightNoIPz20
+			     #bestMuon20 * bestMuonLoose20 * bestMuonTight20 * bestMuonTightNoIPz20
+			     bestMuonLoose * bestMuonTight * 
+			     bestMuonLoose5 * bestMuonTight5 *
+			     bestMuonLoose10 * bestMuonTight10 *
+			     bestMuonLoose20 * bestMuonTight20
 			   )
 bestMuonTuneP_seq = cms.Sequence( bestMuonTuneP )
 trackerMuon_seq = cms.Sequence(
-			       trackerMuons * TrackerMuonArbitrated * TMOneStationTight * TMLastStationAngTight *
+			       #trackerMuons * TrackerMuonArbitrated * TMOneStationTight * TMLastStationAngTight *
 			       #trackerMuons5 * TrackerMuonArbitrated5 * TMOneStationTight5 * TMLastStationAngTight5 *
 			       #trackerMuons10 * TrackerMuonArbitrated10 * TMOneStationTight10 * TMLastStationAngTight10 *
-			       trackerMuons20 * TrackerMuonArbitrated20 * TMOneStationTight20 * TMLastStationAngTight20
+			       #trackerMuons20 * TrackerMuonArbitrated20 * TMOneStationTight20 * TMLastStationAngTight20
+			       TrackerMuonArbitrated * TrackerMuonArbitrated5 * TrackerMuonArbitrated10 * TrackerMuonArbitrated20
 		   	      )
 #
 # Configuration for Seed track extractor

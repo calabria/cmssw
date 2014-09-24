@@ -636,7 +636,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
 	for (unsigned int f=0; f<vtxintervals[w].size()-1; f++){
 	  if (nTrueVertices>=vtxintervals[w][f]&&
-	      nTrueVertices<=vtxintervals[w][f+1]) {
+	      nTrueVertices<vtxintervals[w][f+1]) {
 	    totSIMvtx[w][f]++;
 	    if(fabs(momentumTP.eta()) < 1.2) totSIMvtxBarrel[w][f]++;
 	    else if(fabs(momentumTP.eta()) > 1.2 && fabs(momentumTP.eta()) < 1.7) totSIMvtxOverlap[w][f]++;
@@ -1294,6 +1294,7 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
       fillPlotFromVector(h_simulvtxBarrel[w],totSIMvtxBarrel[w]);
       fillPlotFromVector(h_simulvtxEndcap[w],totSIMvtxEndcap[w]);
       fillPlotFromVector(h_simulvtxOverlap[w],totSIMvtxOverlap[w]);
+
       fillPlotFromVector(h_assoceta[w],totASSeta[w]);
       fillPlotFromVector(h_assocetaBin1[w],totASSetaBin1[w]);
       fillPlotFromVector(h_assocetaBin2[w],totASSetaBin2[w]);
@@ -1304,6 +1305,7 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
       fillPlotFromVector(h_assocvtxBarrel[w],totASSvtxBarrel[w]);
       fillPlotFromVector(h_assocvtxEndcap[w],totASSvtxEndcap[w]);
       fillPlotFromVector(h_assocvtxOverlap[w],totASSvtxOverlap[w]);
+
       fillPlotFromVector(h_assoc2eta[w],totASS2eta[w]);
       fillPlotFromVector(h_assoc2etaBin1[w],totASS2etaBin1[w]);
       fillPlotFromVector(h_assoc2etaBin2[w],totASS2etaBin2[w]);

@@ -794,23 +794,24 @@ muonValidation_seq = cms.Sequence(
 	#trkProbeTrackVMuonAssoc+ trkMuonTrackVTrackAssoc
 	#+staSeedTrackVMuonAssoc+
 	#staMuonTrackVMuonAssoc + 
-	staUpdMuonTrackVMuonAssoc + staUpdMuonTrackVMuonAssoc20
+	#staUpdMuonTrackVMuonAssoc + staUpdMuonTrackVMuonAssoc20
 	#+ glbMuonTrackVTrackAssoc 
-	+ glbMuonTrackVMuonAssoc + glbMuonTrackVMuonAssoc20 
-        + trkStaMuonTrackVMuonAssoc + trkStaGlbMuonTrackVMuonAssoc
+	glbMuonTrackVMuonAssoc + glbMuonTrackVMuonAssoc5 + glbMuonTrackVMuonAssoc10 + glbMuonTrackVMuonAssoc20 
+        #+ trkStaMuonTrackVMuonAssoc + trkStaGlbMuonTrackVMuonAssoc
 	#+ bestMuonTrackVTrackAssoc + bestMuonTrackVTrackAssoc20
-	+ bestMuonLooseTrackVTrackAssoc + bestMuonLooseTrackVTrackAssoc20
-	#+ bestMuonTightTrackVTrackAssoc + bestMuonTightTrackVTrackAssoc20
-	+ bestMuonTightNoIPzTrackVTrackAssoc + bestMuonTightNoIPzTrackVTrackAssoc20
+	+ bestMuonLooseTrackVTrackAssoc + bestMuonLooseTrackVTrackAssoc5 + bestMuonLooseTrackVTrackAssoc10 + bestMuonLooseTrackVTrackAssoc20
+	+ bestMuonTightTrackVTrackAssoc + bestMuonTightTrackVTrackAssoc5 + bestMuonTightTrackVTrackAssoc10 + bestMuonTightTrackVTrackAssoc20
+	#+ bestMuonTightNoIPzTrackVTrackAssoc + bestMuonTightNoIPzTrackVTrackAssoc20
 	#+ bestMuonTunePTrackVTrackAssoc
-	+ trackerMuonTrackVTrackAssoc + trackerMuonArbTrackVTrackAssoc 
-	+ trackerMuonTMOneTrackVTrackAssoc + trackerMuonTMLastTrackVTrackAssoc
+	#+ trackerMuonTrackVTrackAssoc + trackerMuonArbTrackVTrackAssoc 
+	#+ trackerMuonTMOneTrackVTrackAssoc + trackerMuonTMLastTrackVTrackAssoc
 	#+ trackerMuonTrackVTrackAssoc5 + trackerMuonArbTrackVTrackAssoc5 
 	#+ trackerMuonTMOneTrackVTrackAssoc5 + trackerMuonTMLastTrackVTrackAssoc5 
 	#+ trackerMuonTrackVTrackAssoc10 + trackerMuonArbTrackVTrackAssoc10 
 	#+ trackerMuonTMOneTrackVTrackAssoc10 + trackerMuonTMLastTrackVTrackAssoc10 
 	#+ trackerMuonTrackVTrackAssoc20 + trackerMuonArbTrackVTrackAssoc20 
-	#+ trackerMuonTMOneTrackVTrackAssoc20 + trackerMuonTMLastTrackVTrackAssoc20 
+	#+ trackerMuonTMOneTrackVTrackAssoc20 + trackerMuonTMLastTrackVTrackAssoc20
+	+ trackerMuonArbTrackVTrackAssoc + trackerMuonArbTrackVTrackAssoc5 + trackerMuonArbTrackVTrackAssoc10 + trackerMuonArbTrackVTrackAssoc20
 	#+trkProbeTrackVSelMuonAssoc
 	#+ staUpdMuonTrackVSelMuonAssoc + glbMuonTrackVSelMuonAssoc
 	)
@@ -829,7 +830,11 @@ muonValidationCosmic_seq = cms.Sequence(trkCosmicMuonTrackVTrackAssoc+staCosmicM
 recoMuonValidation = cms.Sequence(#probeTracks_seq*
 				 (selectedVertices * selectedFirstPrimaryVertex) * 
 				 #bestMuonTuneP_seq*
-				 muonColl_seq*trackColl_seq*extractedMuonTracks_seq*bestMuon_seq*trackerMuon_seq*
+				 muonColl_seq*
+				 #trackColl_seq*
+				 extractedMuonTracks_seq*
+				 bestMuon_seq*
+				 trackerMuon_seq*
 				 ((muonValidation_seq)
                                  #+(muonValidationTEV_seq)
                                  #+(muonValidationSET_seq)
