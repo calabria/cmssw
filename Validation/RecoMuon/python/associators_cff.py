@@ -323,6 +323,50 @@ bestMuonLoose20 = cms.EDProducer("MuonTrackCollProducer",
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+bestMuonLoose2 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muons"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose2')
+)
+
+bestMuonLoose32 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt3"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose2')
+)
+
+bestMuonLoose52 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt5"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose2')
+)
+
+bestMuonLoose102 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt10"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose2')
+)
+
+bestMuonLoose152 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt15"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose2')
+)
+
+bestMuonLoose202 = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('bestMuonLoose2')
+)
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 bestMuonTight = cms.EDProducer("MuonTrackCollProducer",
    muonsTag = cms.InputTag("muons"),
    vxtTag = cms.InputTag("selectedVertices"),
@@ -566,10 +610,9 @@ bestMuon_seq = cms.Sequence(
 			     #bestMuon5 * bestMuonLoose5 * bestMuonTight5 * bestMuonTightNoIPz5 *
 			     #bestMuon10 * bestMuonLoose10 * bestMuonTight10 * bestMuonTightNoIPz10 *
 			     #bestMuon20 * bestMuonLoose20 * bestMuonTight20 * bestMuonTightNoIPz20
-			     bestMuonLoose * bestMuonTight * 
-			     bestMuonLoose5 * bestMuonTight5 *
-			     bestMuonLoose10 * bestMuonTight10 *
-			     bestMuonLoose20 * bestMuonTight20
+			     bestMuonLoose * bestMuonLoose5 *  bestMuonLoose10 * bestMuonLoose20 *
+			     bestMuonTight * bestMuonTight5 * bestMuonTight10 * bestMuonTight20 *
+			     bestMuonLoose2 * bestMuonLoose52  * bestMuonLoose102  * bestMuonLoose202 
 			   )
 bestMuonTuneP_seq = cms.Sequence( bestMuonTuneP )
 trackerMuon_seq = cms.Sequence(
