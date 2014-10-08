@@ -282,11 +282,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 						 << label[www].instance()<<" with "
 						 << associators[ww].c_str() <<"\n";
 	
-	  LogTrace("MuonTrackValidator") << "Calling associateRecoToSim method" << "\n";
+	  edm::LogVerbatim("MuonTrackValidator") << "Calling associateRecoToSim method" << "\n";
 	  recSimColl=associator[ww]->associateRecoToSim(trackCollection,
 							TPCollectionHfake,
 							&event,&setup);
-	  LogTrace("MuonTrackValidator") << "Calling associateSimToReco method" << "\n";
+	  edm::LogVerbatim("MuonTrackValidator") << "Calling associateSimToReco method" << "\n";
 	  simRecColl=associator[ww]->associateSimToReco(trackCollection,
 							TPCollectionHeff, 
 							&event,&setup);
@@ -533,6 +533,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
       for(View<Track>::size_type i=0; i<trackCollectionSize; ++i){
         bool Track_is_matched = false; 
 	RefToBase<Track> track(trackCollection, i);
+	if((track->numberOfValidHits()) == 0) continue;
 	rT++;
 
 	std::vector<std::pair<TrackingParticleRef, double> > tp;
@@ -567,7 +568,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  }
 
 	  if (!Track_is_matched) edm::LogVerbatim("MuonTrackValidator") 
-	    << "reco::Track #" << track.key() << " with pt=" << track->pt() << " NOT associated to any TrackingParticle" << "\n";
+	    << "reco::Track #" << track.key() << " with pt=" << track->pt() << " eta = " << track->eta() << " NOT associated to any TrackingParticle" << "\n";
 	}
 	// old logic (bugged)
 	else {

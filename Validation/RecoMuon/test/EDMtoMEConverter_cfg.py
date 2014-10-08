@@ -6,8 +6,11 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load("DQMServices.Components.EDMtoMEConverter_cff")
 process.load("DQMServices.Components.DQMEnvironment_cfi")
 #process.load("Configuration.StandardSequences.FakeConditions_cff")
-process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = "IDEAL_V11::All"
+
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgrade2019', '')
 process.load("Validation.Configuration.postValidation_cff")
 process.load("Validation.RecoMuon.PostProcessorHLT_cff")
 
@@ -16,7 +19,10 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring("file:validationEDM.root")
+    fileNames = cms.untracked.vstring(
+	"file:validationEDM.root",
+	#"file:validationEDM_minus.root"
+    )
 )
 
 process.DQMStore.referenceFileName = ""
@@ -30,7 +36,9 @@ process.dqmSaver.forceRunNumber = cms.untracked.int32(1)
 #End of 'RelVal convention settings
 process.dqmSaver.workflow = "/GlobalValidation/Test/RECO"
 
+from Validation.RecoMuon.PostProcessor_cff import *
 process.p1 = cms.Path(process.EDMtoMEConverter*
-                      process.postValidation*
-#                      process.recoMuonPostProcessorsHLT*
+                      #process.postValidation*
+		      process.recoMuonPostProcessors*
+#                     process.recoMuonPostProcessorsHLT*
                       process.dqmSaver)

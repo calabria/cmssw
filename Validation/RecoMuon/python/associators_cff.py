@@ -26,6 +26,163 @@ TrackAssociatorByPosDeltaR.ConsiderAllSimHits = cms.bool(True)
 # Configuration for Muon track extractor
 #
 
+selectedVertices = cms.EDFilter("VertexSelector",
+    src = cms.InputTag('offlinePrimaryVertices'),
+    cut = cms.string("isValid & ndof >= 4 & chi2 > 0 & tracksSize > 0 & abs(z) < 24 & abs(position.Rho) < 2."),
+    filter = cms.bool(False)
+)
+
+selectedFirstPrimaryVertex = cms.EDFilter("PATSingleVertexSelector",
+    mode = cms.string('firstVertex'),
+    vertices = cms.InputTag('selectedVertices'),
+    filter = cms.bool(False)
+)
+
+muonPt5 = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 5."),
+    filter = cms.bool(False)
+)
+
+muonPt10 = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 10."),
+    filter = cms.bool(False)
+)
+
+muonPt20 = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 20."),
+    filter = cms.bool(False)
+)
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+bestMuonLoose = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muons"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackLoose')
+)
+
+bestMuonLoose5 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muonPt5"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackLoose')
+)
+
+bestMuonLoose10 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muonPt10"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackLoose')
+)
+
+bestMuonLoose20 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackLoose')
+)
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+bestMuonLoose2 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muons"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackLoose2')
+)
+
+bestMuonLoose52 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muonPt5"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackLoose2')
+)
+
+bestMuonLoose102 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muonPt10"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackLoose2')
+)
+
+bestMuonLoose202 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackLoose2')
+)
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+bestMuonTight = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muons"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackTight')
+)
+
+bestMuonTight5 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muonPt5"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackTight')
+)
+
+bestMuonTight10 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muonPt10"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackTight')
+)
+
+bestMuonTight20 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muonPt20"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('globalTrackTight')
+)
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+muonColl_seq = cms.Sequence( muonPt5 * 
+			     muonPt10 *
+			     muonPt20)
+
+bestMuon_seq = cms.Sequence( bestMuonLoose * bestMuonLoose5 *  bestMuonLoose10 * bestMuonLoose20 *
+			     bestMuonTight * bestMuonTight5 * bestMuonTight10 * bestMuonTight20 *
+			     bestMuonLoose2 * bestMuonLoose52  * bestMuonLoose102  * bestMuonLoose202 
+			   )
+
+##############################################################################################################################################
+
 import SimMuon.MCTruth.MuonTrackProducer_cfi
 extractedGlobalMuons = SimMuon.MCTruth.MuonTrackProducer_cfi.muonTrackProducer.clone()
 extractedGlobalMuons.selectionTags = ('AllGlobalMuons',)
@@ -174,6 +331,14 @@ tpToL2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorB
 tpToL2UpdMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToL3MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 
+# few more association modules usable for the Upgrade TP studies 
+tpToTkSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToStaUpdSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToStaUpdSel2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToGlbSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToGlbSel2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToGlbSel3MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+
 tpToTkMuonAssociation.tpTag = 'mix:MergedTrackTruth'
 #tpToTkMuonAssociation.tracksTag = 'generalTracks'
 tpToTkMuonAssociation.tracksTag = 'probeTracks'
@@ -273,6 +438,59 @@ tpToL3MuonAssociation.ignoreMissingTrackCollection = True
 tpToL3MuonAssociation.UseSplitting = False
 tpToL3MuonAssociation.UseGrouped = False
 
+# few more association modules usable for the Upgrade TP studies 
+#tpToTkSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+#tpToStaUpdSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+#tpToGlbSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+
+tpToTkSelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToTkSelMuonAssociation.tracksTag = 'probeTracks'
+tpToTkSelMuonAssociation.UseTracker = True
+tpToTkSelMuonAssociation.UseMuon = False
+tpToTkSelMuonAssociation.EfficiencyCut_track = cms.double(0.5)
+tpToTkSelMuonAssociation.PurityCut_track = cms.double(0.75)
+
+tpToStaUpdSelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToStaUpdSelMuonAssociation.tracksTag = 'standAloneMuons:UpdatedAtVtx' 
+tpToStaUpdSelMuonAssociation.UseTracker = False
+tpToStaUpdSelMuonAssociation.UseMuon = True
+tpToStaUpdSelMuonAssociation.includeZeroHitMuons = False
+
+tpToStaUpdSel2MuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToStaUpdSel2MuonAssociation.tracksTag = 'standAloneMuons:UpdatedAtVtx' 
+tpToStaUpdSel2MuonAssociation.UseTracker = False
+tpToStaUpdSel2MuonAssociation.UseMuon = True
+tpToStaUpdSel2MuonAssociation.includeZeroHitMuons = False
+tpToStaUpdSel2MuonAssociation.PurityCut_muon = cms.double(0.75)
+
+tpToGlbSelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToGlbSelMuonAssociation.tracksTag = 'extractedGlobalMuons' 
+tpToGlbSelMuonAssociation.UseTracker = True
+tpToGlbSelMuonAssociation.UseMuon = True
+tpToGlbSelMuonAssociation.EfficiencyCut_track = cms.double(0.5)
+tpToGlbSelMuonAssociation.PurityCut_track = cms.double(0.75)
+tpToGlbSelMuonAssociation.acceptOneStubMatchings = False
+tpToGlbSelMuonAssociation.includeZeroHitMuons = False
+
+tpToGlbSel3MuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToGlbSel3MuonAssociation.tracksTag = 'extractedGlobalMuons' 
+tpToGlbSel3MuonAssociation.UseTracker = True
+tpToGlbSel3MuonAssociation.UseMuon = True
+tpToGlbSel3MuonAssociation.EfficiencyCut_track = cms.double(0.5)
+tpToGlbSel3MuonAssociation.PurityCut_track = cms.double(0.75)
+tpToGlbSel3MuonAssociation.PurityCut_muon = cms.double(0.75)
+tpToGlbSel3MuonAssociation.acceptOneStubMatchings = False
+tpToGlbSel3MuonAssociation.includeZeroHitMuons = False
+
+tpToGlbSel2MuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToGlbSel2MuonAssociation.tracksTag = 'extractedGlobalMuons' 
+tpToGlbSel2MuonAssociation.UseTracker = True
+tpToGlbSel2MuonAssociation.UseMuon = True
+tpToGlbSel2MuonAssociation.EfficiencyCut_track = cms.double(0.5)
+tpToGlbSel2MuonAssociation.PurityCut_track = cms.double(0.75)
+#tpToGlbSel2MuonAssociation.acceptOneStubMatchings = False
+tpToGlbSel2MuonAssociation.includeZeroHitMuons = False
+ 
 #
 # Associators for cosmics:
 #
@@ -320,12 +538,18 @@ tpToGlbCosmicMuonAssociation.UseMuon = True
 #
 
 muonAssociation_seq = cms.Sequence(
-    extractedMuonTracks_seq
+    selectedVertices
+    + extractedMuonTracks_seq
+    + muonColl_seq
+    + bestMuon_seq
 #    +seedsOfSTAmuons_seq
     +probeTracks_seq+(tpToTkMuonAssociation+tpToTkmuTrackAssociation)
 #    +(tpToStaSeedAssociation+tpToStaMuonAssociation+tpToStaUpdMuonAssociation+tpToGlbMuonAssociation)
     +(tpToStaMuonAssociation+tpToStaUpdMuonAssociation+tpToGlbMuonAssociation)
 #   +(tpToStaTrackAssociation+tpToStaUpdTrackAssociation+tpToGlbTrackAssociation)
+#    
+# few more association modules usable for the Upgrade TP studies 
+    +(tpToTkSelMuonAssociation+tpToStaUpdSelMuonAssociation+tpToStaUpdSel2MuonAssociation+tpToGlbSelMuonAssociation+tpToGlbSel2MuonAssociation+tpToGlbSel3MuonAssociation) 
 )
 muonAssociationTEV_seq = cms.Sequence(
     (tpToTevFirstMuonAssociation+tpToTevPickyMuonAssociation+tpToTevDytMuonAssociation)

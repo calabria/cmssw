@@ -1,9 +1,6 @@
-//
-// modified & integrated by Giovanni Abbiendi
-// from code by Arun Luthra: UserCode/luthra/MuonTrackSelector/src/MuonTrackSelector.cc
-//
-#ifndef MCTruth_MuonTrackProducer_h
-#define MCTruth_MuonTrackProducer_h
+
+#ifndef RecoMuon_MuonTrackCollProducer_h
+#define RecoMuon_MuonTrackCollProducer_h
 
 #include <memory>
 #include "FWCore/Framework/interface/EDProducer.h"
@@ -15,28 +12,23 @@
 #include "DataFormats/DTRecHit/interface/DTRecSegment4DCollection.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
-class MuonTrackProducer : public edm::EDProducer {
+class MuonTrackCollProducer : public edm::EDProducer {
   public:
-    explicit MuonTrackProducer(const edm::ParameterSet&);
+    explicit MuonTrackCollProducer(const edm::ParameterSet&);
      std::vector<double> findSimVtx(edm::Event& iEvent);
      bool isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
      bool isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
      bool isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
      bool isLoose2(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
-    ~MuonTrackProducer();
+    ~MuonTrackCollProducer();
 
   private:
     virtual void produce(edm::Event&, const edm::EventSetup&);
   
     edm::Handle<reco::MuonCollection> muonCollectionH;
-    edm::Handle<DTRecSegment4DCollection> dtSegmentCollectionH_;
-    edm::Handle<CSCSegmentCollection> cscSegmentCollectionH_;
-
     edm::InputTag muonsTag;
     edm::InputTag vxtTag;
     bool useIPxy, useIPz;
-    edm::InputTag inputDTRecSegment4DCollection_;
-    edm::InputTag inputCSCSegmentCollection_;
     std::vector<std::string> selectionTags;
     std::string trackType;
     const edm::ParameterSet parset_;
