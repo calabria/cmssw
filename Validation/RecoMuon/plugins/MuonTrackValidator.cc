@@ -893,7 +893,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
 	//Fill other histos
  	try{
-	  if (!Track_is_matched) continue;
+	if (! (Track_is_matched && tpSelector(*tpr)) ) continue;
 
 	  if (associators[ww]=="TrackAssociatorByChi2"){
 	    //association chi2
