@@ -15,6 +15,7 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     #
     useGsf=cms.bool(False),
     beamSpot = cms.InputTag("offlineBeamSpot"),
+    vertexSrc = cms.InputTag("selectedVertices"),
     # set true if you do not want that MTV launch an exception
     # if the track collection is missing (e.g. HLT):
     ignoremissingtrackcollection=cms.untracked.bool(False),
@@ -78,6 +79,10 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     dzRes_nbin = cms.int32(150),                                   
     dzRes_rangeMin = cms.double(-0.05),
     dzRes_rangeMax = cms.double(0.05),
+    #                               
+    minVtx = cms.double(0),                            
+    maxVtx = cms.double(200),
+    nintVtx = cms.int32(20),
     # 
     minpT = cms.double(0),
     maxpT = cms.double(2500),
