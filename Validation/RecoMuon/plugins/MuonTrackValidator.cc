@@ -597,15 +597,15 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	      getEta(momentumTP.eta())<etaintervals[w][f+1]) {
 	    totSIMeta[w][f]++;
 	    if(sqrt(momentumTP.perp2()) > 5 && sqrt(momentumTP.perp2()) < 10) totSIMetaBin1[w][f]++;
-	    if(sqrt(momentumTP.perp2()) > 10 && sqrt(momentumTP.perp2()) < 20) totSIMetaBin2[w][f]++;
-	    if(sqrt(momentumTP.perp2()) > 20 && sqrt(momentumTP.perp2()) < 40) totSIMetaBin3[w][f]++;
-	    if(sqrt(momentumTP.perp2()) > 40) totSIMetaBin4[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 10 && sqrt(momentumTP.perp2()) < 15) totSIMetaBin2[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 15 && sqrt(momentumTP.perp2()) < 20) totSIMetaBin3[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 20) totSIMetaBin4[w][f]++;
 	    if (TP_is_matched) {
 	      totASSeta[w][f]++;
 	      if(sqrt(momentumTP.perp2()) > 5 && sqrt(momentumTP.perp2()) < 10) totASSetaBin1[w][f]++;
-	      if(sqrt(momentumTP.perp2()) > 10 && sqrt(momentumTP.perp2()) < 20) totASSetaBin2[w][f]++;
-	      if(sqrt(momentumTP.perp2()) > 20 && sqrt(momentumTP.perp2()) < 40) totASSetaBin3[w][f]++;
-	      if(sqrt(momentumTP.perp2()) > 40) totASSetaBin4[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 10 && sqrt(momentumTP.perp2()) < 15) totASSetaBin2[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 15 && sqrt(momentumTP.perp2()) < 20) totASSetaBin3[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 20) totASSetaBin4[w][f]++;
 
 	      if (MABH) {
 		if (Quality075) {
@@ -825,15 +825,15 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	      getEta(track->momentum().eta())<etaintervals[w][f+1]) {
 	    totRECeta[w][f]++;
 	    if(sqrt(track->momentum().perp2()) > 5 && sqrt(track->momentum().perp2()) < 10) totRECetaBin1[w][f]++;
-	    if(sqrt(track->momentum().perp2()) > 10 && sqrt(track->momentum().perp2()) < 20) totRECetaBin2[w][f]++;
-	    if(sqrt(track->momentum().perp2()) > 20 && sqrt(track->momentum().perp2()) < 40) totRECetaBin3[w][f]++;
-	    if(sqrt(track->momentum().perp2()) > 40) totRECetaBin4[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 10 && sqrt(track->momentum().perp2()) < 15) totRECetaBin2[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 15 && sqrt(track->momentum().perp2()) < 20) totRECetaBin3[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 20) totRECetaBin4[w][f]++;
 	    if (Track_is_matched) {
 	      totASS2eta[w][f]++;
 	      if(sqrt(track->momentum().perp2()) > 5 && sqrt(track->momentum().perp2()) < 10) totASS2etaBin1[w][f]++;
-	      if(sqrt(track->momentum().perp2()) > 10 && sqrt(track->momentum().perp2()) < 20) totASS2etaBin2[w][f]++;
-	      if(sqrt(track->momentum().perp2()) > 20 && sqrt(track->momentum().perp2()) < 40) totASS2etaBin3[w][f]++;
-	      if(sqrt(track->momentum().perp2()) > 40) totASS2etaBin4[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 10 && sqrt(track->momentum().perp2()) < 15) totASS2etaBin2[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 15 && sqrt(track->momentum().perp2()) < 20) totASS2etaBin3[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 20) totASS2etaBin4[w][f]++;
 	    }		
 	  }
 	} // End for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
@@ -1076,15 +1076,15 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
  		qOverPtres1_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  	qOverPtresXL1_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  }
-	  else if(ptSim > 10 && ptSim < 20){
+	  else if(ptSim > 10 && ptSim < 15){
 	 	qOverPtres2_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  	qOverPtresXL2_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  }
-	  else if(ptSim > 20 && ptSim < 40){
+	  else if(ptSim > 15 && ptSim < 20){
  		qOverPtres3_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 		qOverPtresXL3_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  }
-	  else if(ptSim > 40){
+	  else if(ptSim > 20){
  		qOverPtres4_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  	qOverPtresXL4_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
 	  }
