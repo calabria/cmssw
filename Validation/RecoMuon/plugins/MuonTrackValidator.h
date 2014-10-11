@@ -197,7 +197,14 @@ private:
   std::vector<MonitorElement*> dxyres_vs_pt, ptres_vs_pt, invptres_vs_pt, qOverPtres_vs_pt, qOverPtresXL_vs_pt, dzres_vs_pt, phires_vs_pt, cotThetares_vs_pt;
 
   std::vector<MonitorElement*> ptres_vs_eta_sim, invptres_vs_eta_sim, qOverPtres_vs_eta_sim, qOverPtresXL_vs_eta_sim;
+  std::vector<MonitorElement*> qOverPtres1_vs_eta_sim, qOverPtresXL1_vs_eta_sim;
+  std::vector<MonitorElement*> qOverPtres2_vs_eta_sim, qOverPtresXL2_vs_eta_sim;
+  std::vector<MonitorElement*> qOverPtres3_vs_eta_sim, qOverPtresXL3_vs_eta_sim;
+  std::vector<MonitorElement*> qOverPtres4_vs_eta_sim, qOverPtresXL4_vs_eta_sim;
   std::vector<MonitorElement*> ptres_vs_pt_sim, invptres_vs_pt_sim, qOverPtres_vs_pt_sim, qOverPtresXL_vs_pt_sim;
+  std::vector<MonitorElement*> qOverPtresB_vs_pt_sim, qOverPtresXLB_vs_pt_sim;
+  std::vector<MonitorElement*> qOverPtresO_vs_pt_sim, qOverPtresXLO_vs_pt_sim;
+  std::vector<MonitorElement*> qOverPtresE_vs_pt_sim, qOverPtresXLE_vs_pt_sim;
 
   //pulls of track params vs eta: to be used with fitslicesytool
   std::vector<MonitorElement*> dxypull_vs_eta, ptpull_vs_eta, dzpull_vs_eta, phipull_vs_eta, thetapull_vs_eta;
