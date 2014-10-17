@@ -515,7 +515,7 @@ muonValidation_seq = cms.Sequence(
 	+ staUpdMuonTrackVSelMuonAssoc+staUpdMuonTrackVSel2MuonAssoc
 	+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc
 	+ looseMuonTrackVSelMuonAssoc+looseMuonTrackVSel2MuonAssoc+looseMuonTrackVSel3MuonAssoc
-	+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc+looseMuonTrackVSel3MuonAssoc
+	+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc+tightMuonTrackVSel3MuonAssoc
 #
 #	+ recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt
 	+ bestMuonLooseTrackVTrackAssoc #+ bestMuonLooseTrackVTrackAssoc5 + bestMuonLooseTrackVTrackAssoc10 + bestMuonLooseTrackVTrackAssoc20
