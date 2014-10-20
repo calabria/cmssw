@@ -73,10 +73,9 @@ bool MuonTrackCollProducer::isLoose(edm::Event& iEvent, reco::MuonCollection::co
 {
   bool isPF = muon->isPFMuon();
   bool isGLB = muon->isGlobalMuon();
-  //bool isTrk = muon->isTrackerMuon();
+  bool isTrk = muon->isTrackerMuon();
 
-  //return (isPF && (isGLB || isTrk) );
-  return (isPF && isGLB );
+  return (isPF && (isGLB || isTrk) );
 }
 
 bool MuonTrackCollProducer::isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz)
