@@ -100,7 +100,7 @@ bool MuonTrackCollProducer::isSoft(edm::Event& iEvent, reco::MuonCollection::con
   	const reco::VertexCollection* vertices = vertexHandle.product();
 
 	bool isGood = muon::isGoodMuon((*muon), muon::TMOneStationTight); 
-	bool trkLayMeas = muon->muonBestTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
+	bool trkLayMeas = muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
 	bool pxlLayMeas = muon->innerTrack()->hitPattern().pixelLayersWithMeasurement() > 0; 
 	bool quality = muon->innerTrack()->quality(reco::Track::highPurity);
 	bool ipxy = false;
@@ -175,7 +175,7 @@ bool MuonTrackCollProducer::isTight(edm::Event& iEvent, reco::MuonCollection::co
         //std::cout<<"vx: "<<point.x()<<" vy: "<<point.y()<<" vz: "<<point.z()<<" |Dxy|: "<<ipxySim<<" "<<ipxySimBool<<" |Dz|: "<<ipzSim<<" "<<ipzSimBool<<std::endl;
         //std::cout<<"vx: "<<pointDY.x()<<" vy: "<<pointDY.y()<<" vz: "<<pointDY.z()<<" |Dxy|: "<<ipxySim<<" "<<ipxySimBool<<" |Dz|: "<<ipzSim<<" "<<ipzSimBool<<std::endl;
 
-	bool trkLayMeas = muon->muonBestTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
+	bool trkLayMeas = muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
 	bool isGlb = muon->isGlobalMuon(); 
 	bool isPF = muon->isPFMuon(); 
 	bool chi2 = muon->globalTrack()->normalizedChi2() < 10.; 
