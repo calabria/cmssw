@@ -306,6 +306,8 @@ glbCosmicMuonTrackVMuonAssoc.usetracker = True
 glbCosmicMuonTrackVMuonAssoc.usemuon = True
 
 ### a few more validator modules usable also for Upgrade TP studies
+
+# about STA
 trkProbeTrackVSelMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 trkProbeTrackVSelMuonAssoc.associatormap = 'tpToTkSelMuonAssociation'
 trkProbeTrackVSelMuonAssoc.associators = ('MuonAssociationByHits',)
@@ -327,6 +329,7 @@ staUpdMuonTrackVSel2MuonAssoc.label = ('standAloneMuons:UpdatedAtVtx',)
 staUpdMuonTrackVSel2MuonAssoc.usetracker = False
 staUpdMuonTrackVSel2MuonAssoc.usemuon = True
 
+# about GLB
 glbMuonTrackVSelMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 glbMuonTrackVSelMuonAssoc.associatormap = 'tpToGlbSelMuonAssociation'
 glbMuonTrackVSelMuonAssoc.associators = ('MuonAssociationByHits',)
@@ -347,6 +350,13 @@ glbMuonTrackVSel3MuonAssoc.associators = ('MuonAssociationByHits',)
 glbMuonTrackVSel3MuonAssoc.label = ('extractedGlobalMuons',)
 glbMuonTrackVSel3MuonAssoc.usetracker = True
 glbMuonTrackVSel3MuonAssoc.usemuon = True
+
+glbMuonTrackVSel4MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+glbMuonTrackVSel4MuonAssoc.associatormap = 'tpToGlbSel4MuonAssociation'
+glbMuonTrackVSel4MuonAssoc.associators = ('MuonAssociationByHits',)
+glbMuonTrackVSel4MuonAssoc.label = ('extractedGlobalMuons',)
+glbMuonTrackVSel4MuonAssoc.usetracker = True
+glbMuonTrackVSel4MuonAssoc.usemuon = True
 
 ##################################################################################
 
@@ -509,11 +519,12 @@ recoMuonVMuAssoc_tgt.primaryVertex = 'offlinePrimaryVertices'
 muonValidation_seq = cms.Sequence(
         trkProbeTrackVMuonAssoc+trkMuonTrackVTrackAssoc
 #                                 +staSeedTrackVMuonAssoc
-	+ staMuonTrackVMuonAssoc+staUpdMuonTrackVMuonAssoc+glbMuonTrackVMuonAssoc
+#	+ staMuonTrackVMuonAssoc
+	+staUpdMuonTrackVMuonAssoc+glbMuonTrackVMuonAssoc
 # 
 	+ trkProbeTrackVSelMuonAssoc
 	+ staUpdMuonTrackVSelMuonAssoc+staUpdMuonTrackVSel2MuonAssoc
-	+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc
+	+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc+glbMuonTrackVSel4MuonAssoc
 	+ looseMuonTrackVSelMuonAssoc+looseMuonTrackVSel2MuonAssoc+looseMuonTrackVSel3MuonAssoc
 	+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc+tightMuonTrackVSel3MuonAssoc
 #

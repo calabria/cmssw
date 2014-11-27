@@ -333,6 +333,11 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
 	h_assocpT_Quality075.push_back( dbe_->book1D("num_assoc(simToReco)_pT_Q075","N of associated tracks (simToReco) vs pT (Quality>0.75)",nintpT,minpT,maxpT) );
 	h_assocphi_Quality05.push_back( dbe_->book1D("num_assoc(simToReco)_phi_Q05","N of associated tracks (simToReco) vs phi (Quality>0.5)",nintPhi,minPhi,maxPhi) );
 	h_assocphi_Quality075.push_back( dbe_->book1D("num_assoc(simToReco)_phi_Q075","N of associated tracks (simToReco) vs phi (Quality>0.75)",nintPhi,minPhi,maxPhi) );
+
+        h_assoc2eta_075.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_075","N of associated (recoToSim) tracks vs eta Q>75%",nint,min,max) );
+        h_assoc2eta_050.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_050","N of associated (recoToSim) tracks vs eta Q>50%",nint,min,max) );
+        h_assoc2pT_075.push_back( dbe_->book1D("num_assoc(recoToSim)_pt_075","N of associated (recoToSim) tracks vs pt Q>75%",nintpT,minpT,maxpT) );
+        h_assoc2pT_050.push_back( dbe_->book1D("num_assoc(recoToSim)_pt_050","N of associated (recoToSim) tracks vs pt Q>50%",nintpT,minpT,maxpT) );
       }
 
       if(useLogPt){
@@ -350,6 +355,8 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
 	BinLogX(h_assocpTBin2[j]->getTH1F());
 	BinLogX(h_assocpTBin3[j]->getTH1F());
 	BinLogX(h_assoc2pT[j]->getTH1F());
+ 	BinLogX(h_assoc2pT_075[j]->getTH1F());
+	BinLogX(h_assoc2pT_050[j]->getTH1F());
 	BinLogX(h_assoc2pTBin1[j]->getTH1F());
 	BinLogX(h_assoc2pTBin2[j]->getTH1F());
 	BinLogX(h_assoc2pTBin3[j]->getTH1F());
@@ -501,10 +508,37 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
 	TrackingParticleRef tpr(TPCollectionHeff, i);
 	TrackingParticle* tp=const_cast<TrackingParticle*>(tpr.get());
-	TrackingParticle::Vector momentumTP; 
+	TrackingParticle::Vector momentumTP;
 	TrackingParticle::Point vertexTP;
 	double dxySim = 0;
-	double dzSim = 0; 
+	double dzSim = 0;
+
+	int numSimHits = tp->numberOfHits();
+	int numMuonSimHits = tp->numberOfHits() - tp->numberOfTrackerHits();
+
+ 	edm::Handle<edm::PSimHitContainer> GEMHits;
+	event.getByLabel(edm::InputTag("g4SimHits","MuonGEMHits"), GEMHits);
+	//ESHandle<GlobalTrackingGeometry> theTrackingGeometry;
+	//eventSetup.get<GlobalTrackingGeometryRecord>().get(theTrackingGeometry);
+ 	edm::PSimHitContainer selectedGEMHits;
+	for (edm::PSimHitContainer::const_iterator itHit = GEMHits->begin(); itHit != GEMHits->end(); ++itHit){
+
+		//DetId id = DetId(itHit->detUnitId());
+		//if (!(id.subdetId() == MuonSubdetId::GEM)) continue;
+
+		for(int i = 0; i < (int)tp->g4Tracks().size(); i++){
+
+			//if(itHit->particleType() != (*(tp->g4Tracks())[i]).type()) continue;
+			if((tp->g4Tracks())[i].trackId() == itHit->trackId()) selectedGEMHits.push_back(*itHit);
+
+		}
+
+	}
+
+    	//std::vector<PSimHit> resultME11;
+    	//std::vector<PSimHit> resultRPCUp;
+
+	if(selectedGEMHits.size()>0) cout<<numSimHits<<" "<<numMuonSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedGEMHits.size()<<std::endl;
 
 	//If the TrackingParticle is collison like, get the momentum and vertex at production state
 	if(parametersDefiner=="LhcParametersDefinerForTP")
@@ -745,7 +779,9 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
       int at=0;
       int rT=0;
       for(View<Track>::size_type i=0; i<trackCollectionSize; ++i){
-        bool Track_is_matched = false; 
+        bool Track_is_matched = false;
+  	bool Track_is_matched_075 = false;
+	bool Track_is_matched_050 = false; 
 	RefToBase<Track> track(trackCollection, i);
 	//if((track->numberOfValidHits()) == 0) continue;
 	rT++;
@@ -788,6 +824,8 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		if ( assoc_track_checkback.key() == track.key() ) {
 		  edm::LogVerbatim("MuonTrackValidator")<<"------------------associated TrackingParticle #"<<tpr.key();
 		  Track_is_matched = true;
+ 		  if(MABH && track_checkback.begin()->second > 0.75) Track_is_matched_075 = true;
+		  if(MABH && track_checkback.begin()->second > 0.50) Track_is_matched_050 = true;
 		  at++;
 		  double Purity = tp.begin()->second;
 		  double Quality = track_checkback.begin()->second;
@@ -828,13 +866,18 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    if(sqrt(track->momentum().perp2()) > 10 && sqrt(track->momentum().perp2()) < 15) totRECetaBin2[w][f]++;
 	    if(sqrt(track->momentum().perp2()) > 15 && sqrt(track->momentum().perp2()) < 20) totRECetaBin3[w][f]++;
 	    if(sqrt(track->momentum().perp2()) > 20) totRECetaBin4[w][f]++;
+
 	    if (Track_is_matched) {
 	      totASS2eta[w][f]++;
 	      if(sqrt(track->momentum().perp2()) > 5 && sqrt(track->momentum().perp2()) < 10) totASS2etaBin1[w][f]++;
 	      if(sqrt(track->momentum().perp2()) > 10 && sqrt(track->momentum().perp2()) < 15) totASS2etaBin2[w][f]++;
 	      if(sqrt(track->momentum().perp2()) > 15 && sqrt(track->momentum().perp2()) < 20) totASS2etaBin3[w][f]++;
 	      if(sqrt(track->momentum().perp2()) > 20) totASS2etaBin4[w][f]++;
-	    }		
+	    }
+
+	    if (MABH && Track_is_matched_075) totASS2eta_075[w][f]++;
+	    if (MABH && Track_is_matched_050) totASS2eta_050[w][f]++;
+	
 	  }
 	} // End for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
 
@@ -861,7 +904,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	      if(fabs(track->momentum().eta()) < 1.2) totASS2pTBin1[w][f]++;
 	      if(fabs(track->momentum().eta()) > 1.2 && fabs(track->momentum().eta()) < 1.7) totASS2pTBin2[w][f]++;
 	      if(fabs(track->momentum().eta()) > 1.7) totASS2pTBin3[w][f]++;
-	    }	      
+	    }
+
+ 	   if (MABH && Track_is_matched_075) totASS2pT_075[w][f]++; 
+           if (MABH && Track_is_matched_050) totASS2pT_050[w][f]++;
+ 
 	  }
 	} // End for (unsigned int f=0; f<pTintervals[w].size()-1; f++){
 
@@ -1319,6 +1366,10 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
 	fillPlotFromVector(h_assocpT_Quality075[w],totASSpT_Quality075[w]);
 	fillPlotFromVector(h_assocphi_Quality05[w] ,totASS_phi_Quality05[w]);
 	fillPlotFromVector(h_assocphi_Quality075[w],totASS_phi_Quality075[w]);
+        fillPlotFromVector(h_assoc2eta_075[w],totASS2eta_075[w]);
+        fillPlotFromVector(h_assoc2eta_050[w],totASS2eta_050[w]);
+        fillPlotFromVector(h_assoc2pT_075[w],totASS2pT_075[w]);
+        fillPlotFromVector(h_assoc2pT_050[w],totASS2pT_050[w]);
       }
       
       w++;

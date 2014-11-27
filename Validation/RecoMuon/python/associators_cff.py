@@ -354,6 +354,7 @@ tpToStaUpdSel2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAss
 tpToGlbSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToGlbSel2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToGlbSel3MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToGlbSel4MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 
 tpToLooseSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToLooseSel2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
@@ -531,6 +532,8 @@ tpToL3MuonAssociation.UseGrouped = False
 #tpToStaUpdSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 #tpToGlbSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 
+# about STA
+
 tpToTkSelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
 tpToTkSelMuonAssociation.tracksTag = 'probeTracks'
 tpToTkSelMuonAssociation.UseTracker = True
@@ -551,6 +554,8 @@ tpToStaUpdSel2MuonAssociation.UseMuon = True
 tpToStaUpdSel2MuonAssociation.includeZeroHitMuons = False
 tpToStaUpdSel2MuonAssociation.PurityCut_muon = cms.double(0.75)
 
+# about global
+
 tpToGlbSelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
 tpToGlbSelMuonAssociation.tracksTag = 'extractedGlobalMuons' 
 tpToGlbSelMuonAssociation.UseTracker = True
@@ -559,6 +564,15 @@ tpToGlbSelMuonAssociation.EfficiencyCut_track = cms.double(0.5)
 tpToGlbSelMuonAssociation.PurityCut_track = cms.double(0.75)
 tpToGlbSelMuonAssociation.acceptOneStubMatchings = False
 tpToGlbSelMuonAssociation.includeZeroHitMuons = False
+
+tpToGlbSel2MuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToGlbSel2MuonAssociation.tracksTag = 'extractedGlobalMuons' 
+tpToGlbSel2MuonAssociation.UseTracker = True
+tpToGlbSel2MuonAssociation.UseMuon = True
+tpToGlbSel2MuonAssociation.EfficiencyCut_track = cms.double(0.5)
+tpToGlbSel2MuonAssociation.PurityCut_track = cms.double(0.75)
+#tpToGlbSel2MuonAssociation.acceptOneStubMatchings = False
+tpToGlbSel2MuonAssociation.includeZeroHitMuons = False
 
 tpToGlbSel3MuonAssociation.tpTag = 'mix:MergedTrackTruth'
 tpToGlbSel3MuonAssociation.tracksTag = 'extractedGlobalMuons' 
@@ -570,14 +584,15 @@ tpToGlbSel3MuonAssociation.PurityCut_muon = cms.double(0.75)
 tpToGlbSel3MuonAssociation.acceptOneStubMatchings = False
 tpToGlbSel3MuonAssociation.includeZeroHitMuons = False
 
-tpToGlbSel2MuonAssociation.tpTag = 'mix:MergedTrackTruth'
-tpToGlbSel2MuonAssociation.tracksTag = 'extractedGlobalMuons' 
-tpToGlbSel2MuonAssociation.UseTracker = True
-tpToGlbSel2MuonAssociation.UseMuon = True
-tpToGlbSel2MuonAssociation.EfficiencyCut_track = cms.double(0.5)
-tpToGlbSel2MuonAssociation.PurityCut_track = cms.double(0.75)
-#tpToGlbSel2MuonAssociation.acceptOneStubMatchings = False
-tpToGlbSel2MuonAssociation.includeZeroHitMuons = False
+tpToGlbSel4MuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToGlbSel4MuonAssociation.tracksTag = 'extractedGlobalMuons' 
+tpToGlbSel4MuonAssociation.UseTracker = True
+tpToGlbSel4MuonAssociation.UseMuon = True
+tpToGlbSel4MuonAssociation.EfficiencyCut_track = cms.double(0.5)
+tpToGlbSel4MuonAssociation.PurityCut_track = cms.double(0.75)
+tpToGlbSel4MuonAssociation.PurityCut_muon = cms.double(0.75)
+#tpToGlbSel4MuonAssociation.acceptOneStubMatchings = False
+tpToGlbSel4MuonAssociation.includeZeroHitMuons = False
 
 #####################################################################################################
 
@@ -699,7 +714,7 @@ muonAssociation_seq = cms.Sequence(
 #   +(tpToStaTrackAssociation+tpToStaUpdTrackAssociation+tpToGlbTrackAssociation)
 #    
 # few more association modules usable for the Upgrade TP studies 
-    +(tpToTkSelMuonAssociation+tpToStaUpdSelMuonAssociation+tpToStaUpdSel2MuonAssociation+tpToGlbSelMuonAssociation+tpToGlbSel2MuonAssociation+tpToGlbSel3MuonAssociation)
+    +(tpToTkSelMuonAssociation+tpToStaUpdSelMuonAssociation+tpToStaUpdSel2MuonAssociation+tpToGlbSelMuonAssociation+tpToGlbSel2MuonAssociation+tpToGlbSel3MuonAssociation+tpToGlbSel4MuonAssociation)
     +(tpToLooseSelMuonAssociation+tpToLooseSel2MuonAssociation+tpToLooseSel3MuonAssociation)
     +(tpToTightSelMuonAssociation+tpToTightSel2MuonAssociation+tpToTightSel3MuonAssociation) 
 )
