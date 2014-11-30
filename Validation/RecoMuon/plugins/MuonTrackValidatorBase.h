@@ -556,7 +556,7 @@ class MuonTrackValidatorBase {
   std::vector< std::vector<int> > totSIM_vertpos,totASS_vertpos,totSIM_zpos,totASS_zpos;
 
   // for muon Validation (SimToReco distributions for Quality > 0.5, 0.75)
-  std::vector<MonitorElement*> h_PurityVsQuality;
+  std::vector<MonitorElement*> h_PurityVsQuality, h_quality;
   std::vector< std::vector<int> > totASSeta_Quality05,totASSeta_Quality075;
   std::vector< std::vector<int> > totASSpT_Quality05, totASSpT_Quality075;
   std::vector< std::vector<int> > totASS_phi_Quality05, totASS_phi_Quality075;

@@ -336,6 +336,7 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
 	h_assocpT_Quality075.push_back( dbe_->book1D("num_assoc(simToReco)_pT_Q075","N of associated tracks (simToReco) vs pT (Quality>0.75)",nintpT,minpT,maxpT) );
 	h_assocphi_Quality05.push_back( dbe_->book1D("num_assoc(simToReco)_phi_Q05","N of associated tracks (simToReco) vs phi (Quality>0.5)",nintPhi,minPhi,maxPhi) );
 	h_assocphi_Quality075.push_back( dbe_->book1D("num_assoc(simToReco)_phi_Q075","N of associated tracks (simToReco) vs phi (Quality>0.75)",nintPhi,minPhi,maxPhi) );
+	h_quality.push_back( dbe_->book1D("quality","Quality (MABH)",20,0.01,1.01) );
 
         h_assoc2eta_075.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_075","N of associated (recoToSim) tracks vs eta Q>75%",nint,min,max) );
         h_assoc2eta_050.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_050","N of associated (recoToSim) tracks vs eta Q>50%",nint,min,max) );
@@ -559,11 +560,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		}
 
 	}
-	//double corrFactorME11 = numSimHits/(numSimHits - selectedME11Hits.size());
-	//double corrFactorGEMME11 = numSimHits/(numSimHits - - selectedGEMHits.size() - selectedME11Hits.size());
+	double corrFactorME11 = numSimHits/(numSimHits - selectedME11Hits.size());
+	double corrFactorGEMME11 = numSimHits/(numSimHits - - selectedGEMHits.size() - selectedME11Hits.size());
 	
-	if(selectedME11Hits.size()>0) cout<<"CSC "<<numSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedME11Hits.size()<<std::endl;
-	if(selectedME11Hits.size()>0) cout<<"CSC "<<corrFactorME11<<std::endl;
+	//if(selectedME11Hits.size()>0) cout<<"CSC "<<numSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedME11Hits.size()<<std::endl;
+	//if(selectedME11Hits.size()>0) cout<<"CSC "<<corrFactorME11<<std::endl;
 
 	////////////////////////////////////////////////////////////////////////////////////
 
@@ -611,6 +612,8 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	      if(maskGEM) quality *= corrFactorGEM;
 	      else if(maskME11) quality *= corrFactorME11;
 	      else if(maskGEM && maskME11) quality *= corrFactorGEMME11;
+	      h_quality[w]->Fill(quality);
+
 	      if (quality > 0.75) {
 		Quality075 = true;
 		Quality05  = true;
