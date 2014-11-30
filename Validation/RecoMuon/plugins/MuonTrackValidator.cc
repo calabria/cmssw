@@ -26,6 +26,9 @@
 #include "TMath.h"
 #include <TF1.h>
 
+#include <DataFormats/MuonDetId/interface/CSCDetId.h>
+#include <DataFormats/MuonDetId/interface/GEMDetId.h>
+
 using namespace std;
 using namespace edm;
 
@@ -513,32 +516,56 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	double dxySim = 0;
 	double dzSim = 0;
 
-	int numSimHits = tp->numberOfHits();
-	int numMuonSimHits = tp->numberOfHits() - tp->numberOfTrackerHits();
+	////////////////////////////////////////////////////////////////////////////////////
 
+	double numSimHits = tp->numberOfHits();
  	edm::Handle<edm::PSimHitContainer> GEMHits;
 	event.getByLabel(edm::InputTag("g4SimHits","MuonGEMHits"), GEMHits);
-	//ESHandle<GlobalTrackingGeometry> theTrackingGeometry;
-	//eventSetup.get<GlobalTrackingGeometryRecord>().get(theTrackingGeometry);
  	edm::PSimHitContainer selectedGEMHits;
 	for (edm::PSimHitContainer::const_iterator itHit = GEMHits->begin(); itHit != GEMHits->end(); ++itHit){
 
-		//DetId id = DetId(itHit->detUnitId());
-		//if (!(id.subdetId() == MuonSubdetId::GEM)) continue;
+		DetId id = DetId(itHit->detUnitId());
+		if (!(id.subdetId() == MuonSubdetId::GEM)) continue;
 
 		for(int i = 0; i < (int)tp->g4Tracks().size(); i++){
 
-			//if(itHit->particleType() != (*(tp->g4Tracks())[i]).type()) continue;
+			if(itHit->particleType() != ((tp->g4Tracks())[i]).type()) continue;
 			if((tp->g4Tracks())[i].trackId() == itHit->trackId()) selectedGEMHits.push_back(*itHit);
 
 		}
 
 	}
+	double corrFactorGEM = numSimHits/(numSimHits - selectedGEMHits.size());
+	//if(selectedME11Hits.size()>0) cout<<"GEM "<<numSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedGEMHits.size()<<std::endl;
+	//if(selectedME11Hits.size()>0) cout<<"GEM "<<corrFactorGEM<<std::endl;
 
-    	//std::vector<PSimHit> resultME11;
-    	//std::vector<PSimHit> resultRPCUp;
+ 	edm::Handle<edm::PSimHitContainer> ME11Hits;
+	event.getByLabel(edm::InputTag("g4SimHits","MuonCSCHits"), ME11Hits);
+ 	edm::PSimHitContainer selectedME11Hits;
+	for (edm::PSimHitContainer::const_iterator itHit = ME11Hits->begin(); itHit != ME11Hits->end(); ++itHit){
 
-	if(selectedGEMHits.size()>0) cout<<numSimHits<<" "<<numMuonSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedGEMHits.size()<<std::endl;
+		DetId id = DetId(itHit->detUnitId());
+ 		CSCDetId idCSC = CSCDetId(itHit->detUnitId());
+ 		int station = (int) idCSC.station();
+		int ring = (int) idCSC.ring();
+		if (!(id.subdetId() == MuonSubdetId::CSC)) continue;
+		if(!(station == 1 && (ring == 1 || ring == 4))) continue;
+
+		for(int i = 0; i < (int)tp->g4Tracks().size(); i++){
+
+			if(itHit->particleType() != ((tp->g4Tracks())[i]).type()) continue;
+			if((tp->g4Tracks())[i].trackId() == itHit->trackId()) selectedME11Hits.push_back(*itHit);
+
+		}
+
+	}
+	double corrFactorME11 = numSimHits/(numSimHits - selectedME11Hits.size());
+	double corrFactorGEMME11 = numSimHits/(numSimHits - - selectedGEMHits.size() - selectedME11Hits.size());
+	
+	if(selectedME11Hits.size()>0) cout<<"CSC "<<numSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedME11Hits.size()<<std::endl;
+	if(selectedME11Hits.size()>0) cout<<"CSC "<<corrFactorME11<<std::endl;
+
+	////////////////////////////////////////////////////////////////////////////////////
 
 	//If the TrackingParticle is collison like, get the momentum and vertex at production state
 	if(parametersDefiner=="LhcParametersDefinerForTP")
@@ -581,6 +608,9 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 						   << " with pt=" << sqrt(momentumTP.perp2()) 
 						   << " associated with quality:" << quality <<"\n";
 	    if (MABH) {
+	      if(maskGEM) quality *= corrFactorGEM;
+	      else if(maskME11) quality *= corrFactorME11;
+	      else if(maskGEM && maskME11) quality *= corrFactorGEMME11;
 	      if (quality > 0.75) {
 		Quality075 = true;
 		Quality05  = true;
@@ -814,7 +844,61 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  if(recSimColl.find(track) != recSimColl.end()) {
 	    tp = recSimColl[track];	    
 	    if (tp.size() != 0) {
-	      tpr = tp.begin()->first;	      
+	      tpr = tp.begin()->first;
+
+	      TrackingParticle* tp2=const_cast<TrackingParticle*>(tpr.get());
+
+	      ////////////////////////////////////////////////////////////////////////////////////
+
+	      double numSimHits = tp2->numberOfHits();
+ 	      edm::Handle<edm::PSimHitContainer> GEMHits;
+	      event.getByLabel(edm::InputTag("g4SimHits","MuonGEMHits"), GEMHits);
+ 	      edm::PSimHitContainer selectedGEMHits;
+	      for (edm::PSimHitContainer::const_iterator itHit = GEMHits->begin(); itHit != GEMHits->end(); ++itHit){
+
+		DetId id = DetId(itHit->detUnitId());
+		if (!(id.subdetId() == MuonSubdetId::GEM)) continue;
+
+		for(int i = 0; i < (int)tp2->g4Tracks().size(); i++){
+
+			if(itHit->particleType() != ((tp2->g4Tracks())[i]).type()) continue;
+			if((tp2->g4Tracks())[i].trackId() == itHit->trackId()) selectedGEMHits.push_back(*itHit);
+
+		}
+
+	      }
+              double corrFactorGEM = numSimHits/(numSimHits - selectedGEMHits.size());
+	      //if(selectedGEMHits.size()>0) cout<<"GEM "<<numSimHits<<" "<<tp2->g4Tracks().size()<<" "<<selectedGEMHits.size()<<std::endl;
+	      //if(selectedGEMHits.size()>0) cout<<"GEM "<<corrFactorGEM<<std::endl;
+
+ 	      edm::Handle<edm::PSimHitContainer> ME11Hits;
+	      event.getByLabel(edm::InputTag("g4SimHits","MuonCSCHits"), ME11Hits);
+ 	      edm::PSimHitContainer selectedME11Hits;
+	      for (edm::PSimHitContainer::const_iterator itHit = ME11Hits->begin(); itHit != ME11Hits->end(); ++itHit){
+
+		DetId id = DetId(itHit->detUnitId());
+ 		CSCDetId idCSC = CSCDetId(itHit->detUnitId());
+ 		int station = (int) idCSC.station();
+		int ring = (int) idCSC.ring();
+		if (!(id.subdetId() == MuonSubdetId::CSC)) continue;
+		if(!(station == 1 && (ring == 1 || ring == 4))) continue;
+
+		for(int i = 0; i < (int)tp2->g4Tracks().size(); i++){
+
+			if(itHit->particleType() != ((tp2->g4Tracks())[i]).type()) continue;
+			if((tp2->g4Tracks())[i].trackId() == itHit->trackId()) selectedME11Hits.push_back(*itHit);
+
+		}
+
+	      }
+	      double corrFactorME11 = numSimHits/(numSimHits - selectedME11Hits.size());
+	      double corrFactorGEMME11 = numSimHits/(numSimHits - selectedME11Hits.size() - selectedGEMHits.size());
+
+	      if(selectedME11Hits.size()>0) cout<<"CSC "<<numSimHits<<" "<<tp2->g4Tracks().size()<<" "<<selectedME11Hits.size()<<std::endl;
+	      if(selectedME11Hits.size()>0) cout<<"CSC "<<corrFactorME11<<std::endl;
+
+	      ////////////////////////////////////////////////////////////////////////////////////
+
 	      // RtS and StR must associate the same pair !
 	      if(simRecColl.find(tpr) != simRecColl.end()) {
 		std::vector<std::pair<RefToBase<Track>, double> > track_checkback  = simRecColl[tpr];
@@ -824,11 +908,16 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		if ( assoc_track_checkback.key() == track.key() ) {
 		  edm::LogVerbatim("MuonTrackValidator")<<"------------------associated TrackingParticle #"<<tpr.key();
 		  Track_is_matched = true;
- 		  if(MABH && track_checkback.begin()->second > 0.75) Track_is_matched_075 = true;
-		  if(MABH && track_checkback.begin()->second > 0.50) Track_is_matched_050 = true;
 		  at++;
 		  double Purity = tp.begin()->second;
 		  double Quality = track_checkback.begin()->second;
+
+	          if(maskGEM) Quality *= corrFactorGEM;
+	          else if(maskME11) Quality *= corrFactorME11;
+	          else if(maskGEM && maskME11) Quality *= corrFactorGEMME11;
+ 		  if(MABH && Quality > 0.75) Track_is_matched_075 = true;
+		  if(MABH && Quality > 0.50) Track_is_matched_050 = true;
+
 		  edm::LogVerbatim("MuonTrackValidator") << "reco::Track #" << track.key() << " with pt=" << track->pt() 
 							 << " associated with quality:" << Purity <<"\n";
 		  if (MABH) h_PurityVsQuality[w]->Fill(Quality,Purity);
