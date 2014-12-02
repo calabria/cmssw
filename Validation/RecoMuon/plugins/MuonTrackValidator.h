@@ -20,9 +20,9 @@ class MuonTrackValidator : public edm::EDAnalyzer, protected MuonTrackValidatorB
  public:
   /// Constructor
   MuonTrackValidator(const edm::ParameterSet& pset):MuonTrackValidatorBase(pset){
-    maskGEM = pset.getUntrackedParameter< bool >("maskGEM", false);
-    maskME11 = pset.getUntrackedParameter< bool >("maskME11", false);
-    maskRPC = pset.getUntrackedParameter< bool >("maskRPC", false);
+    maskGEM = pset.getParameter< bool >("maskGEM");
+    maskME11 = pset.getParameter< bool >("maskME11");
+    maskRPC = pset.getParameter< bool >("maskRPC");
     dirName_ = pset.getParameter<std::string>("dirName");
     associatormap = pset.getParameter< edm::InputTag >("associatormap");
     UseAssociators = pset.getParameter< bool >("UseAssociators");
@@ -141,12 +141,12 @@ private:
 			double& phi, double& phiError) const;
 
  private:
-  std::string dirName_;
-  edm::InputTag associatormap;
-  bool UseAssociators;
   bool maskGEM;
   bool maskME11;
   bool maskRPC;
+  std::string dirName_;
+  edm::InputTag associatormap;
+  bool UseAssociators;
   bool useGEMs_;
   double minPhi, maxPhi;
   int nintPhi;

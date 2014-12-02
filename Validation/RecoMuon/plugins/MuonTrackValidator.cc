@@ -538,9 +538,10 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		}
 
 	}
-	double corrFactorGEM = numSimHits/(numSimHits - selectedGEMHits.size());
-	//if(selectedME11Hits.size()>0) cout<<"GEM "<<numSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedGEMHits.size()<<std::endl;
-	//if(selectedME11Hits.size()>0) cout<<"GEM "<<corrFactorGEM<<std::endl;
+	double corrFactorGEM = 1;
+	if((numSimHits - selectedGEMHits.size()) > 0) corrFactorGEM = numSimHits/(numSimHits - selectedGEMHits.size());
+	//if(selectedGEMHits.size()>0) cout<<"GEM "<<numSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedGEMHits.size()<<std::endl;
+	//if(selectedGEMHits.size()>0) cout<<"GEM "<<" "<<quality<<" "<<corrFactorGEM<<" "<<quality*corrFactorGEM<<std::endl;
 
  	edm::Handle<edm::PSimHitContainer> ME11Hits;
 	event.getByLabel(edm::InputTag("g4SimHits","MuonCSCHits"), ME11Hits);
@@ -562,8 +563,9 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		}
 
 	}
-	double corrFactorME11 = numSimHits/(numSimHits - selectedME11Hits.size());
-	double corrFactorGEMME11 = numSimHits/(numSimHits - - selectedGEMHits.size() - selectedME11Hits.size());
+	double corrFactorME11 = 1, corrFactorGEMME11 = 1;
+	if((numSimHits - selectedME11Hits.size()) > 0) corrFactorME11 = numSimHits/(numSimHits - selectedME11Hits.size());
+	if((numSimHits - selectedGEMHits.size() - selectedME11Hits.size()) > 0) corrFactorGEMME11 = numSimHits/(numSimHits - selectedGEMHits.size() - selectedME11Hits.size());
 	
 	//if(selectedME11Hits.size()>0) cout<<"CSC "<<numSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedME11Hits.size()<<std::endl;
 	//if(selectedME11Hits.size()>0) cout<<"CSC "<<corrFactorME11<<std::endl;
@@ -588,8 +590,10 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		}
 
 	}
-	//double corrFactorRPC = numSimHits/(numSimHits - selectedRPCHits.size());
-	double corrFactorGEMRPC = numSimHits/(numSimHits - - selectedGEMHits.size() - selectedRPCHits.size());
+	//double corrFactorRPC = 1;
+	double corrFactorGEMRPC = 1;
+	//if((numSimHits - selectedRPCHits.size()) > 0) corrFactorRPC = numSimHits/(numSimHits - selectedRPCHits.size());
+	if((numSimHits - selectedGEMHits.size() - selectedRPCHits.size()) > 0) corrFactorGEMRPC = numSimHits/(numSimHits - selectedGEMHits.size() - selectedRPCHits.size());
 	
 	//if(selectedME11Hits.size()>0) cout<<"RPC "<<numSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedRPCHits.size()<<std::endl;
 	//if(selectedME11Hits.size()>0) cout<<"RPC "<<corrFactorRPC<<std::endl;
@@ -637,12 +641,18 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 						   << " with pt=" << sqrt(momentumTP.perp2()) 
 						   << " associated with quality:" << quality <<"\n";
 	    if (MABH) {
-	      if(maskGEM) quality *= corrFactorGEM;
-	      else if(maskME11) quality *= corrFactorME11;
-	      else if(maskGEM && maskME11) quality *= corrFactorGEMME11;
-	      else if(maskGEM && maskRPC) quality *= corrFactorGEMRPC;
+	      //cout<<"GEM1 "<<" "<<quality<<" "<<corrFactorGEM<<" "<<quality*corrFactorGEM<<std::endl;
+	      //cout<<"GEM0 "<<" "<<selectedGEMHits.size()<<" "<<maskGEM<<std::endl;	
+	      if(selectedGEMHits.size() > 0 && maskGEM){
+			//cout<<"GEM0 "<<" "<<selectedGEMHits.size()<<" "<<maskGEM<<std::endl;	
+			quality *= corrFactorGEM;
+	      }
+	      else if(selectedME11Hits.size() > 0 && maskME11) quality *= corrFactorME11;
+	      else if((selectedGEMHits.size() > 0 || selectedME11Hits.size() > 0) && maskGEM && maskME11) quality *= corrFactorGEMME11;
+	      else if((selectedGEMHits.size() > 0 || selectedRPCHits.size() > 0) && maskGEM && maskRPC) quality *= corrFactorGEMRPC;
 	      h_quality[w]->Fill(quality);
 	      h_qualityVsEta[w]->Fill(fabs(momentumTP.eta()),quality);
+	      //cout<<"GEM2 "<<" "<<quality<<" "<<corrFactorGEM<<" "<<quality*corrFactorGEM<<std::endl;
 
 	      if (quality > 0.75) {
 		Quality075 = true;
@@ -676,7 +686,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	      else if(fabs(momentumTP.eta()) > 1.2 && fabs(momentumTP.eta()) < 1.7) totASSvtxOverlap[w][f]++;
 	      else if(fabs(momentumTP.eta()) > 1.7) totASSvtxEndcap[w][f]++;
 
-	      if (MABH) {
+	      /*if (MABH) {
 		if (Quality075) {
 		  totASSeta_Quality075[w][f]++;
 		  totASSeta_Quality05[w][f]++;
@@ -684,7 +694,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		else if (Quality05) {
 		  totASSeta_Quality05[w][f]++;
 		}
-	      }
+	      }*/
 	    }
 	  }
 	} // END for (unsigned int f=0; f<vtxintervals[w].size()-1; f++){
@@ -900,7 +910,8 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		}
 
 	      }
-              double corrFactorGEM = numSimHits/(numSimHits - selectedGEMHits.size());
+	      double corrFactorGEM = 1;
+              if((numSimHits - selectedGEMHits.size()) > 0) corrFactorGEM = numSimHits/(numSimHits - selectedGEMHits.size());
 	      //if(selectedGEMHits.size()>0) cout<<"GEM "<<numSimHits<<" "<<tp2->g4Tracks().size()<<" "<<selectedGEMHits.size()<<std::endl;
 	      //if(selectedGEMHits.size()>0) cout<<"GEM "<<corrFactorGEM<<std::endl;
 
@@ -924,8 +935,9 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		}
 
 	      }
-	      double corrFactorME11 = numSimHits/(numSimHits - selectedME11Hits.size());
-	      double corrFactorGEMME11 = numSimHits/(numSimHits - selectedME11Hits.size() - selectedGEMHits.size());
+	      double corrFactorME11 = 1, corrFactorGEMME11 = 1;
+	      if((numSimHits - selectedME11Hits.size()) > 0) corrFactorME11 = numSimHits/(numSimHits - selectedME11Hits.size());
+	      if((numSimHits - selectedME11Hits.size() - selectedGEMHits.size()) > 0) corrFactorGEMME11 = numSimHits/(numSimHits - selectedME11Hits.size() - selectedGEMHits.size());
 
 	      //if(selectedME11Hits.size()>0) cout<<"CSC "<<numSimHits<<" "<<tp2->g4Tracks().size()<<" "<<selectedME11Hits.size()<<std::endl;
 	      //if(selectedME11Hits.size()>0) cout<<"CSC "<<corrFactorME11<<std::endl;
@@ -950,8 +962,10 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		}
 
 	      }
-	      //double corrFactorRPC = numSimHits/(numSimHits - selectedRPCHits.size());
-	      double corrFactorGEMRPC = numSimHits/(numSimHits - - selectedGEMHits.size() - selectedRPCHits.size());
+	      //double corrFactorRPC = 1;
+	      double corrFactorGEMRPC = 1;
+	      //if((numSimHits - selectedRPCHits.size()) > 0) corrFactorRPC = numSimHits/(numSimHits - selectedRPCHits.size());
+	      if((numSimHits - selectedGEMHits.size() - selectedRPCHits.size()) > 0) corrFactorGEMRPC = numSimHits/(numSimHits - selectedGEMHits.size() - selectedRPCHits.size());
 	
 	      //if(selectedME11Hits.size()>0) cout<<"RPC "<<numSimHits<<" "<<tp2->g4Tracks().size()<<" "<<selectedRPCHits.size()<<std::endl;
 	      //if(selectedME11Hits.size()>0) cout<<"RPC "<<corrFactorRPC<<std::endl;
@@ -971,10 +985,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		  double Purity = tp.begin()->second;
 		  double Quality = track_checkback.begin()->second;
 
-	          if(maskGEM) Quality *= corrFactorGEM;
-	          else if(maskME11) Quality *= corrFactorME11;
-	          else if(maskGEM && maskME11) Quality *= corrFactorGEMME11;
-	          else if(maskGEM && maskRPC) Quality *= corrFactorGEMRPC;
+	          if(selectedGEMHits.size() > 0 && maskGEM) Quality *= corrFactorGEM;
+	          else if(selectedME11Hits.size() > 0 && maskME11) Quality *= corrFactorME11;
+	          else if((selectedGEMHits.size() > 0 || selectedME11Hits.size() > 0) && maskGEM && maskME11) Quality *= corrFactorGEMME11;
+	          else if((selectedGEMHits.size() > 0 || selectedRPCHits.size() > 0) &&maskGEM && maskRPC) Quality *= corrFactorGEMRPC;
+
  		  if(MABH && Quality > 0.75) Track_is_matched_075 = true;
 		  if(MABH && Quality > 0.50) Track_is_matched_050 = true;
 

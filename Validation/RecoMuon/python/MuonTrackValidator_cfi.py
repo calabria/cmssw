@@ -4,9 +4,9 @@ from SimTracker.TrackAssociation.LhcParametersDefinerForTP_cfi import *
 from SimTracker.TrackAssociation.CosmicParametersDefinerForTP_cfi import *
 
 muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
-    maskGEM = cms.untracked.bool(False),
-    maskME11 = cms.untracked.bool(False),
-    maskRPC = cms.untracked.bool(False),
+    maskGEM = cms.bool(False),
+    maskME11 = cms.bool(False),
+    maskRPC = cms.bool(False),
     # input TrackingParticle collections
     label_tp_effic = cms.InputTag("mix","MergedTrackTruth"),
     label_tp_fake = cms.InputTag("mix","MergedTrackTruth"),
