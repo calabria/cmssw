@@ -329,6 +329,20 @@ staUpdMuonTrackVSel2MuonAssoc.label = ('standAloneMuons:UpdatedAtVtx',)
 staUpdMuonTrackVSel2MuonAssoc.usetracker = False
 staUpdMuonTrackVSel2MuonAssoc.usemuon = True
 
+staUpd10SelMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpd10SelMuonTrackVMuonAssoc.associatormap = 'tpToStaUpd10SelMuonAssociation'
+staUpd10SelMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
+staUpd10SelMuonTrackVMuonAssoc.label = ('staMuonsPt10',)
+staUpd10SelMuonTrackVMuonAssoc.usetracker = False
+staUpd10SelMuonTrackVMuonAssoc.usemuon = True
+
+staUpd20SelMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpd20SelMuonTrackVMuonAssoc.associatormap = 'tpToStaUpd20SelMuonAssociation'
+staUpd20SelMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
+staUpd20SelMuonTrackVMuonAssoc.label = ('staMuonsPt20',)
+staUpd20SelMuonTrackVMuonAssoc.usetracker = False
+staUpd20SelMuonTrackVMuonAssoc.usemuon = True
+
 # about GLB
 glbMuonTrackVSelMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 glbMuonTrackVSelMuonAssoc.associatormap = 'tpToGlbSelMuonAssociation'
@@ -518,12 +532,13 @@ recoMuonVMuAssoc_tgt.primaryVertex = 'offlinePrimaryVertices'
 
 muonValidation_seq = cms.Sequence(
         trkProbeTrackVMuonAssoc+trkMuonTrackVTrackAssoc
-#                                 +staSeedTrackVMuonAssoc
+#       + staSeedTrackVMuonAssoc
 #	+ staMuonTrackVMuonAssoc
-	+staUpdMuonTrackVMuonAssoc+glbMuonTrackVMuonAssoc
+	+ staUpdMuonTrackVMuonAssoc+glbMuonTrackVMuonAssoc
 # 
 	+ trkProbeTrackVSelMuonAssoc
 	+ staUpdMuonTrackVSelMuonAssoc+staUpdMuonTrackVSel2MuonAssoc
+	+ staUpd10SelMuonTrackVMuonAssoc+staUpd20SelMuonTrackVMuonAssoc
 	+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc+glbMuonTrackVSel4MuonAssoc
 	+ looseMuonTrackVSelMuonAssoc+looseMuonTrackVSel2MuonAssoc+looseMuonTrackVSel3MuonAssoc
 	+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc+tightMuonTrackVSel3MuonAssoc

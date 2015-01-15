@@ -56,6 +56,19 @@ muonPt20 = cms.EDFilter("MuonSelector",
     filter = cms.bool(False)
 )
 
+import PhysicsTools.RecoAlgos.recoTrackSelector_cfi
+staMuonsPt10 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+staMuonsPt10.ptMin = cms.double(10.0)
+staMuonsPt10.quality = cms.vstring('')
+staMuonsPt10.minHit = cms.int32(0)
+staMuonsPt10.src = cms.InputTag("standAloneMuons:UpdatedAtVtx")
+
+staMuonsPt20 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+staMuonsPt20.ptMin = cms.double(20.0)
+staMuonsPt20.quality = cms.vstring('')
+staMuonsPt20.minHit = cms.int32(0)
+staMuonsPt20.src = cms.InputTag("standAloneMuons:UpdatedAtVtx")
+
 #-----------------------------------------------------------------------------------------------------------------------
 
 bestMuonLoose = cms.EDProducer("MuonTrackProducer",
@@ -172,9 +185,12 @@ bestMuonTight20 = cms.EDProducer("MuonTrackProducer",
 
 #-----------------------------------------------------------------------------------------------------------------------
 
-muonColl_seq = cms.Sequence( muonPt5 * 
-			     muonPt10 *
-			     muonPt20)
+muonColl_seq = cms.Sequence( staMuonsPt10 *
+			     staMuonsPt20 
+			     #muonPt5 * 
+			     #muonPt10 *
+			     #muonPt20
+  			   )
 
 bestMuon_seq = cms.Sequence( bestMuonLoose #* bestMuonLoose5 *  bestMuonLoose10 * bestMuonLoose20 *
 			     *bestMuonTight #* bestMuonTight5 * bestMuonTight10 * bestMuonTight20 *
@@ -187,7 +203,11 @@ import SimMuon.MCTruth.MuonTrackProducer_cfi
 extractedGlobalMuons = SimMuon.MCTruth.MuonTrackProducer_cfi.muonTrackProducer.clone()
 extractedGlobalMuons.selectionTags = ('AllGlobalMuons',)
 extractedGlobalMuons.trackType = "globalTrack"
-extractedMuonTracks_seq = cms.Sequence( extractedGlobalMuons )
+
+extractedSTAMuons = SimMuon.MCTruth.MuonTrackProducer_cfi.muonTrackProducer.clone()
+extractedSTAMuons.selectionTags = ('AllGlobalMuons',)
+extractedSTAMuons.trackType = "outerTrack"
+extractedMuonTracks_seq = cms.Sequence( extractedGlobalMuons * extractedSTAMuons )
 
 #
 # Configuration for Seed track extractor
@@ -199,7 +219,7 @@ extractedMuonTracks_seq = cms.Sequence( extractedGlobalMuons )
 #seedsOfSTAmuons_seq = cms.Sequence( seedsOfSTAmuons )
 
 # select probe tracks
-import PhysicsTools.RecoAlgos.recoTrackSelector_cfi
+#import PhysicsTools.RecoAlgos.recoTrackSelector_cfi
 probeTracks = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
 probeTracks.quality = cms.vstring('highPurity')
 probeTracks.tip = cms.double(3.5)
@@ -351,6 +371,10 @@ tpToL3MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorB
 tpToTkSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToStaUpdSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToStaUpdSel2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+
+tpToStaUpd10SelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToStaUpd20SelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+
 tpToGlbSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToGlbSel2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToGlbSel3MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
@@ -554,6 +578,18 @@ tpToStaUpdSel2MuonAssociation.UseMuon = True
 tpToStaUpdSel2MuonAssociation.includeZeroHitMuons = False
 tpToStaUpdSel2MuonAssociation.PurityCut_muon = cms.double(0.75)
 
+tpToStaUpd10SelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToStaUpd10SelMuonAssociation.tracksTag = 'staMuonsPt10'
+tpToStaUpd10SelMuonAssociation.UseTracker = False
+tpToStaUpd10SelMuonAssociation.UseMuon = True
+tpToStaUpd10SelMuonAssociation.includeZeroHitMuons = False
+
+tpToStaUpd20SelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToStaUpd20SelMuonAssociation.tracksTag = 'staMuonsPt20'
+tpToStaUpd20SelMuonAssociation.UseTracker = False
+tpToStaUpd20SelMuonAssociation.UseMuon = True
+tpToStaUpd20SelMuonAssociation.includeZeroHitMuons = False
+
 # about global
 
 tpToGlbSelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
@@ -701,7 +737,7 @@ tpToGlbCosmicMuonAssociation.UseMuon = True
 muonAssociation_seq = cms.Sequence(
     selectedVertices
     + extractedMuonTracks_seq
-#    + muonColl_seq
+    + muonColl_seq
     + bestMuon_seq
 #    +seedsOfSTAmuons_seq
     +probeTracks_seq+(tpToTkMuonAssociation+tpToTkmuTrackAssociation)
@@ -714,7 +750,7 @@ muonAssociation_seq = cms.Sequence(
 #   +(tpToStaTrackAssociation+tpToStaUpdTrackAssociation+tpToGlbTrackAssociation)
 #    
 # few more association modules usable for the Upgrade TP studies 
-    +(tpToTkSelMuonAssociation+tpToStaUpdSelMuonAssociation+tpToStaUpdSel2MuonAssociation+tpToGlbSelMuonAssociation+tpToGlbSel2MuonAssociation+tpToGlbSel3MuonAssociation+tpToGlbSel4MuonAssociation)
+    +(tpToTkSelMuonAssociation+tpToStaUpdSelMuonAssociation+tpToStaUpdSel2MuonAssociation+tpToGlbSelMuonAssociation+tpToGlbSel2MuonAssociation+tpToGlbSel3MuonAssociation+tpToGlbSel4MuonAssociation+tpToStaUpd10SelMuonAssociation+tpToStaUpd20SelMuonAssociation)
     +(tpToLooseSelMuonAssociation+tpToLooseSel2MuonAssociation+tpToLooseSel3MuonAssociation)
     +(tpToTightSelMuonAssociation+tpToTightSel2MuonAssociation+tpToTightSel3MuonAssociation) 
 )
