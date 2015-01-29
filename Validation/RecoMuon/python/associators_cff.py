@@ -583,12 +583,14 @@ tpToStaUpd10SelMuonAssociation.tracksTag = 'staMuonsPt10'
 tpToStaUpd10SelMuonAssociation.UseTracker = False
 tpToStaUpd10SelMuonAssociation.UseMuon = True
 tpToStaUpd10SelMuonAssociation.includeZeroHitMuons = False
+tpToStaUpd10SelMuonAssociation.PurityCut_muon = cms.double(0.75)
 
 tpToStaUpd20SelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
 tpToStaUpd20SelMuonAssociation.tracksTag = 'staMuonsPt20'
 tpToStaUpd20SelMuonAssociation.UseTracker = False
 tpToStaUpd20SelMuonAssociation.UseMuon = True
 tpToStaUpd20SelMuonAssociation.includeZeroHitMuons = False
+tpToStaUpd20SelMuonAssociation.PurityCut_muon = cms.double(0.75)
 
 # about global
 

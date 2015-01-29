@@ -531,12 +531,15 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
  	edm::PSimHitContainer selectedGEMHits;
 	for (edm::PSimHitContainer::const_iterator itHit = GEMHits->begin(); itHit != GEMHits->end(); ++itHit){
 
+		//if(itHit->eventId().bunchCrossing() != 0) std::cout<<"BX: "<<itHit->eventId().bunchCrossing()<<std::endl;
+
 		DetId id = DetId(itHit->detUnitId());
 		if (!(id.subdetId() == MuonSubdetId::GEM)) continue;
 
 		for(int i = 0; i < (int)tp->g4Tracks().size(); i++){
 
 			if(itHit->particleType() != ((tp->g4Tracks())[i]).type()) continue;
+			if(itHit->eventId() != (tp->eventId())) continue;
 			if((tp->g4Tracks())[i].trackId() == itHit->trackId()) selectedGEMHits.push_back(*itHit);
 
 		}
@@ -544,6 +547,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	}
 	double corrFactorGEM = 1;
 	if((numSimHits - selectedGEMHits.size()) > 0) corrFactorGEM = numSimHits/(numSimHits - selectedGEMHits.size());
+	//if((numSimHits - 2) > 0) corrFactorGEM = numSimHits/(numSimHits - 2);
 	//if(selectedGEMHits.size()>0) cout<<"GEM "<<numSimHits<<" "<<tp->g4Tracks().size()<<" "<<selectedGEMHits.size()<<std::endl;
 	//if(selectedGEMHits.size()>0) cout<<"GEM "<<" "<<quality<<" "<<corrFactorGEM<<" "<<quality*corrFactorGEM<<std::endl;
 
@@ -562,6 +566,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		for(int i = 0; i < (int)tp->g4Tracks().size(); i++){
 
 			if(itHit->particleType() != ((tp->g4Tracks())[i]).type()) continue;
+			if(itHit->eventId() != (tp->eventId())) continue;
 			if((tp->g4Tracks())[i].trackId() == itHit->trackId()) selectedME11Hits.push_back(*itHit);
 
 		}
@@ -589,6 +594,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		for(int i = 0; i < (int)tp->g4Tracks().size(); i++){
 
 			if(itHit->particleType() != ((tp->g4Tracks())[i]).type()) continue;
+			if(itHit->eventId() != (tp->eventId())) continue;
 			if((tp->g4Tracks())[i].trackId() == itHit->trackId()) selectedRPCHits.push_back(*itHit);
 
 		}
@@ -647,11 +653,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    if (MABH) {
 	      //cout<<"GEM1 "<<" "<<quality<<" "<<corrFactorGEM<<" "<<quality*corrFactorGEM<<std::endl;
 	      //cout<<"GEM0 "<<" "<<selectedGEMHits.size()<<" "<<maskGEM<<std::endl;	
-	      if(selectedGEMHits.size() > 0 && maskGEM){
+	      if(selectedGEMHits.size() > 0 && maskGEM && !maskME11){
 			//cout<<"GEM0 "<<" "<<selectedGEMHits.size()<<" "<<maskGEM<<std::endl;	
 			quality *= corrFactorGEM;
 	      }
-	      else if(selectedME11Hits.size() > 0 && maskME11) quality *= corrFactorME11;
+	      else if(selectedME11Hits.size() > 0 && maskME11 && !maskGEM) quality *= corrFactorME11;
 	      else if((selectedGEMHits.size() > 0 || selectedME11Hits.size() > 0) && maskGEM && maskME11) quality *= corrFactorGEMME11;
 	      else if((selectedGEMHits.size() > 0 || selectedRPCHits.size() > 0) && maskGEM && maskRPC) quality *= corrFactorGEMRPC;
 	      h_quality[w]->Fill(quality);
