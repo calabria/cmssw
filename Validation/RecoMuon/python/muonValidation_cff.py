@@ -228,6 +228,20 @@ staUpdMuonTrackVMuonAssoc.label = ('standAloneMuons:UpdatedAtVtx',)
 staUpdMuonTrackVMuonAssoc.usetracker = False
 staUpdMuonTrackVMuonAssoc.usemuon = True
 
+staUpdMuonTrackVMuonAssoc2St = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVMuonAssoc2St.associatormap = 'tpToStaUpdMuonAssociation2St'
+staUpdMuonTrackVMuonAssoc2St.associators = ('MuonAssociationByHits',)
+staUpdMuonTrackVMuonAssoc2St.label = ('extractedSTAMuons2Stat',)
+staUpdMuonTrackVMuonAssoc2St.usetracker = False
+staUpdMuonTrackVMuonAssoc2St.usemuon = True
+
+staUpdMuonTrackVMuonAssoc2StTime = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVMuonAssoc2StTime.associatormap = 'tpToStaUpdMuonAssociation2StTime'
+staUpdMuonTrackVMuonAssoc2StTime.associators = ('MuonAssociationByHits',)
+staUpdMuonTrackVMuonAssoc2StTime.label = ('extractedSTAMuons2StatTiming',)
+staUpdMuonTrackVMuonAssoc2StTime.usetracker = False
+staUpdMuonTrackVMuonAssoc2StTime.usemuon = True
+
 glbMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 glbMuonTrackVMuonAssoc.associatormap = 'tpToGlbMuonAssociation'
 glbMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
@@ -322,12 +336,40 @@ staUpdMuonTrackVSelMuonAssoc.label = ('standAloneMuons:UpdatedAtVtx',)
 staUpdMuonTrackVSelMuonAssoc.usetracker = False
 staUpdMuonTrackVSelMuonAssoc.usemuon = True
 
+staUpdMuonTrackVSelMuonAssoc2St = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVSelMuonAssoc2St.associatormap = 'tpToStaUpdSelMuonAssociation2St'
+staUpdMuonTrackVSelMuonAssoc2St.associators = ('MuonAssociationByHits',)
+staUpdMuonTrackVSelMuonAssoc2St.label = ('extractedSTAMuons2Stat',)
+staUpdMuonTrackVSelMuonAssoc2St.usetracker = False
+staUpdMuonTrackVSelMuonAssoc2St.usemuon = True
+
+staUpdMuonTrackVSelMuonAssoc2StTime = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVSelMuonAssoc2StTime.associatormap = 'tpToStaUpdSelMuonAssociation2StTime'
+staUpdMuonTrackVSelMuonAssoc2StTime.associators = ('MuonAssociationByHits',)
+staUpdMuonTrackVSelMuonAssoc2StTime.label = ('extractedSTAMuons2StatTiming',)
+staUpdMuonTrackVSelMuonAssoc2StTime.usetracker = False
+staUpdMuonTrackVSelMuonAssoc2StTime.usemuon = True
+
 staUpdMuonTrackVSel2MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 staUpdMuonTrackVSel2MuonAssoc.associatormap = 'tpToStaUpdSel2MuonAssociation'
 staUpdMuonTrackVSel2MuonAssoc.associators = ('MuonAssociationByHits',)
 staUpdMuonTrackVSel2MuonAssoc.label = ('standAloneMuons:UpdatedAtVtx',)
 staUpdMuonTrackVSel2MuonAssoc.usetracker = False
 staUpdMuonTrackVSel2MuonAssoc.usemuon = True
+
+staUpdMuonTrackVSel2MuonAssoc2St = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVSel2MuonAssoc2St.associatormap = 'tpToStaUpdSel2MuonAssociation2St'
+staUpdMuonTrackVSel2MuonAssoc2St.associators = ('MuonAssociationByHits',)
+staUpdMuonTrackVSel2MuonAssoc2St.label = ('extractedSTAMuons2Stat',)
+staUpdMuonTrackVSel2MuonAssoc2St.usetracker = False
+staUpdMuonTrackVSel2MuonAssoc2St.usemuon = True
+
+staUpdMuonTrackVSel2MuonAssoc2StTime = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+staUpdMuonTrackVSel2MuonAssoc2StTime.associatormap = 'tpToStaUpdSel2MuonAssociation2StTime'
+staUpdMuonTrackVSel2MuonAssoc2StTime.associators = ('MuonAssociationByHits',)
+staUpdMuonTrackVSel2MuonAssoc2StTime.label = ('extractedSTAMuons2StatTiming',)
+staUpdMuonTrackVSel2MuonAssoc2StTime.usetracker = False
+staUpdMuonTrackVSel2MuonAssoc2StTime.usemuon = True
 
 staUpd10SelMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 staUpd10SelMuonTrackVMuonAssoc.associatormap = 'tpToStaUpd10SelMuonAssociation'
@@ -395,6 +437,13 @@ looseMuonTrackVSel3MuonAssoc.label = ('bestMuonLoose',)
 looseMuonTrackVSel3MuonAssoc.usetracker = True
 looseMuonTrackVSel3MuonAssoc.usemuon = True
 
+looseMuonTrackVSel4MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+looseMuonTrackVSel4MuonAssoc.associatormap = 'tpToLooseSel4MuonAssociation'
+looseMuonTrackVSel4MuonAssoc.associators = ('MuonAssociationByHits',)
+looseMuonTrackVSel4MuonAssoc.label = ('bestMuonLoose',)
+looseMuonTrackVSel4MuonAssoc.usetracker = True
+looseMuonTrackVSel4MuonAssoc.usemuon = True
+
 tightMuonTrackVSelMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 tightMuonTrackVSelMuonAssoc.associatormap = 'tpToTightSelMuonAssociation'
 tightMuonTrackVSelMuonAssoc.associators = ('MuonAssociationByHits',)
@@ -415,6 +464,13 @@ tightMuonTrackVSel3MuonAssoc.associators = ('MuonAssociationByHits',)
 tightMuonTrackVSel3MuonAssoc.label = ('bestMuonTight',)
 tightMuonTrackVSel3MuonAssoc.usetracker = True
 tightMuonTrackVSel3MuonAssoc.usemuon = True
+
+tightMuonTrackVSel4MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+tightMuonTrackVSel4MuonAssoc.associatormap = 'tpToTightSel4MuonAssociation'
+tightMuonTrackVSel4MuonAssoc.associators = ('MuonAssociationByHits',)
+tightMuonTrackVSel4MuonAssoc.label = ('bestMuonTight',)
+tightMuonTrackVSel4MuonAssoc.usetracker = True
+tightMuonTrackVSel4MuonAssoc.usemuon = True
 
 ##################################################################################
 
@@ -531,22 +587,31 @@ recoMuonVMuAssoc_tgt.primaryVertex = 'offlinePrimaryVertices'
 # Muon validation sequence
 
 muonValidation_seq = cms.Sequence(
-        trkProbeTrackVMuonAssoc+trkMuonTrackVTrackAssoc
+        #trkProbeTrackVMuonAssoc+trkMuonTrackVTrackAssoc
 #       + staSeedTrackVMuonAssoc
-#	+ staMuonTrackVMuonAssoc
-	+ staUpdMuonTrackVMuonAssoc+glbMuonTrackVMuonAssoc
+#	+ staMuonTrackVMuonAssoc + 
+	#staUpdMuonTrackVMuonAssoc
+	#+staUpdMuonTrackVMuonAssoc2St+
+	staUpdMuonTrackVMuonAssoc2StTime
+	#+ glbMuonTrackVMuonAssoc
 # 
-	+ trkProbeTrackVSelMuonAssoc
-	+ staUpdMuonTrackVSelMuonAssoc+staUpdMuonTrackVSel2MuonAssoc
-	+ staUpd10SelMuonTrackVMuonAssoc+staUpd20SelMuonTrackVMuonAssoc
-	+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc+glbMuonTrackVSel4MuonAssoc
-	+ looseMuonTrackVSelMuonAssoc+looseMuonTrackVSel2MuonAssoc+looseMuonTrackVSel3MuonAssoc
-	+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc+tightMuonTrackVSel3MuonAssoc
+	#+ trkProbeTrackVSelMuonAssoc
+	#+ staUpdMuonTrackVSelMuonAssoc+staUpdMuonTrackVSel2MuonAssoc
+	#+ staUpdMuonTrackVSelMuonAssoc2St
+	#+ staUpdMuonTrackVSel2MuonAssoc2St
+	#+ staUpdMuonTrackVSelMuonAssoc2StTime
+ 	+ staUpdMuonTrackVSel2MuonAssoc2StTime
+	#+ staUpd10SelMuonTrackVMuonAssoc+staUpd20SelMuonTrackVMuonAssoc
+	#+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc+glbMuonTrackVSel4MuonAssoc
+	#+ looseMuonTrackVSelMuonAssoc+looseMuonTrackVSel2MuonAssoc
+	+ looseMuonTrackVSel3MuonAssoc+looseMuonTrackVSel4MuonAssoc
+	#+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc
+	+ tightMuonTrackVSel3MuonAssoc+tightMuonTrackVSel4MuonAssoc
 #
 #	+ recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt
-	+ bestMuonLooseTrackVTrackAssoc #+ bestMuonLooseTrackVTrackAssoc5 + bestMuonLooseTrackVTrackAssoc10 + bestMuonLooseTrackVTrackAssoc20
+	#+ bestMuonLooseTrackVTrackAssoc #+ bestMuonLooseTrackVTrackAssoc5 + bestMuonLooseTrackVTrackAssoc10 + bestMuonLooseTrackVTrackAssoc20
 #	+ bestMuonLoose2TrackVTrackAssoc + bestMuonLoose2TrackVTrackAssoc5 + bestMuonLoose2TrackVTrackAssoc10 + bestMuonLoose2TrackVTrackAssoc20
-	+ bestMuonTightTrackVTrackAssoc #+ bestMuonTightTrackVTrackAssoc5 + bestMuonTightTrackVTrackAssoc10 + bestMuonTightTrackVTrackAssoc20
+	#+ bestMuonTightTrackVTrackAssoc #+ bestMuonTightTrackVTrackAssoc5 + bestMuonTightTrackVTrackAssoc10 + bestMuonTightTrackVTrackAssoc20
 
 )
                                   
