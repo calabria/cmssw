@@ -87,10 +87,10 @@ bool MuonTrackProducer::isLoose(edm::Event& iEvent, reco::MuonCollection::const_
 {
   bool isPF = muon->isPFMuon();
   bool isGLB = muon->isGlobalMuon();
-  //bool isTrk = muon->isTrackerMuon();
+  bool isTrk = muon->isTrackerMuon();
 
-  //return (isPF && (isGLB || isTrk) );
-  return (isPF && isGLB );
+  return (isPF && (isGLB || isTrk) );
+  //return (isPF && isGLB );
 }
 
 bool MuonTrackProducer::isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz)
@@ -463,7 +463,7 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
         else continue;
       }
       else if (trackType == "globalTrackLoose") {
-        if (muon->globalTrack().isNonnull() && loose) trackref = muon->globalTrack();
+        if (muon->muonBestTrack().isNonnull() && loose) trackref = muon->muonBestTrack();
         else continue;
       }
       else if (trackType == "globalTrackLoose2") {
@@ -471,7 +471,7 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
         else continue;
       }
       else if (trackType == "globalTrackTight") {
-        if (muon->globalTrack().isNonnull() && tight) trackref = muon->globalTrack();
+        if (muon->muonBestTrack().isNonnull() && tight) trackref = muon->muonBestTrack();
         else continue;
       }
       else if (trackType == "innerTrackPlusSegments") {
