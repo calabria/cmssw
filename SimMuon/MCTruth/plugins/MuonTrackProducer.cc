@@ -471,7 +471,7 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
 
 	if(loose){
 
-          	if( muon->globalTrack().isNonnull() && (tight || !muon->isTrackerMuon()) )
+          	if( muon->globalTrack().isNonnull() && !muon->isTrackerMuon() )
                 {
                    	trackref = muon->globalTrack();
 	           	usingInner = false;

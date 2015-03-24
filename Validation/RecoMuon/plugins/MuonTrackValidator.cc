@@ -819,7 +819,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
 		  if (isSignalMuon) {
 			// verifica che lo sia veramente
-			std::cout<<"isSignalMuon: "<<isSignalMuon<<" id: "<<tpRtS->pdgId()<<" gP: "<<tpRtS->genParticles().empty()<<std::endl;
+			//std::cout<<"isSignalMuon: "<<isSignalMuon<<" id: "<<tpRtS->pdgId()<<" gP: "<<tpRtS->genParticles().empty()<<std::endl;
 		  }
 		  if (!useMCTruth_ || (useMCTruth_ && isSignalMuon)) {
 
