@@ -42,6 +42,7 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     # if *not* uses associators, the TP-RecoTrack maps has to be specified 
     UseAssociators = cms.bool(False),
     useGEMs = cms.bool(True),
+    useMCTruth = cms.untracked.bool(False),
     associators = cms.vstring('a_MuonAssociator'),
     associatormap = cms.InputTag("tpToMuonTrackAssociation"),
     #

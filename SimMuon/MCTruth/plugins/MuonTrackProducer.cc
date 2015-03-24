@@ -450,6 +450,7 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
       bool loose2 = isLoose2(iEvent, muon, useIPxy, useIPz);
       //bool soft = isSoft(iEvent, muon, useIPxy, useIPz);
       bool tight = isTight(iEvent, muon, useIPxy, useIPz);
+      bool usingInner = false;
       if (trackType == "innerTrack") {
         if (muon->innerTrack().isNonnull()) trackref = muon->innerTrack();
         else continue;
@@ -462,16 +463,38 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
         if (muon->globalTrack().isNonnull()) trackref = muon->globalTrack();
         else continue;
       }
+      else if (trackType == "bestMuon") {
+	if (muon->muonBestTrack().isNonnull()) trackref = muon->muonBestTrack();
+	else continue;
+      }
       else if (trackType == "globalTrackLoose") {
-        if (muon->muonBestTrack().isNonnull() && loose) trackref = muon->muonBestTrack();
+
+	if(loose){
+
+          	if( muon->globalTrack().isNonnull() && (tight || !muon->isTrackerMuon()) )
+                {
+                   	trackref = muon->globalTrack();
+	           	usingInner = false;
+                }
+          	else if ( muon->innerTrack().isNonnull() )
+                {
+                   trackref = muon->innerTrack();
+                   usingInner = true;
+                }
+          	else continue;
+
+	}
+
+        //if (muon->muonBestTrack().isNonnull() && loose) trackref = muon->muonBestTrack();
         else continue;
+
       }
       else if (trackType == "globalTrackLoose2") {
         if (muon->globalTrack().isNonnull() && loose2) trackref = muon->globalTrack();
         else continue;
       }
       else if (trackType == "globalTrackTight") {
-        if (muon->muonBestTrack().isNonnull() && tight) trackref = muon->muonBestTrack();
+        if (muon->muonBestTrack().isNonnull() && tight) trackref = muon->globalTrack();
         else continue;
       }
       else if (trackType == "innerTrackPlusSegments") {
@@ -505,7 +528,7 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
         newExtra->add( TrackingRecHitRef( rHits, hidx++ ) );
       }
 
-      if (trackType == "innerTrackPlusSegments") { 
+      if (trackType == "innerTrackPlusSegments" || usingInner) { 
 	
 	int wheel, station, sector;
 	int endcap, /*station, */ ring, chamber;

@@ -436,6 +436,16 @@ looseMuonTrackVSel3MuonAssoc.associators = ('MuonAssociationByHits',)
 looseMuonTrackVSel3MuonAssoc.label = ('bestMuonLoose',)
 looseMuonTrackVSel3MuonAssoc.usetracker = True
 looseMuonTrackVSel3MuonAssoc.usemuon = True
+looseMuonTrackVSel3MuonAssoc.useMCTruth = True
+
+looseMuonTrackVSel35MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+looseMuonTrackVSel35MuonAssoc.associatormap = 'tpToLooseSel35MuonAssociation'
+looseMuonTrackVSel35MuonAssoc.associators = ('MuonAssociationByHits',)
+looseMuonTrackVSel35MuonAssoc.label = ('bestMuonLoose5',)
+looseMuonTrackVSel35MuonAssoc.ptMinTP = 5.0
+looseMuonTrackVSel35MuonAssoc.usetracker = True
+looseMuonTrackVSel35MuonAssoc.usemuon = True
+looseMuonTrackVSel35MuonAssoc.useMCTruth = True
 
 looseMuonTrackVSel4MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 looseMuonTrackVSel4MuonAssoc.associatormap = 'tpToLooseSel4MuonAssociation'
@@ -464,6 +474,16 @@ tightMuonTrackVSel3MuonAssoc.associators = ('MuonAssociationByHits',)
 tightMuonTrackVSel3MuonAssoc.label = ('bestMuonTight',)
 tightMuonTrackVSel3MuonAssoc.usetracker = True
 tightMuonTrackVSel3MuonAssoc.usemuon = True
+tightMuonTrackVSel3MuonAssoc.useMCTruth = True
+
+tightMuonTrackVSel35MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+tightMuonTrackVSel35MuonAssoc.associatormap = 'tpToTightSel35MuonAssociation'
+tightMuonTrackVSel35MuonAssoc.associators = ('MuonAssociationByHits',)
+tightMuonTrackVSel35MuonAssoc.label = ('bestMuonTight5',)
+tightMuonTrackVSel35MuonAssoc.ptMinTP = 5.0
+tightMuonTrackVSel35MuonAssoc.usetracker = True
+tightMuonTrackVSel35MuonAssoc.usemuon = True
+tightMuonTrackVSel35MuonAssoc.useMCTruth = True
 
 tightMuonTrackVSel4MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 tightMuonTrackVSel4MuonAssoc.associatormap = 'tpToTightSel4MuonAssociation'
@@ -604,9 +624,13 @@ muonValidation_seq = cms.Sequence(
 	#+ staUpd10SelMuonTrackVMuonAssoc+staUpd20SelMuonTrackVMuonAssoc
 	#+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc+glbMuonTrackVSel4MuonAssoc
 	#+ looseMuonTrackVSelMuonAssoc+looseMuonTrackVSel2MuonAssoc
-	+ looseMuonTrackVSel3MuonAssoc+looseMuonTrackVSel4MuonAssoc
+	+ looseMuonTrackVSel3MuonAssoc
+	#+looseMuonTrackVSel4MuonAssoc
+	+ looseMuonTrackVSel35MuonAssoc
 	#+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc
-	+ tightMuonTrackVSel3MuonAssoc+tightMuonTrackVSel4MuonAssoc
+	+ tightMuonTrackVSel3MuonAssoc
+	#+tightMuonTrackVSel4MuonAssoc
+	+ tightMuonTrackVSel35MuonAssoc
 #
 #	+ recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt
 	#+ bestMuonLooseTrackVTrackAssoc #+ bestMuonLooseTrackVTrackAssoc5 + bestMuonLooseTrackVTrackAssoc10 + bestMuonLooseTrackVTrackAssoc20
