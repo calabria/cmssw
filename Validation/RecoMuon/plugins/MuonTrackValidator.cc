@@ -817,9 +817,15 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		  TrackingParticle* tpRtS=const_cast<TrackingParticle*>(tpr.get());
 		  bool isSignalMuon = abs(tpRtS->pdgId())==13 && !tpRtS->genParticles().empty();
 
+		  for(TrackingParticle::g4t_iterator g4T=(*tpRtS).g4Track_begin(); g4T!=(*tpRtS).g4Track_end(); ++g4T) {
+
+			cout<<"\t"<< " Id:"<<(*g4T).trackId()<<"/Evt:("<<(*g4T).eventId().event()<<","<<(*g4T).eventId().bunchCrossing()<<")";
+
+		  }
+
 		  if (isSignalMuon) {
 			// verifica che lo sia veramente
-			//std::cout<<"isSignalMuon: "<<isSignalMuon<<" id: "<<tpRtS->pdgId()<<" gP: "<<tpRtS->genParticles().empty()<<std::endl;
+			std::cout<<"isSignalMuon: "<<isSignalMuon<<" id: "<<tpRtS->pdgId()<<" gP: "<<tpRtS->genParticles().empty()<<std::endl;
 		  }
 		  if (!useMCTruth_ || (useMCTruth_ && isSignalMuon)) {
 
