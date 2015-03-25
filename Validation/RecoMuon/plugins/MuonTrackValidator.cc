@@ -819,7 +819,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
 		  for(TrackingParticle::g4t_iterator g4T=(*tpRtS).g4Track_begin(); g4T!=(*tpRtS).g4Track_end(); ++g4T) {
 
-			edm::LogVerbatim("MuonAssociatorByHitsHelper")<<"\t"<< " Id:"<<(*g4T).trackId()<<"/Evt:("<<(*g4T).eventId().event()<<","<<(*g4T).eventId().bunchCrossing()<<")";
+			edm::LogVerbatim("MuonTrackValidator")<<"\t"<< " Id:"<<(*g4T).trackId()<<"/Evt:("<<(*g4T).eventId().event()<<","<<(*g4T).eventId().bunchCrossing()<<")";
 
 		  }
 
@@ -829,7 +829,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 			int hitsStatus = tpRtS->status();
 			double prodRho = tpRtS->vertex().Rho();
 			double prodZ = tpRtS->vz();
-			edm::LogVerbatim("MuonAssociatorByHitsHelper") << "\t Particle pdgId = "<< hitsPdgId << " status:" << hitsStatus << " produced at rho = " << prodRho << ", z = " << prodZ;
+			edm::LogVerbatim("MuonTrackValidator") << "\t Particle pdgId = "<< hitsPdgId << " status:" << hitsStatus << " produced at rho = " << prodRho << ", z = " << prodZ;
 
                 	reco::GenParticleRef genp   = tpRtS->genParticles()[0];
                 	reco::GenParticleRef genMom = genp->numberOfMothers() > 0 ? genp->motherRef() : reco::GenParticleRef();
@@ -840,14 +840,14 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
                     		int momStatus = genMom->status();
                     		double momRho = genMom->vertex().Rho(); 
 				double momZ = genMom->vz();
-                    		edm::LogVerbatim("MuonAssociatorByHitsHelper") << "\t Particle pdgId = "<<hitsPdgId << ", has GEN mother pdgId = " << momPdgId << ", mom status: " << momStatus;
+                    		edm::LogVerbatim("MuonTrackValidator") << "\t Particle pdgId = "<<hitsPdgId << ", has GEN mother pdgId = " << momPdgId << ", mom status: " << momStatus;
                     		reco::GenParticleRef genGMom = genMom->numberOfMothers() > 0 ? genMom->motherRef() : reco::GenParticleRef();
 				//cout << "\t\t Number of gmoms: " << genMom->numberOfMothers() << std::endl;
                     		if (genGMom.isNonnull()) {
 
                         		int gmomPdgId = genGMom->pdgId();
 					int gmomStatus = genGMom->status();
-                        		edm::LogVerbatim("MuonAssociatorByHitsHelper") << "\t\t mother prod. vertex rho = " << momRho << ", z = " << momZ << ", grand-mom pdgId = " << gmomPdgId << ", status: " << gmomStatus;
+                        		edm::LogVerbatim("MuonTrackValidator") << "\t\t mother prod. vertex rho = " << momRho << ", z = " << momZ << ", grand-mom pdgId = " << gmomPdgId << ", status: " << gmomStatus;
 
                     			reco::GenParticleRef genGGMom = genGMom->numberOfMothers() > 0 ? genGMom->motherRef() : reco::GenParticleRef();
 					//cout << "\t\t Number of ggmoms: " << genGMom->numberOfMothers() << std::endl;
@@ -855,7 +855,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
                         			int ggmomPdgId = genGGMom->pdgId();
                         			int ggmomStatus = genGGMom->status();
-                        			edm::LogVerbatim("MuonAssociatorByHitsHelper") << "\t\t grand-grand-mom pdgId = " << ggmomPdgId << ", status: " << ggmomStatus;
+                        			edm::LogVerbatim("MuonTrackValidator") << "\t\t grand-grand-mom pdgId = " << ggmomPdgId << ", status: " << ggmomStatus;
 
                     				reco::GenParticleRef genGGGMom = genGGMom->numberOfMothers() > 0 ? genGGMom->motherRef() : reco::GenParticleRef();
 						//cout << "\t\t Number of gggmoms: " << genGGMom->numberOfMothers() << std::endl;
@@ -863,7 +863,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
                         				int gggmomPdgId = genGGGMom->pdgId();
                         				int gggmomStatus = genGGGMom->status();
-                        				edm::LogVerbatim("MuonAssociatorByHitsHelper") << "\t\t grand-grand-grand-mom pdgId = " << gggmomPdgId << ", status: " << gggmomStatus;
+                        				edm::LogVerbatim("MuonTrackValidator") << "\t\t grand-grand-grand-mom pdgId = " << gggmomPdgId << ", status: " << gggmomStatus;
 
                     				}	
 
