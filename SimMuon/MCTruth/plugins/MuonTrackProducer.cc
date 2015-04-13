@@ -478,8 +478,8 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
                 }
           	else if ( muon->innerTrack().isNonnull() )
                 {
-                   trackref = muon->innerTrack();
-                   usingInner = true;
+                   	trackref = muon->innerTrack();
+                   	usingInner = true;
                 }
           	else continue;
 
@@ -494,7 +494,7 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
         else continue;
       }
       else if (trackType == "globalTrackTight") {
-        if (muon->muonBestTrack().isNonnull() && tight) trackref = muon->globalTrack();
+        if (muon->globalTrack().isNonnull() && tight) trackref = muon->globalTrack();
         else continue;
       }
       else if (trackType == "innerTrackPlusSegments") {

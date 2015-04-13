@@ -430,13 +430,30 @@ looseMuonTrackVSel2MuonAssoc.label = ('bestMuonLoose',)
 looseMuonTrackVSel2MuonAssoc.usetracker = True
 looseMuonTrackVSel2MuonAssoc.usemuon = True
 
+looseMuonTrackVSel0MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+looseMuonTrackVSel0MuonAssoc.associatormap = 'tpToLooseSel0MuonAssociation'
+looseMuonTrackVSel0MuonAssoc.associators = ('MuonAssociationByHits',)
+looseMuonTrackVSel0MuonAssoc.label = ('bestMuonLoose',)
+looseMuonTrackVSel0MuonAssoc.usetracker = True
+looseMuonTrackVSel0MuonAssoc.usemuon = True
+looseMuonTrackVSel0MuonAssoc.useMCTruth = False
+
+looseMuonTrackVSel05MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+looseMuonTrackVSel05MuonAssoc.associatormap = 'tpToLooseSel05MuonAssociation'
+looseMuonTrackVSel05MuonAssoc.associators = ('MuonAssociationByHits',)
+looseMuonTrackVSel05MuonAssoc.label = ('bestMuonLoose5',)
+looseMuonTrackVSel05MuonAssoc.ptMinTP = 5.0
+looseMuonTrackVSel05MuonAssoc.usetracker = True
+looseMuonTrackVSel05MuonAssoc.usemuon = True
+looseMuonTrackVSel05MuonAssoc.useMCTruth = False
+
 looseMuonTrackVSel3MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 looseMuonTrackVSel3MuonAssoc.associatormap = 'tpToLooseSel3MuonAssociation'
 looseMuonTrackVSel3MuonAssoc.associators = ('MuonAssociationByHits',)
 looseMuonTrackVSel3MuonAssoc.label = ('bestMuonLoose',)
 looseMuonTrackVSel3MuonAssoc.usetracker = True
 looseMuonTrackVSel3MuonAssoc.usemuon = True
-looseMuonTrackVSel3MuonAssoc.useMCTruth = True
+looseMuonTrackVSel3MuonAssoc.useMCTruth = False
 
 looseMuonTrackVSel35MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 looseMuonTrackVSel35MuonAssoc.associatormap = 'tpToLooseSel35MuonAssociation'
@@ -445,7 +462,7 @@ looseMuonTrackVSel35MuonAssoc.label = ('bestMuonLoose5',)
 looseMuonTrackVSel35MuonAssoc.ptMinTP = 5.0
 looseMuonTrackVSel35MuonAssoc.usetracker = True
 looseMuonTrackVSel35MuonAssoc.usemuon = True
-looseMuonTrackVSel35MuonAssoc.useMCTruth = True
+looseMuonTrackVSel35MuonAssoc.useMCTruth = False
 
 looseMuonTrackVSel4MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 looseMuonTrackVSel4MuonAssoc.associatormap = 'tpToLooseSel4MuonAssociation'
@@ -468,13 +485,30 @@ tightMuonTrackVSel2MuonAssoc.label = ('bestMuonTight',)
 tightMuonTrackVSel2MuonAssoc.usetracker = True
 tightMuonTrackVSel2MuonAssoc.usemuon = True
 
+tightMuonTrackVSel0MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+tightMuonTrackVSel0MuonAssoc.associatormap = 'tpToTightSel0MuonAssociation'
+tightMuonTrackVSel0MuonAssoc.associators = ('MuonAssociationByHits',)
+tightMuonTrackVSel0MuonAssoc.label = ('bestMuonTight',)
+tightMuonTrackVSel0MuonAssoc.usetracker = True
+tightMuonTrackVSel0MuonAssoc.usemuon = True
+tightMuonTrackVSel0MuonAssoc.useMCTruth = False
+
+tightMuonTrackVSel05MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+tightMuonTrackVSel05MuonAssoc.associatormap = 'tpToTightSel05MuonAssociation'
+tightMuonTrackVSel05MuonAssoc.associators = ('MuonAssociationByHits',)
+tightMuonTrackVSel05MuonAssoc.label = ('bestMuonTight5',)
+tightMuonTrackVSel05MuonAssoc.ptMinTP = 5.0
+tightMuonTrackVSel05MuonAssoc.usetracker = True
+tightMuonTrackVSel05MuonAssoc.usemuon = True
+tightMuonTrackVSel05MuonAssoc.useMCTruth = False
+
 tightMuonTrackVSel3MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 tightMuonTrackVSel3MuonAssoc.associatormap = 'tpToTightSel3MuonAssociation'
 tightMuonTrackVSel3MuonAssoc.associators = ('MuonAssociationByHits',)
 tightMuonTrackVSel3MuonAssoc.label = ('bestMuonTight',)
 tightMuonTrackVSel3MuonAssoc.usetracker = True
 tightMuonTrackVSel3MuonAssoc.usemuon = True
-tightMuonTrackVSel3MuonAssoc.useMCTruth = True
+tightMuonTrackVSel3MuonAssoc.useMCTruth = False
 
 tightMuonTrackVSel35MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 tightMuonTrackVSel35MuonAssoc.associatormap = 'tpToTightSel35MuonAssociation'
@@ -483,7 +517,7 @@ tightMuonTrackVSel35MuonAssoc.label = ('bestMuonTight5',)
 tightMuonTrackVSel35MuonAssoc.ptMinTP = 5.0
 tightMuonTrackVSel35MuonAssoc.usetracker = True
 tightMuonTrackVSel35MuonAssoc.usemuon = True
-tightMuonTrackVSel35MuonAssoc.useMCTruth = True
+tightMuonTrackVSel35MuonAssoc.useMCTruth = False
 
 tightMuonTrackVSel4MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 tightMuonTrackVSel4MuonAssoc.associatormap = 'tpToTightSel4MuonAssociation'
@@ -612,7 +646,7 @@ muonValidation_seq = cms.Sequence(
 #	+ staMuonTrackVMuonAssoc + 
 	#staUpdMuonTrackVMuonAssoc
 	#+staUpdMuonTrackVMuonAssoc2St+
-	staUpdMuonTrackVMuonAssoc2StTime
+	#staUpdMuonTrackVMuonAssoc2StTime
 	#+ glbMuonTrackVMuonAssoc
 # 
 	#+ trkProbeTrackVSelMuonAssoc
@@ -620,17 +654,17 @@ muonValidation_seq = cms.Sequence(
 	#+ staUpdMuonTrackVSelMuonAssoc2St
 	#+ staUpdMuonTrackVSel2MuonAssoc2St
 	#+ staUpdMuonTrackVSelMuonAssoc2StTime
- 	+ staUpdMuonTrackVSel2MuonAssoc2StTime
+ 	staUpdMuonTrackVSel2MuonAssoc2StTime
 	#+ staUpd10SelMuonTrackVMuonAssoc+staUpd20SelMuonTrackVMuonAssoc
 	#+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc+glbMuonTrackVSel4MuonAssoc
 	#+ looseMuonTrackVSelMuonAssoc+looseMuonTrackVSel2MuonAssoc
-	+ looseMuonTrackVSel3MuonAssoc
+	+ looseMuonTrackVSel3MuonAssoc + looseMuonTrackVSel0MuonAssoc
 	#+looseMuonTrackVSel4MuonAssoc
-	+ looseMuonTrackVSel35MuonAssoc
+	+ looseMuonTrackVSel35MuonAssoc + looseMuonTrackVSel05MuonAssoc
 	#+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc
-	+ tightMuonTrackVSel3MuonAssoc
+	+ tightMuonTrackVSel3MuonAssoc + tightMuonTrackVSel0MuonAssoc
 	#+tightMuonTrackVSel4MuonAssoc
-	+ tightMuonTrackVSel35MuonAssoc
+	+ tightMuonTrackVSel35MuonAssoc + tightMuonTrackVSel05MuonAssoc
 #
 #	+ recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt
 	#+ bestMuonLooseTrackVTrackAssoc #+ bestMuonLooseTrackVTrackAssoc5 + bestMuonLooseTrackVTrackAssoc10 + bestMuonLooseTrackVTrackAssoc20
