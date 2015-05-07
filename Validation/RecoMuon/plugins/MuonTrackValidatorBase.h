@@ -52,6 +52,10 @@ class MuonTrackValidatorBase {
     nint(pset.getParameter<int>("nint")),
     useFabs(pset.getParameter<bool>("useFabsEta")),
 
+    minRes(pset.getParameter<double>("minRes")),
+    maxRes(pset.getParameter<double>("maxRes")),
+    nintRes(pset.getParameter<int>("nintRes")),
+
     minVtx(pset.getParameter<double>("minVtx")),
     maxVtx(pset.getParameter<double>("maxVtx")),
     nintVtx(pset.getParameter<int>("nintVtx")),
@@ -482,6 +486,8 @@ class MuonTrackValidatorBase {
   double  min, max;
   int nint;
   bool useFabs;
+  double  minRes, maxRes;
+  int nintRes;
   double  minVtx, maxVtx;
   int nintVtx;
   double minpT, maxpT;
@@ -517,7 +523,7 @@ class MuonTrackValidatorBase {
   std::vector<MonitorElement*> h_tracks, h_fakes, h_hits, h_charge;
   std::vector<MonitorElement*> h_assocpTvsEta, h_assocpTvsPhi;
   std::vector<MonitorElement*> h_simulpTvsEta, h_simulpTvsPhi;
-  std::vector<MonitorElement*> h_numEvt, h_recoeta, h_assoc2eta, h_assoc2etaBin1, h_assoc2etaBin2, h_assoc2etaBin3, h_assoc2etaBin4,h_assoc2etaPt10,h_assoc2eta_050, h_assoc2eta_075;
+  std::vector<MonitorElement*> h_numEvt, h_recoeta, h_assoc2eta, h_assoc2etaphi, h_assoc2etaBin1, h_assoc2etaBin2, h_assoc2etaBin3, h_assoc2etaBin4,h_assoc2etaPt10,h_assoc2eta_050, h_assoc2eta_075;
 
   std::vector<MonitorElement*> h_assoc2eta_SgnMu,h_assoc2eta_SgnBkg,h_assoc2eta_Pu,h_assoc2eta_PuIT,h_assoc2eta_PuOOT,h_assoc2eta_PuMu,h_assoc2eta_PuITMu,h_assoc2eta_PuOOTMu;
 
@@ -535,7 +541,7 @@ class MuonTrackValidatorBase {
   std::vector<MonitorElement*> h_recopTBin1, h_recopTBin2, h_recopTBin3;
   std::vector<MonitorElement*> h_assocpTBin1, h_assocpTBin2, h_assocpTBin3, h_simulpTBin1, h_simulpTBin2, h_simulpTBin3;
   std::vector<MonitorElement*> h_recohit, h_assochit, h_assoc2hit, h_simulhit;
-  std::vector<MonitorElement*> h_recophi, h_assocphi, h_assoc2phi, h_simulphi;
+  std::vector<MonitorElement*> h_recophi, h_recoetaphi, h_assocphi, h_assoc2phi, h_simulphi;
   std::vector<MonitorElement*> h_recodxy, h_dxyDistr, h_assocdxy, h_assoc2dxy, h_simuldxy;
   std::vector<MonitorElement*> h_recodz, h_dzDistr, h_assocdz, h_assoc2dz, h_simuldz;
   std::vector<MonitorElement*> h_assocvertpos, h_simulvertpos, h_assoczpos, h_simulzpos;

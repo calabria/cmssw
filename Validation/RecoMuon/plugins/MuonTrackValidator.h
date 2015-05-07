@@ -24,7 +24,6 @@ class MuonTrackValidator : public edm::EDAnalyzer, protected MuonTrackValidatorB
     associatormap = pset.getParameter< edm::InputTag >("associatormap");
     UseAssociators = pset.getParameter< bool >("UseAssociators");
     useGEMs_ = pset.getParameter< bool >("useGEMs");
-    useMCTruth_ = pset.getUntrackedParameter< bool >("useMCTruth", false);
     tpSelector = TrackingParticleSelector(pset.getParameter<double>("ptMinTP"),
 					  pset.getParameter<double>("minRapidityTP"),
 					  pset.getParameter<double>("maxRapidityTP"),
@@ -137,6 +136,8 @@ private:
   void getRecoMomentum (const reco::GsfTrack& gsfTrack, double& pt, double& ptError,
 			double& qoverp, double& qoverpError, double& lambda, double& lambdaError,  
 			double& phi, double& phiError) const;
+
+  bool isSignalFromZgamma(TrackingParticle* tpRtS);
 
  private:
   std::string dirName_;

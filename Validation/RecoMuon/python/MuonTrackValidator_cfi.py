@@ -4,9 +4,6 @@ from SimTracker.TrackAssociation.LhcParametersDefinerForTP_cfi import *
 from SimTracker.TrackAssociation.CosmicParametersDefinerForTP_cfi import *
 
 muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
-    maskGEM = cms.bool(False),
-    maskME11 = cms.bool(False),
-    maskRPC = cms.bool(False),
     # input TrackingParticle collections
     label_tp_effic = cms.InputTag("mix","MergedTrackTruth"),
     label_tp_fake = cms.InputTag("mix","MergedTrackTruth"),
@@ -25,7 +22,7 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     #
     # selection of TP for evaluation of efficiency, from "TrackingParticleSelectionForEfficiency"
     signalOnlyTP = cms.bool(True),
-    stableOnlyTP = cms.bool(False),
+    stableOnlyTP = cms.bool(True),
     chargedOnlyTP = cms.bool(True),
     pdgIdTP = cms.vint32(13,-13),
     minHitTP = cms.int32(0),
@@ -60,6 +57,9 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     min = cms.double(0),
     max = cms.double(2.5),
     nint = cms.int32(25),
+    minRes = cms.double(0),
+    maxRes = cms.double(2.4),
+    nintRes = cms.int32(12),
     #
     ptRes_nbin = cms.int32(100),                                   
     ptRes_rangeMin = cms.double(-0.3),
@@ -90,7 +90,7 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     # 
     minpT = cms.double(0),
     maxpT = cms.double(2500),
-    nintpT = cms.int32(500),
+    nintpT = cms.int32(2500),
     useLogPt=cms.untracked.bool(False),
     useInvPt = cms.bool(False),
     #                               
