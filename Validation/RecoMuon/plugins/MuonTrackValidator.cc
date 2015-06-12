@@ -1199,6 +1199,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  //TrackingParticle::Point vertexTP = parametersDefinerTP->vertex(event,setup,*(tpr.get()));
 
 	  double ptSim = sqrt(momentumTP.perp2());
+      double pSim = sqrt(momentumTP.mag2());
 	  double chargeSim = tpr->charge();
 	  double qoverpSim = tpr->charge()/sqrt(momentumTP.x()*momentumTP.x()+momentumTP.y()*momentumTP.y()+momentumTP.z()*momentumTP.z());
 	  double thetaSim = momentumTP.theta();
@@ -1217,6 +1218,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  double qoverpRec(0);
 	  double qoverpErrorRec(0); 
 	  double ptRec(0);
+      double pRec(0);
 	  double ptErrorRec(0);
 	  double lambdaRec(0); 
 	  double lambdaErrorRec(0);
@@ -1234,13 +1236,13 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  if (gsfTrack) {
 	    // get values from mode
 	    getRecoMomentum(*gsfTrack, ptRec, ptErrorRec, qoverpRec, qoverpErrorRec, 
-			    lambdaRec,lambdaErrorRec, phiRec, phiErrorRec); 
+			    lambdaRec,lambdaErrorRec, phiRec, phiErrorRec, pRec);
 	  }
 	 
 	  else {
 	    // get values from track (without mode) 
 	    getRecoMomentum(*track, ptRec, ptErrorRec, qoverpRec, qoverpErrorRec, 
-			    lambdaRec,lambdaErrorRec, phiRec, phiErrorRec); 
+			    lambdaRec,lambdaErrorRec, phiRec, phiErrorRec, pRec);
 	  }
 	 
 	  double thetaRec = track->theta();
@@ -1391,8 +1393,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  //dxyres_vs_pt[w]->Fill(getPt(ptSim),dxyRec-dxySim);
 	  ptres_vs_pt_sim[w]->Fill(getPt(ptSim),(ptRec-ptSim)/ptSim);
 	  invptres_vs_pt_sim[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptSim));
-	  qOverPtres_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
-	  qOverPtresXL_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  //qOverPtres_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  //qOverPtresXL_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+        
+      qOverPtres_vs_pt_sim[w]->Fill(getPt(pSim),(chargeRec/pRec-chargeSim/pSim)/(chargeSim/pSim));
+      qOverPtresXL_vs_pt_sim[w]->Fill(getPt(pSim),(chargeRec/pRec-chargeSim/pSim)/(chargeSim/pSim));
 
 	  if(fabs(etaSim) > 0 && fabs(etaSim) < 1.2){
 	  	qOverPtresB_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
@@ -1638,7 +1643,7 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
 
 void 
 MuonTrackValidator::getRecoMomentum (const reco::Track& track, double& pt, double& ptError,
-				      double& qoverp, double& qoverpError, double& lambda,double& lambdaError,  double& phi, double& phiError ) const {
+				      double& qoverp, double& qoverpError, double& lambda,double& lambdaError,  double& phi, double& phiError, double& p ) const {
   pt = track.pt();
   ptError = track.ptError();
   qoverp = track.qoverp();
@@ -1647,12 +1652,13 @@ MuonTrackValidator::getRecoMomentum (const reco::Track& track, double& pt, doubl
   lambdaError = track.lambdaError(); 
   phi = track.phi(); 
   phiError = track.phiError();
+  p = track.p();
 
 }
 
 void 
 MuonTrackValidator::getRecoMomentum (const reco::GsfTrack& gsfTrack, double& pt, double& ptError,
-				      double& qoverp, double& qoverpError, double& lambda,double& lambdaError,  double& phi, double& phiError  ) const {
+				      double& qoverp, double& qoverpError, double& lambda,double& lambdaError,  double& phi, double& phiError, double& p  ) const {
 
   pt = gsfTrack.ptMode();
   ptError = gsfTrack.ptModeError();
@@ -1662,6 +1668,7 @@ MuonTrackValidator::getRecoMomentum (const reco::GsfTrack& gsfTrack, double& pt,
   lambdaError = gsfTrack.lambdaModeError(); 
   phi = gsfTrack.phiMode(); 
   phiError = gsfTrack.phiModeError();
+  p = gsfTrack.p();
 
 }
 

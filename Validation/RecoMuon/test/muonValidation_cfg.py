@@ -54,10 +54,6 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
 
 #---- Validation stuffs ----#
 ## Default validation modules
-process.load("Validation.RecoMuon.MuonTrackValidator_cfi")
-process.muonTrackValidator.maskGEM = cms.bool(False) ####################### <------------------
-process.muonTrackValidator.maskME11 = cms.bool(False) ####################### <------------------
-process.muonTrackValidator.maskRPC = cms.bool(False) ####################### <------------------
 process.load("Configuration.StandardSequences.Validation_cff")
 process.validation_step = cms.Path(process.validation)
 ## Load muon validation modules

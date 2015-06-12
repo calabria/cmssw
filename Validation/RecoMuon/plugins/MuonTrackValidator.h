@@ -131,11 +131,11 @@ private:
   /// retrieval of reconstructed momentum components from reco::Track (== mean values for GSF) 
   void getRecoMomentum (const reco::Track& track, double& pt, double& ptError,
 			double& qoverp, double& qoverpError, double& lambda, double& lambdaError,  
-			double& phi, double& phiError ) const;
+			double& phi, double& phiError, double& p ) const;
   /// retrieval of reconstructed momentum components based on the mode of a reco::GsfTrack
   void getRecoMomentum (const reco::GsfTrack& gsfTrack, double& pt, double& ptError,
 			double& qoverp, double& qoverpError, double& lambda, double& lambdaError,  
-			double& phi, double& phiError) const;
+			double& phi, double& phiError, double& p ) const;
 
   bool isSignalFromZgamma(TrackingParticle* tpRtS);
 
