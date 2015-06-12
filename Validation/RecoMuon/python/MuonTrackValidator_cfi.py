@@ -15,13 +15,14 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     #
     useGsf=cms.bool(False),
     beamSpot = cms.InputTag("offlineBeamSpot"),
+    vertexSrc = cms.InputTag("selectedVertices"),
     # set true if you do not want that MTV launch an exception
     # if the track collection is missing (e.g. HLT):
     ignoremissingtrackcollection=cms.untracked.bool(False),
     #
     # selection of TP for evaluation of efficiency, from "TrackingParticleSelectionForEfficiency"
     signalOnlyTP = cms.bool(True),
-    stableOnlyTP = cms.bool(False),
+    stableOnlyTP = cms.bool(True),
     chargedOnlyTP = cms.bool(True),
     pdgIdTP = cms.vint32(13,-13),
     minHitTP = cms.int32(0),
@@ -37,7 +38,8 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     #
     # if *not* uses associators, the TP-RecoTrack maps has to be specified 
     UseAssociators = cms.bool(False),
-    useGEMs = cms.bool(False),
+    useGEMs = cms.bool(True),
+    useMCTruth = cms.untracked.bool(False),
     associators = cms.vstring('a_MuonAssociator'),
     associatormap = cms.InputTag("tpToMuonTrackAssociation"),
     #
@@ -51,10 +53,13 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     dirName = cms.string('Muons/RecoMuonV/MultiTrack/'),
     #
     # Parameters for plots                                    
-    useFabsEta = cms.bool(False),
-    min = cms.double(-2.5),
+    useFabsEta = cms.bool(True),
+    min = cms.double(0),
     max = cms.double(2.5),
-    nint = cms.int32(50),
+    nint = cms.int32(25),
+    minRes = cms.double(0),
+    maxRes = cms.double(2.4),
+    nintRes = cms.int32(12),
     #
     ptRes_nbin = cms.int32(100),                                   
     ptRes_rangeMin = cms.double(-0.3),
@@ -78,10 +83,14 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     dzRes_nbin = cms.int32(150),                                   
     dzRes_rangeMin = cms.double(-0.05),
     dzRes_rangeMax = cms.double(0.05),
+    #                               
+    minVtx = cms.double(0),                            
+    maxVtx = cms.double(200),
+    nintVtx = cms.int32(20),
     # 
-    minpT = cms.double(0.1),
-    maxpT = cms.double(1500),
-    nintpT = cms.int32(40),
+    minpT = cms.double(0),
+    maxpT = cms.double(2500),
+    nintpT = cms.int32(2500),
     useLogPt=cms.untracked.bool(False),
     useInvPt = cms.bool(False),
     #                               
