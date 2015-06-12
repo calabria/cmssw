@@ -416,6 +416,14 @@ glbMuonTrackVSel4MuonAssoc.usemuon = True
 
 ##################################################################################
 
+bestTunePMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+bestTunePMuonTrackVMuonAssoc.associatormap = 'tpToTunePMuonAssociation'
+bestTunePMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
+bestTunePMuonTrackVMuonAssoc.label = ('bestTunePMuon',)
+bestTunePMuonTrackVMuonAssoc.usetracker = True
+bestTunePMuonTrackVMuonAssoc.usemuon = True
+bestTunePMuonTrackVMuonAssoc.useMCTruth = False
+
 looseMuonTrackVSelMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 looseMuonTrackVSelMuonAssoc.associatormap = 'tpToLooseSelMuonAssociation'
 looseMuonTrackVSelMuonAssoc.associators = ('MuonAssociationByHits',)
@@ -681,44 +689,10 @@ recoMuonVMuAssoc_tgt.primaryVertex = 'offlinePrimaryVertices'
 # Muon validation sequence
 
 muonValidation_seq = cms.Sequence(
-        #trkProbeTrackVMuonAssoc+trkMuonTrackVTrackAssoc
-#       + staSeedTrackVMuonAssoc
-#	+ staMuonTrackVMuonAssoc + 
-	#staUpdMuonTrackVMuonAssoc
-	#+staUpdMuonTrackVMuonAssoc2St+
-	#staUpdMuonTrackVMuonAssoc2StTime
-	#+ glbMuonTrackVMuonAssoc
-# 
-	#+ trkProbeTrackVSelMuonAssoc
-	#+ staUpdMuonTrackVSelMuonAssoc+staUpdMuonTrackVSel2MuonAssoc
-	#+ staUpdMuonTrackVSelMuonAssoc2St
-	#+ staUpdMuonTrackVSel2MuonAssoc2St
-	#+ staUpdMuonTrackVSelMuonAssoc2StTime
- 	staUpdMuonTrackVSel2MuonAssoc2StTime
-	#+ staUpd10SelMuonTrackVMuonAssoc+staUpd20SelMuonTrackVMuonAssoc
-	#+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc+glbMuonTrackVSel4MuonAssoc
-	#+ looseMuonTrackVSelMuonAssoc+looseMuonTrackVSel2MuonAssoc
-	+ looseMuonTrackVSel3MuonAssoc 
-	+ looseMuonTrackVSel0MuonAssoc
-	#+looseMuonTrackVSel4MuonAssoc
-	+ looseMuonTrackVSel35MuonAssoc
- 	+ looseMuonTrackVSel05MuonAssoc
-	+ looseMuonTrackVSel35SimMuonAssoc 
-	+ looseMuonTrackVSel05SimMuonAssoc
-	#+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc
-	+ tightMuonTrackVSel3MuonAssoc 
-	+ tightMuonTrackVSel0MuonAssoc
-	#+tightMuonTrackVSel4MuonAssoc
-	+ tightMuonTrackVSel35MuonAssoc 
-	+ tightMuonTrackVSel05MuonAssoc
-	+ tightMuonTrackVSel35SimMuonAssoc 
-	+ tightMuonTrackVSel05SimMuonAssoc
-#
-#	+ recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt
-	#+ bestMuonLooseTrackVTrackAssoc #+ bestMuonLooseTrackVTrackAssoc5 + bestMuonLooseTrackVTrackAssoc10 + bestMuonLooseTrackVTrackAssoc20
-#	+ bestMuonLoose2TrackVTrackAssoc + bestMuonLoose2TrackVTrackAssoc5 + bestMuonLoose2TrackVTrackAssoc10 + bestMuonLoose2TrackVTrackAssoc20
-	#+ bestMuonTightTrackVTrackAssoc #+ bestMuonTightTrackVTrackAssoc5 + bestMuonTightTrackVTrackAssoc10 + bestMuonTightTrackVTrackAssoc20
-
+	staUpdMuonTrackVMuonAssoc
+	+ glbMuonTrackVMuonAssoc
+ 	+ staUpdMuonTrackVSel2MuonAssoc2StTime
+    + bestTunePMuonTrackVMuonAssoc
 )
                                   
 muonValidationTEV_seq = cms.Sequence(tevMuonFirstTrackVMuonAssoc+tevMuonPickyTrackVMuonAssoc+tevMuonDytTrackVMuonAssoc)
@@ -733,7 +707,7 @@ muonValidationCosmic_seq = cms.Sequence(trkCosmicMuonTrackVTrackAssoc
 # The muon association and validation sequence
 
 recoMuonValidation = cms.Sequence((muonAssociation_seq*muonValidation_seq)
-                                 #+(muonAssociationTEV_seq*muonValidationTEV_seq)
+                                 +(muonAssociationTEV_seq*muonValidationTEV_seq)
                                  #+(muonAssociationSET_seq*muonValidationSET_seq)
                                  #+(muonAssociationRefit_seq*muonValidationRefit_seq)
                                  )

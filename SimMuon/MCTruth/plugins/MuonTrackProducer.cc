@@ -463,9 +463,13 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
         if (muon->globalTrack().isNonnull()) trackref = muon->globalTrack();
         else continue;
       }
+      else if (trackType == "bestMuonTuneP") {
+        if (muon->tunePMuonBestTrack().isNonnull()) trackref = muon->tunePMuonBestTrack();
+        else continue;
+      }
       else if (trackType == "bestMuon") {
-	if (muon->muonBestTrack().isNonnull()) trackref = muon->muonBestTrack();
-	else continue;
+	    if (muon->muonBestTrack().isNonnull()) trackref = muon->muonBestTrack();
+	    else continue;
       }
       else if (trackType == "globalTrackLoose") {
 

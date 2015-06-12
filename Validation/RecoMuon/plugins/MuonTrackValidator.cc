@@ -635,7 +635,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	if(parametersDefiner=="LhcParametersDefinerForTP")
 	  {
 	    if(! tpSelector(*tp)) continue;
-	    if(!isSignalFromZgamma(tp)) continue;
+	    //if(!isSignalFromZgamma(tp)) continue;
 	    //if(isSignalFromZgamma(tp)) cout<<"Signal: 1"<<endl;
 	    //else cout<<"Signal: 0"<<endl;
 	    momentumTP = tp->momentum();

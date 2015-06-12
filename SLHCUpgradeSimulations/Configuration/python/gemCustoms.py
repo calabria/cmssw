@@ -80,9 +80,9 @@ def customise_RawToDigi(process):
 def customise_Reco(process):
     process.load('RecoLocalMuon.GEMRecHit.gemRecHits_cfi')
     process.muonlocalreco += process.gemRecHits
-    process.standAloneMuons.STATrajBuilderParameters.EnableGEMMeasurement = cms.bool(True)
+    process.standAloneMuons.STATrajBuilderParameters.FilterParameters.EnableGEMMeasurement = cms.bool(True)
     process.standAloneMuons.STATrajBuilderParameters.BWFilterParameters.EnableGEMMeasurement = cms.bool(True)
-    process.refittedStandAloneMuons.STATrajBuilderParameters.EnableGEMMeasurement = cms.bool(True)
+    process.refittedStandAloneMuons.STATrajBuilderParameters.FilterParameters.EnableGEMMeasurement = cms.bool(True)
     process.refittedStandAloneMuons.STATrajBuilderParameters.BWFilterParameters.EnableGEMMeasurement = cms.bool(True)
     process=outputCustoms(process)
     return process

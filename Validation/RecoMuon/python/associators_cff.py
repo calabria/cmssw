@@ -83,6 +83,16 @@ staMuonsPt20.src = cms.InputTag("standAloneMuons:UpdatedAtVtx")
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+bestTunePMuon = cms.EDProducer("MuonTrackProducer",
+    muonsTag = cms.InputTag("muons"),
+    inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+    inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+    vxtTag = cms.InputTag("selectedVertices"),
+    #selectionTags = cms.vstring('AllGlobalMuons'),
+    selectionTags = cms.vstring('All'),
+    trackType = cms.string('bestMuonTuneP')
+    )
+
 bestMuonLoose = cms.EDProducer("MuonTrackProducer",
    muonsTag = cms.InputTag("muons"),
    inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
@@ -262,15 +272,17 @@ TMLastStationAngTight20 = cms.EDProducer("MuonTrackProducer",
 muonColl_seq = cms.Sequence( #staMuonsPt10 *
 			     #staMuonsPt20 *
 			     #muon2Stat *
-			     muon2StatTiming *
-			     muonPt5
+			     muon2StatTiming
+			     #muonPt5
 			     #muonPt10 *
 			     #muonPt20
   			   )
 
-bestMuon_seq = cms.Sequence( bestMuonLoose * bestMuonLoose5 #*  bestMuonLoose10 * bestMuonLoose20 *
-			     *bestMuonTight * bestMuonTight5 #* bestMuonTight10 * bestMuonTight20 *
-			     #bestMuonLoose2 * bestMuonLoose52  * bestMuonLoose102  * bestMuonLoose202 
+bestMuon_seq = cms.Sequence(
+                 #bestMuonLoose * bestMuonLoose5 #*  bestMuonLoose10 * bestMuonLoose20 *
+                 #*bestMuonTight * bestMuonTight5 #* bestMuonTight10 * bestMuonTight20 *
+			     #bestMuonLoose2 * bestMuonLoose52  * bestMuonLoose102  * bestMuonLoose202
+                 bestTunePMuon
 			   )
 
 trackerMuon_seq = cms.Sequence(
@@ -485,6 +497,8 @@ tpToGlbSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssocia
 tpToGlbSel2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToGlbSel3MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToGlbSel4MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+
+tpToTunePMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 
 tpToLooseSelMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToLooseSel2MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
@@ -786,14 +800,11 @@ tpToGlbSel4MuonAssociation.includeZeroHitMuons = False
 
 #####################################################################################################
 
-tpToLooseSelMuonAssociation.tpTag = 'mix:MergedTrackTruth'
-tpToLooseSelMuonAssociation.tracksTag = 'bestMuonLoose' 
-tpToLooseSelMuonAssociation.UseTracker = True
-tpToLooseSelMuonAssociation.UseMuon = True
-tpToLooseSelMuonAssociation.EfficiencyCut_track = cms.double(0.5)
-tpToLooseSelMuonAssociation.PurityCut_track = cms.double(0.75)
-tpToLooseSelMuonAssociation.acceptOneStubMatchings = False
-tpToLooseSelMuonAssociation.includeZeroHitMuons = False
+tpToTunePMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToTunePMuonAssociation.tracksTag = 'bestTunePMuon'
+tpToTunePMuonAssociation.UseTracker = True
+tpToTunePMuonAssociation.UseMuon = True
+tpToTunePMuonAssociation.acceptOneStubMatchings = False
 
 tpToLooseSel0MuonAssociation.tpTag = 'mix:MergedTrackTruth'
 tpToLooseSel0MuonAssociation.tracksTag = 'bestMuonLoose' 
@@ -1007,49 +1018,12 @@ tpToGlbCosmicMuonAssociation.UseMuon = True
 muonAssociation_seq = cms.Sequence(
     selectedVertices
     + muonColl_seq
-    + extractedMuonTracks_seq
     + bestMuon_seq
-#    +seedsOfSTAmuons_seq
-    #+probeTracks_seq
-    #+(tpToTkMuonAssociation+tpToTkmuTrackAssociation)
-#    +(tpToStaSeedAssociation+tpToStaMuonAssociation
-    #+tpToStaUpdMuonAssociation
-    #+tpToGlbMuonAssociation)
-    #+(
-	#tpToStaMuonAssociation+
-	#tpToStaUpdMuonAssociation
-	#tpToStaUpdMuonAssociation2St
-	#tpToStaUpdMuonAssociation2StTime
-	#+tpToGlbMuonAssociation
-    #+tpToLooseMuonAssociation#+tpToLoose5MuonAssociation+tpToLoose10MuonAssociation+tpToLoose20MuonAssociation
-#    +tpToLoose2MuonAssociation+tpToLoose52MuonAssociation+tpToLoose102MuonAssociation+tpToLoose202MuonAssociation
-    #+tpToTightMuonAssociation#+tpToTight5MuonAssociation+tpToTight10MuonAssociation+tpToTight20MuonAssociation
-    #)
-#   +(tpToStaTrackAssociation+tpToStaUpdTrackAssociation+tpToGlbTrackAssociation)
-#    
-# few more association modules usable for the Upgrade TP studies 
-    +(
-        #tpToTkSelMuonAssociation+
-        #tpToStaUpdSelMuonAssociation+tpToStaUpdSel2MuonAssociation
-        #+tpToStaUpdSelMuonAssociation2St
-	#tpToStaUpdSel2MuonAssociation2St
-        #+tpToStaUpdSelMuonAssociation2St
-	tpToStaUpdSel2MuonAssociation2StTime
-	#+tpToGlbSelMuonAssociation+tpToGlbSel2MuonAssociation+tpToGlbSel3MuonAssociation+tpToGlbSel4MuonAssociation
-	#+tpToStaUpd10SelMuonAssociation+tpToStaUpd20SelMuonAssociation
-     )
-    +(#tpToLooseSelMuonAssociation+tpToLooseSel2MuonAssociation+
-	tpToLooseSel3MuonAssociation
-	+tpToLooseSel35MuonAssociation
-	+tpToLooseSel0MuonAssociation
-	+tpToLooseSel05MuonAssociation
-     )
-    +(#tpToTightSelMuonAssociation+tpToTightSel2MuonAssociation+
-	tpToTightSel3MuonAssociation
-	+tpToTightSel35MuonAssociation
-	+tpToTightSel0MuonAssociation
-	+tpToTightSel05MuonAssociation
-     ) 
+    + extractedMuonTracks_seq
+    + tpToStaUpdMuonAssociation
+    + tpToGlbMuonAssociation
+    + tpToStaUpdSel2MuonAssociation2StTime
+    + tpToTunePMuonAssociation
 )
 muonAssociationTEV_seq = cms.Sequence(
     (tpToTevFirstMuonAssociation+tpToTevPickyMuonAssociation+tpToTevDytMuonAssociation)
