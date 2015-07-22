@@ -6,22 +6,17 @@ process = cms.Process(processName)
 readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
 process.source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles)
-readFiles.extend( (
-       '/store/user/calabria/DYToMuMu_M-20_TuneZ2star_14TeV-pythia6-tauola/calabria_DYToMuMu_AODSIM_CMSSW_6_2_0_SLHC12_2023Scenario_Case1_4/314265c4c851b22933fa9c86eb7294b1/step3_1000_3_8Gu.root',
-       '/store/user/calabria/DYToMuMu_M-20_TuneZ2star_14TeV-pythia6-tauola/calabria_DYToMuMu_AODSIM_CMSSW_6_2_0_SLHC12_2023Scenario_Case1_4/314265c4c851b22933fa9c86eb7294b1/step3_1001_3_Emn.root',
-       '/store/user/calabria/DYToMuMu_M-20_TuneZ2star_14TeV-pythia6-tauola/calabria_DYToMuMu_AODSIM_CMSSW_6_2_0_SLHC12_2023Scenario_Case1_4/314265c4c851b22933fa9c86eb7294b1/step3_1002_2_d8r.root',
-       '/store/user/calabria/DYToMuMu_M-20_TuneZ2star_14TeV-pythia6-tauola/calabria_DYToMuMu_AODSIM_CMSSW_6_2_0_SLHC12_2023Scenario_Case1_4/314265c4c851b22933fa9c86eb7294b1/step3_1003_1_6sG.root',
-       '/store/user/calabria/DYToMuMu_M-20_TuneZ2star_14TeV-pythia6-tauola/calabria_DYToMuMu_AODSIM_CMSSW_6_2_0_SLHC12_2023Scenario_Case1_4/314265c4c851b22933fa9c86eb7294b1/step3_1005_2_ODk.root',
-       '/store/user/calabria/DYToMuMu_M-20_TuneZ2star_14TeV-pythia6-tauola/calabria_DYToMuMu_AODSIM_CMSSW_6_2_0_SLHC12_2023Scenario_Case1_4/314265c4c851b22933fa9c86eb7294b1/step3_1006_2_BLd.root',
-       '/store/user/calabria/DYToMuMu_M-20_TuneZ2star_14TeV-pythia6-tauola/calabria_DYToMuMu_AODSIM_CMSSW_6_2_0_SLHC12_2023Scenario_Case1_4/314265c4c851b22933fa9c86eb7294b1/step3_1007_4_HGF.root',
-       '/store/user/calabria/DYToMuMu_M-20_TuneZ2star_14TeV-pythia6-tauola/calabria_DYToMuMu_AODSIM_CMSSW_6_2_0_SLHC12_2023Scenario_Case1_4/314265c4c851b22933fa9c86eb7294b1/step3_1008_1_Xds.root',
-       '/store/user/calabria/DYToMuMu_M-20_TuneZ2star_14TeV-pythia6-tauola/calabria_DYToMuMu_AODSIM_CMSSW_6_2_0_SLHC12_2023Scenario_Case1_4/314265c4c851b22933fa9c86eb7294b1/step3_1009_3_FKR.root',
-    ))
-secFiles.extend((
+readFiles.extend( [
 
-    ))
+	'/store/group/upgrade/muon/RecoFolder/DYToMuMu_2019Age_3Step/DYToMuMu_M-20_TuneZ2star_14TeV-pythia6-tauola/calabria_DYToMuMu_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC23patch1_2019Age_3Step_OK7/401b8d05daa77b137fd55a5661197207/step3_1000_1_9NR.root',
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+ ] );
+
+
+secFiles.extend( [
+               ] )
+
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 process.out = cms.OutputModule("PoolOutputModule",
     outputCommands = cms.untracked.vstring('drop *', "keep *_MEtoEDMConverter_*_"+processName),
@@ -38,15 +33,16 @@ process.load("DQMServices.Components.MEtoEDMConverter_cfi")
 process.MEtoEDMConverter_step = cms.Path(process.MEtoEDMConverter)
 
 process.load("Configuration.StandardSequences.Services_cff")
-process.load('Configuration.Geometry.GeometryExtended2023MuonReco_cff')
-process.load('Configuration.Geometry.GeometryExtended2023Muon_cff')
-#process.load('Configuration.Geometry.GeometryExtended2019Reco_cff')
-#process.load('Configuration.Geometry.GeometryExtended2019_cff')
+#process.load('Configuration.Geometry.GeometryExtended2023MuonReco_cff')
+#process.load('Configuration.Geometry.GeometryExtended2023Muon_cff')
+process.load('Configuration.Geometry.GeometryExtended2019Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2019_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgrade2019', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'PH1_1K_FB_V2::All', '')
 
 #---- Validation stuffs ----#
 ## Default validation modules

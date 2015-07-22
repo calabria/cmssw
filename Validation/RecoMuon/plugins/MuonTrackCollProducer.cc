@@ -379,6 +379,8 @@ void MuonTrackCollProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
       bool loose2 = isLoose2(iEvent, muon, useIPxy, useIPz);
       bool soft = isSoft(iEvent, muon, useIPxy, useIPz);
       bool tight = isTight(iEvent, muon, useIPxy, useIPz);
+      //const reco::Track* innTrk = 0;
+      //if (muon->innerTrack().isNonnull()) innTrk = &(*(muon->innerTrack()));
       if (trackType == "innerTrack") {
         if (muon->innerTrack().isNonnull()) trackref = muon->innerTrack();
         else continue;
@@ -400,7 +402,8 @@ void MuonTrackCollProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
 	else continue;
       }
       else if (trackType == "bestMuonLoose") {
-	if (muon->muonBestTrack().isNonnull() && loose) trackref = muon->muonBestTrack();
+	//if (muon->muonBestTrack().isNonnull() && loose && muon->innerTrack().isNonnull() && innTrk->quality(reco::Track::highPurity)) trackref = muon->muonBestTrack();
+	if (muon->muonBestTrack().isNonnull() && loose) trackref = muon->muonBestTrack(); //
 	else continue;
       }
       else if (trackType == "bestMuonLoose2") {
@@ -412,6 +415,7 @@ void MuonTrackCollProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
 	else continue;
       }
       else if (trackType == "bestMuonTight") {
+	//if (muon->muonBestTrack().isNonnull() && tight && muon->innerTrack().isNonnull() && innTrk->quality(reco::Track::highPurity)) trackref = muon->muonBestTrack();
 	if (muon->muonBestTrack().isNonnull() && tight) trackref = muon->muonBestTrack();
 	else continue;
       }

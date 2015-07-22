@@ -43,11 +43,11 @@ Publish=False
 # By default, if the root files are already in the local area, they won't be overwritten
 
 #GetFilesFrom='WEB'       # --> Take root files from the MuonPOG Validation repository on the web
-#GetFilesFrom='CASTOR'    # --> Copy root files from castor
-GetFilesFrom='GUI'       # --> Copy root files from the DQM GUI server
+GetFilesFrom='CASTOR'    # --> Copy root files from castor
+#GetFilesFrom='GUI'       # --> Copy root files from the DQM GUI server
 #GetRefsFrom='WEB'
-#GetRefsFrom='CASTOR'
-GetRefsFrom='GUI'
+GetRefsFrom='CASTOR'
+#GetRefsFrom='GUI'
 
 #DqmGuiNewRepository = 'https://cmsweb.cern.ch/dqm/dev/data/browse/Development/RelVal/CMSSW_4_2_x/'
 #DqmGuiNewRepository = 'https://cmsweb.cern.ch/dqm/offline/data/browse/ROOT/RelVal/CMSSW_4_3_x/'
@@ -55,7 +55,7 @@ DqmGuiNewRepository = 'https://cmsweb.cern.ch/dqm/relval/data/browse/ROOT/RelVal
 #DqmGuiRefRepository = 'https://cmsweb.cern.ch/dqm/dev/data/browse/Development/RelVal/CMSSW_4_2_x/'
 #DqmGuiRefRepository = 'https://cmsweb.cern.ch/dqm/offline/data/browse/ROOT/RelVal/CMSSW_4_3_x/'
 DqmGuiRefRepository = 'https://cmsweb.cern.ch/dqm/relval/data/browse/ROOT/RelVal/CMSSW_6_1_x/'
-CastorRepository = '/castor/cern.ch/user/a/aperrott/ValidationRecoMuon'
+CastorRepository = '/cmshome/calabria/GEM_SLHC8_New2023/CMSSW_6_2_0_SLHC12/src/PLOTS2019/Convert'
 
 # These are only needed if you copy any root file from the DQM GUI:
 NewLabel='START61_V5'

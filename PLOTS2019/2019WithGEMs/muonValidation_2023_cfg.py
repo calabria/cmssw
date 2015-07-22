@@ -7,7 +7,7 @@ readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
 process.source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles)
 readFiles.extend( (
-	'file:root://xrootd.unl.edu//store/user/calabria/Muminus_Pt50-gun/calabria_MuMinusPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2023Scenario_Case4_3/70a2ba5dd85fcf14c114cb0c11fae90d/out_reco_rereco_100_1_EMy.root',
+	'file:/lustre/cms/store/user/calabria/calabria_SingleMuPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC9_CMSSUSY_DIGIv7_2023_TeVMuon/calabria_SingleMuPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC9_CMSSUSY_DIGIv7_2023_TeVMuon/86f5ded53ff0c875cc654b0173249b26/out_reco_100_2_VfM.root',
     ))
 secFiles.extend((
 
@@ -51,10 +51,13 @@ process.MEtoEDMConverter_step = cms.Path(process.MEtoEDMConverter)
 process.load("Configuration.StandardSequences.Services_cff")
 process.load('Configuration.Geometry.GeometryExtended2023MuonReco_cff')
 process.load('Configuration.Geometry.GeometryExtended2023Muon_cff')
+#process.load('Configuration.Geometry.GeometryExtended2019Reco_cff')
+#process.load('Configuration.Geometry.GeometryExtended2019_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'PH2_1K_FB_V6::All', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgrade2019', '')
 
 #---- Validation stuffs ----#
 ## Default validation modules

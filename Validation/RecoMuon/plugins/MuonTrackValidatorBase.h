@@ -52,6 +52,10 @@ class MuonTrackValidatorBase {
     nint(pset.getParameter<int>("nint")),
     useFabs(pset.getParameter<bool>("useFabsEta")),
 
+    minRes(pset.getParameter<double>("minRes")),
+    maxRes(pset.getParameter<double>("maxRes")),
+    nintRes(pset.getParameter<int>("nintRes")),
+
     minVtx(pset.getParameter<double>("minVtx")),
     maxVtx(pset.getParameter<double>("maxVtx")),
     nintVtx(pset.getParameter<int>("nintVtx")),
@@ -454,6 +458,8 @@ class MuonTrackValidatorBase {
   double  min, max;
   int nint;
   bool useFabs;
+  double  minRes, maxRes;
+  int nintRes;
   double  minVtx, maxVtx;
   int nintVtx;
   double minpT, maxpT;

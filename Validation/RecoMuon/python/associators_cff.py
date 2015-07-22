@@ -170,6 +170,13 @@ tevMuonsPicky20.src = cms.InputTag("tevMuons:picky")
 #extractedGlobalMuons.selectionTags = ('AllGlobalMuons',)
 #extractedGlobalMuons.trackType = "globalTrack"
 
+innerTRKMuons = cms.EDProducer("MuonTrackCollProducer",
+   muonsTag = cms.InputTag("muons"),
+   vxtTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('AllGlobalMuons'),
+   trackType = cms.string('innerTrack')
+)
+
 extractedTRKSTAMuons = cms.EDProducer("MuonTrackCollProducer",
    muonsTag = cms.InputTag("muonTRKSTA"),
    vxtTag = cms.InputTag("selectedVertices"),
@@ -601,6 +608,7 @@ trackColl_seq = cms.Sequence(staMuonsPt20)
 extractedMuonTracks_seq = cms.Sequence( #extractedTRKSTAMuons * 
 				  	#extractedTRKSTAGLBMuons *
 					#extractedTRKSTAMuons20 *
+					#innerTRKMuons *
 				        extractedGlobalMuons * 
 					extractedGlobalMuons5 * 
 					extractedGlobalMuons10 * 
@@ -640,7 +648,16 @@ probeTracks.lip = cms.double(30.)
 probeTracks.ptMin = cms.double(4.0)
 probeTracks.minRapidity = cms.double(-2.5)
 probeTracks.maxRapidity = cms.double(2.5)
-probeTracks_seq = cms.Sequence( probeTracks )
+
+probeTracks2 = PhysicsTools.RecoAlgos.recoTrackSelector_cfi.recoTrackSelector.clone()
+probeTracks2.quality = cms.vstring('loose')
+probeTracks2.tip = cms.double(3.5)
+probeTracks2.lip = cms.double(30.)
+probeTracks2.ptMin = cms.double(4.0)
+probeTracks2.minRapidity = cms.double(-2.5)
+probeTracks2.maxRapidity = cms.double(2.5)
+
+probeTracks_seq = cms.Sequence( probeTracks * probeTracks2 )
 
 #
 # Associators for Full Sim + Reco:

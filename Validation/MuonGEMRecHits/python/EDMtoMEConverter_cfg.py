@@ -10,7 +10,6 @@ process.load("DQMServices.Components.DQMEnvironment_cfi")
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgrade2019', '')
 process.load("Validation.Configuration.postValidation_cff")
 process.load("Validation.RecoMuon.PostProcessorHLT_cff")
 
@@ -19,10 +18,11 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring(
-	"file:validationEDM.root",
-	#"file:validationEDM_minus.root"
-    )
+    fileNames = cms.untracked.vstring(       
+	'file:validationEDM_case1.root'
+	#'file:root://xrootd.unl.edu//store/user/calabria/calabria_SingleMuPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2023Scenario_Case2/calabria_SingleMuPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2023Scenario_VAL2_Case2/defc9ce5c12ca10cbd1533a5d2d2e5bd/validationEDM_1_1_nfR.root',
+       	#'file:root://xrootd.unl.edu//store/user/calabria/calabria_SingleMuPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2023Scenario_Case2/calabria_SingleMuPt50_GEN-SIM-DIGI-RECO_CMSSW_6_2_0_SLHC12_2023Scenario_VAL2_Case2/defc9ce5c12ca10cbd1533a5d2d2e5bd/validationEDM_2_1_Xl7.root'
+	)
 )
 
 process.DQMStore.referenceFileName = ""

@@ -224,19 +224,19 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       nlosthits_vs_eta.push_back( dbe_->book2D("nlosthits_vs_eta","nlosthits vs eta",nint,min,max,nintHit,minHit,maxHit) );
       h_losthits_eta.push_back( dbe_->bookProfile("losthits_eta","losthits_eta",nint,min,max,nintHit,minHit,maxHit) );
 
-      ptres_vs_eta.push_back(dbe_->book2D("ptres_vs_eta","ptres_vs_eta",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      ptres_vs_eta.push_back(dbe_->book2D("ptres_vs_eta","ptres_vs_eta",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       ptres_vs_phi.push_back( dbe_->book2D("ptres_vs_phi","p_{t} res vs #phi",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       ptres_vs_pt.push_back(dbe_->book2D("ptres_vs_pt","ptres_vs_pt",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
 
-      invptres_vs_eta.push_back(dbe_->book2D("invptres_vs_eta","invptres_vs_eta",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      invptres_vs_eta.push_back(dbe_->book2D("invptres_vs_eta","invptres_vs_eta",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       invptres_vs_phi.push_back( dbe_->book2D("invptres_vs_phi","1/p_{t} res vs #phi",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       invptres_vs_pt.push_back(dbe_->book2D("invptres_vs_pt","invptres_vs_pt",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
 
-      qOverPtres_vs_eta.push_back(dbe_->book2D("qOverPtres_vs_eta","qOverPtres_vs_eta",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres_vs_eta.push_back(dbe_->book2D("qOverPtres_vs_eta","qOverPtres_vs_eta",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       qOverPtres_vs_phi.push_back( dbe_->book2D("qOverPtres_vs_phi","q/p_{t} res vs #phi",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       qOverPtres_vs_pt.push_back(dbe_->book2D("qOverPtres_vs_pt","qOverPtres_vs_pt",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
 
-      qOverPtresXL_vs_eta.push_back(dbe_->book2D("qOverPtresXL_vs_eta","qOverPtres_vs_eta",nint,min,max, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL_vs_eta.push_back(dbe_->book2D("qOverPtresXL_vs_eta","qOverPtres_vs_eta",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
       qOverPtresXL_vs_phi.push_back( dbe_->book2D("qOverPtresXL_vs_phi","q/p_{t} res vs #phi",nintPhi,minPhi,maxPhi, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
       qOverPtresXL_vs_pt.push_back(dbe_->book2D("qOverPtresXL_vs_pt","qOverPtres_vs_pt",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
 
@@ -244,19 +244,19 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       chargeMisID_vs_phi.push_back(dbe_->book2D("chargeMisID_vs_phi","chargeMisID vs #phi",nintPhi,minPhi,maxPhi,5,-2.5,2.5));
       chargeMisID_vs_pt.push_back(dbe_->book2D("chargeMisID_vs_pt","chargeMisID_vs_pt",nintpT,minpT,maxpT,5,-2.5,2.5));
 
-      ptres_vs_eta_sim.push_back(dbe_->book2D("ptres_vs_eta_sim","ptres_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      ptres_vs_eta_sim.push_back(dbe_->book2D("ptres_vs_eta_sim","ptres_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       ptres_vs_phi_sim.push_back( dbe_->book2D("ptres_vs_phi_sim","p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       ptres_vs_pt_sim.push_back(dbe_->book2D("ptres_vs_pt_sim","ptres_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
 
-      invptres_vs_eta_sim.push_back(dbe_->book2D("invptres_vs_eta_sim","invptres_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      invptres_vs_eta_sim.push_back(dbe_->book2D("invptres_vs_eta_sim","invptres_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       invptres_vs_phi_sim.push_back( dbe_->book2D("invptres_vs_phi_sim","1/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       invptres_vs_pt_sim.push_back(dbe_->book2D("invptres_vs_pt_sim","invptres_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
 
-      qOverPtres_vs_eta_sim.push_back(dbe_->book2D("qOverPtres_vs_eta_sim","qOverPtres_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
-      qOverPtres1_vs_eta_sim.push_back(dbe_->book2D("qOverPtres1_vs_eta_sim","qOverPtres1_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
-      qOverPtres2_vs_eta_sim.push_back(dbe_->book2D("qOverPtres2_vs_eta_sim","qOverPtres2_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
-      qOverPtres3_vs_eta_sim.push_back(dbe_->book2D("qOverPtres3_vs_eta_sim","qOverPtres3_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
-      qOverPtres4_vs_eta_sim.push_back(dbe_->book2D("qOverPtres4_vs_eta_sim","qOverPtres4_vs_eta sim",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres_vs_eta_sim.push_back(dbe_->book2D("qOverPtres_vs_eta_sim","qOverPtres_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres1_vs_eta_sim.push_back(dbe_->book2D("qOverPtres1_vs_eta_sim","qOverPtres1_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres2_vs_eta_sim.push_back(dbe_->book2D("qOverPtres2_vs_eta_sim","qOverPtres2_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres3_vs_eta_sim.push_back(dbe_->book2D("qOverPtres3_vs_eta_sim","qOverPtres3_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres4_vs_eta_sim.push_back(dbe_->book2D("qOverPtres4_vs_eta_sim","qOverPtres4_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
 
       qOverPtres_vs_phi_sim.push_back( dbe_->book2D("qOverPtres_vs_phi_sim","q/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       qOverPtres_vs_pt_sim.push_back(dbe_->book2D("qOverPtres_vs_pt_sim","qOverPtres_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
@@ -264,11 +264,11 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       qOverPtresO_vs_pt_sim.push_back(dbe_->book2D("qOverPtresO_vs_pt_sim","qOverPtresO_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       qOverPtresE_vs_pt_sim.push_back(dbe_->book2D("qOverPtresE_vs_pt_sim","qOverPtresE_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
 
-      qOverPtresXL_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL_vs_eta_sim","qOverPtres_vs_eta sim",nint,min,max, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
-      qOverPtresXL1_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL1_vs_eta_sim","qOverPtres1_vs_eta sim",nint,min,max, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
-      qOverPtresXL2_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL2_vs_eta_sim","qOverPtres2_vs_eta sim",nint,min,max, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
-      qOverPtresXL3_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL3_vs_eta_sim","qOverPtres3_vs_eta sim",nint,min,max, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
-      qOverPtresXL4_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL4_vs_eta_sim","qOverPtres4_vs_eta sim",nint,min,max, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL_vs_eta_sim","qOverPtres_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL1_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL1_vs_eta_sim","qOverPtres1_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL2_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL2_vs_eta_sim","qOverPtres2_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL3_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL3_vs_eta_sim","qOverPtres3_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL4_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL4_vs_eta_sim","qOverPtres4_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
 
       qOverPtresXL_vs_phi_sim.push_back( dbe_->book2D("qOverPtresXL_vs_phi_sim","q/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
       qOverPtresXL_vs_pt_sim.push_back(dbe_->book2D("qOverPtresXL_vs_pt_sim","qOverPtres_vs_pt sim",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
