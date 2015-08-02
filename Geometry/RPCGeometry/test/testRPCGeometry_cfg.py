@@ -18,8 +18,13 @@ process = cms.Process("Demo")
 # process.GlobalTag.globaltag = autoCond['mc']
 
 
-process.load('Configuration.Geometry.GeometryExtended2023_cff') 
-process.load('Configuration.Geometry.GeometryExtended2023Reco_cff')
+#process.load('Configuration.Geometry.GeometryExtended2023_cff')
+#process.load('Configuration.Geometry.GeometryExtended2023Reco_cff')
+
+
+process.load('Configuration.Geometry.GeometryExtended2019Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2019_cff')
+
 
 # process.load('Configuration.Geometry.GeometryExtended2023RPCUpscopeReco_2p4_192_cff')
 # process.load("Configuration.Geometry.GeometryExtended2023RPCUpscope_2p4_192_cff")
@@ -29,6 +34,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgrade2019', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'PH2_1K_FB_V6::All', '')
 
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(1)
