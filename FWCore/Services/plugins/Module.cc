@@ -1,12 +1,17 @@
 #include "FWCore/ServiceRegistry/interface/ServiceMaker.h"
 
 #include "FWCore/Services/src/SiteLocalConfigService.h"
+
+#include "FWCore/Services/src/Tracer.h"
+#include "FWCore/Services/interface/thread_pool.h"
+#include "FWCore/Services/src/InitRootHandlers.h"
+#include "FWCore/Services/src/UnixSignalService.h"
+
 #include "FWCore/Services/src/JobReportService.h"
 
 #include "FWCore/Services/interface/Timing.h"
 #include "FWCore/Services/src/Memory.h"
 #include "FWCore/Services/src/CPU.h"
-#include "FWCore/Services/interface/thread_pool.h"
 #include "FWCore/Services/src/LoadAllDictionaries.h"
 #include "FWCore/Services/src/EnableFloatingPointExceptions.h"
 #include "FWCore/Services/interface/PrintLoadingPlugins.h"
