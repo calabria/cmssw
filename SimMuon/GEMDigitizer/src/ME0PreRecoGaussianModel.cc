@@ -281,7 +281,8 @@ double ME0PreRecoGaussianModel::correctSigmaU(const ME0EtaPartition* roll, doubl
   double tgTheta = x/Rx;
   double cos2Theta = 1.0 / (1 + tgTheta*tgTheta);
   double sigma_u_new = Rx/Rmax*sigma_u;
-  std::cout<<"cosTheta: "<<sqrt(cos2Theta)<<" sigma_old: "<<sigma_u<<" sigma_new: "<<sigma_u_new<<std::endl;
+  //std::cout<<"1.cosTheta: "<<sqrt(cos2Theta)<<" sigma_old: "<<sigma_u<<" sigma_new: "<<sigma_u_new<<std::endl;
   sigma_u_new *= sqrt(cos2Theta);
+  //std::cout<<"2.cosTheta: "<<sqrt(cos2Theta)<<" sigma_old: "<<sigma_u<<" sigma_new: "<<sigma_u_new<<std::endl;
   return sigma_u_new;
 }
