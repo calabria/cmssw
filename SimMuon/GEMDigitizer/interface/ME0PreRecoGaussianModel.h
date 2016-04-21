@@ -22,7 +22,7 @@ public:
   void simulateSignal(const ME0EtaPartition*, const edm::PSimHitContainer&);
   void setRandomEngine(CLHEP::HepRandomEngine&);
   void simulateNoise(const ME0EtaPartition*);
-  double correctSigmaU(const ME0EtaPartition*, double);
+  double correctSigmaU(const ME0EtaPartition*, double, double);
   void setup()
   {
   }

@@ -70,7 +70,7 @@ void ME0PreRecoGaussianModel::simulateSignal(const ME0EtaPartition* roll, const 
     double x=0.0, y=0.0;
 
     double sigma_u_new = sigma_u;
-    if(constPhiSmearing_) sigma_u_new = correctSigmaU(roll, entry.y());
+    if(constPhiSmearing_) sigma_u_new = correctSigmaU(roll, entry.x, entry.y());
 
     if(gaussianSmearing_) { // Gaussian Smearing
       x=gauss_->fire(entry.x(), sigma_u_new);
@@ -145,7 +145,6 @@ void ME0PreRecoGaussianModel::simulateNoise(const ME0EtaPartition* roll)
     double xMax = topLength/2.0 - (height/2.0 - yy_rand) * myTanPhi;
 
     double sigma_u_new = sigma_u;
-    if(constPhiSmearing_) sigma_u_new = correctSigmaU(roll, yy_rand);
 
     // simulate intrinsic noise and background hits in all BX that are being read out
     // for(int bx=minBunch_; bx<maxBunch_+1; ++bx) {
@@ -192,6 +191,7 @@ void ME0PreRecoGaussianModel::simulateNoise(const ME0EtaPartition* roll)
 	//calculate xx_rand at a given yy_rand
 	double myRandX = flat1_->fire(0., 1.);
 	double xx_rand = 2 * xMax * (myRandX - 0.5);
+    if(constPhiSmearing_) sigma_u_new = correctSigmaU(roll, xx_rand, yy_rand);
 	double ex = sigma_u_new;
 	double ey = sigma_v;
 	double corr = 0.;
@@ -243,6 +243,7 @@ void ME0PreRecoGaussianModel::simulateNoise(const ME0EtaPartition* roll)
 	//calculate xx_rand at a given yy_rand
 	double myRandX = flat1_->fire(0., 1.);
 	double xx_rand = 2 * xMax * (myRandX - 0.5);
+    if(constPhiSmearing_) sigma_u_new = correctSigmaU(roll, xx_rand, yy_rand);
 	double ex = sigma_u_new;
 	double ey = sigma_v;
 	double corr = 0.;
@@ -270,13 +271,17 @@ void ME0PreRecoGaussianModel::simulateNoise(const ME0EtaPartition* roll)
   } // end loop over strips (= pseudo rolls)
 }
 
-double ME0PreRecoGaussianModel::correctSigmaU(const ME0EtaPartition* roll, double y) {
+double ME0PreRecoGaussianModel::correctSigmaU(const ME0EtaPartition* roll, double x, double y) {
   const TrapezoidalStripTopology* top_(dynamic_cast<const TrapezoidalStripTopology*>(&(roll->topology())));
   auto& parameters(roll->specs()->parameters());
   double height(parameters[2]);       // height     = height from Center of Roll
   double rollRadius = top_->radius(); // rollRadius = Radius at Center of Roll
   double Rmax = rollRadius+height;    // MaxRadius  = Radius at top of Roll
   double Rx = rollRadius+y;           // y in [-height,+height]
+  double tgTheta = x/Rx;
+  double cos2Theta = 1.0 / (1 + tgTheta*tgTheta);
   double sigma_u_new = Rx/Rmax*sigma_u;
+  std::cout<<"cosTheta: "<<sqrt(cos2Theta)<<std::endl;
+  sigma_u_new *= sqrt(cos2Theta);
   return sigma_u_new;
 }
