@@ -1053,7 +1053,6 @@ readFiles.extend( [
        '/store/user/rosma/SingleMuPlusPt5_14TeV_GEN-SIM_2023HGCalME0Geomv2/SingleMuPlusPt5_14TeV_GEN-SIM_2023HGCalME0Geomv2/160404_214814/0000/SMPt5_999.root',
        '/store/user/rosma/SingleMuPlusPt5_14TeV_GEN-SIM_2023HGCalME0Geomv2/SingleMuPlusPt5_14TeV_GEN-SIM_2023HGCalME0Geomv2/160404_214814/0001/SMPt5_1000.root' ] );
 
-
 secFiles.extend( [
                ] )
 
