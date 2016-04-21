@@ -70,7 +70,7 @@ void ME0PreRecoGaussianModel::simulateSignal(const ME0EtaPartition* roll, const 
     double x=0.0, y=0.0;
 
     double sigma_u_new = sigma_u;
-    if(constPhiSmearing_) sigma_u_new = correctSigmaU(roll, entry.x, entry.y());
+    if(constPhiSmearing_) sigma_u_new = correctSigmaU(roll, entry.x(), entry.y());
 
     if(gaussianSmearing_) { // Gaussian Smearing
       x=gauss_->fire(entry.x(), sigma_u_new);
