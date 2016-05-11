@@ -588,6 +588,19 @@ tpToTightModSel0MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonA
 tpToTightModSelUncMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToTightModSel05MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 
+tpToDisplacedStaSeedAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToDisplacedStaMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+
+tpToDisplacedStaMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToDisplacedStaMuonAssociation.tracksTag = 'displacedStandAloneMuons'
+tpToDisplacedStaMuonAssociation.UseTracker = False
+tpToDisplacedStaMuonAssociation.UseMuon = True
+
+tpToDisplacedStaSeedAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToDisplacedStaSeedAssociation.tracksTag = 'seedsOfDisplacedSTAmuons'
+tpToDisplacedStaSeedAssociation.UseTracker = False
+tpToDisplacedStaSeedAssociation.UseMuon = True
+
 tpToTkMuonAssociation.tpTag = 'mix:MergedTrackTruth'
 tpToTkMuonAssociation.tracksTag = 'generalTracks'
 #tpToTkMuonAssociation.tracksTag = 'probeTracks'
@@ -1035,7 +1048,7 @@ tpToTightSel0BSMuonAssociation.acceptOneStubMatchings = False
 
 tpToTightSelUncMuonAssociation.tpTag = 'mix:MergedTrackTruth'
 tpToTightSelUncMuonAssociation.tracksTag = 'bestMuonTight' 
-tpToTightSelUncMuonAssociation.UseTracker = True
+tpToTightSelUncMuonAssociation.UseTracker = False
 tpToTightSelUncMuonAssociation.UseMuon = True
 #tpToTightSelUncMuonAssociation.EfficiencyCut_track = cms.double(0.5)
 #tpToTightSelUncMuonAssociation.PurityCut_track = cms.double(0.75)
@@ -1134,7 +1147,7 @@ tpToTightModSel0MuonAssociation.acceptOneStubMatchings = False
 
 tpToTightModSelUncMuonAssociation.tpTag = 'mix:MergedTrackTruth'
 tpToTightModSelUncMuonAssociation.tracksTag = 'bestMuonTightMod'
-tpToTightModSelUncMuonAssociation.UseTracker = True
+tpToTightModSelUncMuonAssociation.UseTracker = False
 tpToTightModSelUncMuonAssociation.UseMuon = True
 #tpToTightModSelUncMuonAssociation.EfficiencyCut_track = cms.double(0.5)
 #tpToTightModSelUncMuonAssociation.PurityCut_track = cms.double(0.75)
@@ -1277,6 +1290,11 @@ muonAssociationCosmic_seq = cms.Sequence(
 muonAssociationHLT_seq = cms.Sequence(
     (tpToL2MuonAssociation+tpToL2UpdMuonAssociation+tpToL3MuonAssociation+tpToL3TkMuonAssociation)
 #    +(tpToL2TrackAssociation+tpToL2UpdTrackAssociation+tpToL3TrackAssociation+tpToL3TkTrackTrackAssociation)
+)
+
+muonAssociationDisplaced_seq = cms.Sequence(
+                                            #tpToStaMuonAssociation+tpToStaUpdMuonAssociation+
+    tpToDisplacedStaMuonAssociation
 )
 
 

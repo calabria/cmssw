@@ -33,58 +33,58 @@
 using namespace std;
 using namespace edm;
 
-bool MuonTrackValidator::isSignalFromZgamma(TrackingParticle* tpRtS){
+bool MuonTrackValidator::isSignalFromZgamma(TrackingParticle* tpRtS, bool debug = false){
 
 	bool isSignalMuon = abs(tpRtS->pdgId())==13 && !tpRtS->genParticles().empty() && (tpRtS->eventId().event() == 0) && (tpRtS->eventId().bunchCrossing() == 0); //segnale muone
 
 	bool isFromZgamma = false;
 	if (isSignalMuon){
 
-		//int hitsPdgId = tpRtS->pdgId();
-		//int hitsStatus = tpRtS->status();
-		//double prodRho = tpRtS->vertex().Rho();
-		//double prodZ = tpRtS->vz();
-		//cout << "\t Particle pdgId = "<< hitsPdgId << " status:" << hitsStatus << " produced at rho = " << prodRho << ", z = " << prodZ <<endl;
+		int hitsPdgId = tpRtS->pdgId();
+		int hitsStatus = tpRtS->status();
+		double prodRho = tpRtS->vertex().Rho();
+		double prodZ = tpRtS->vz();
+		if(debug) cout << "\t Particle pdgId = "<< hitsPdgId << " status:" << hitsStatus << " produced at rho = " << prodRho << ", z = " << prodZ <<endl;
 
 		reco::GenParticleRef genp   = tpRtS->genParticles()[0];
 		reco::GenParticleRef genMom = genp->numberOfMothers() > 0 ? genp->motherRef() : reco::GenParticleRef();
-		//cout << "\t Number of mothers: "<< genp->numberOfMothers() << std::endl;
+		if(debug) cout << "\t Number of mothers = "<< genp->numberOfMothers() << std::endl;
 		if (genMom.isNonnull()) {
 
 			int momPdgId  = genMom->pdgId();
 			int momStatus = genMom->status();
-			if( (momPdgId == 23 || momPdgId == 22) && momStatus == 3 ) isFromZgamma = true;
-			//double momRho = genMom->vertex().Rho();
-			//double momZ = genMom->vz();
-			//cout << "\t Particle pdgId = "<<hitsPdgId << ", has GEN mother pdgId = " << momPdgId << ", mom status: " << momStatus <<endl;
+			if( (momPdgId == 23 || momPdgId == 3000022 ) && momStatus == 3) isFromZgamma = true;
+			double momRho = genMom->vertex().Rho();
+			double momZ = genMom->vz();
+			if(debug) cout << "\t Particle pdgId = "<<hitsPdgId << ", has GEN mother pdgId = " << momPdgId << ", mom status: " << momStatus <<endl;
 			reco::GenParticleRef genGMom = genMom->numberOfMothers() > 0 ? genMom->motherRef() : reco::GenParticleRef();
-			//cout << "\t\t Number of gmoms: " << genMom->numberOfMothers() << std::endl;
+			if(debug) cout << "\t\t Number of gmoms = " << genMom->numberOfMothers() << std::endl;
 			if (genGMom.isNonnull()) {
 
 				int gmomPdgId = genGMom->pdgId();
 				int gmomStatus = genGMom->status();
-				if( (gmomPdgId == 23 || gmomPdgId == 22) && gmomStatus == 3 ) isFromZgamma = true;
-				//cout << "\t\t mother prod. vertex rho = " << momRho << ", z = " << momZ << ", grand-mom pdgId = " << gmomPdgId << ", status: " << gmomStatus <<endl;
+				if( (gmomPdgId == 23 || gmomPdgId == 3000022) && gmomStatus == 3) isFromZgamma = true;
+				if(debug) cout << "\t\t mother prod. vertex rho = " << momRho << ", z = " << momZ << ", grand-mom pdgId = " << gmomPdgId << ", status: " << gmomStatus << " mass = " <<genGMom->mass()<<endl;
 
 				reco::GenParticleRef genGGMom = genGMom->numberOfMothers() > 0 ? genGMom->motherRef() : reco::GenParticleRef();
-				//cout << "\t\t Number of ggmoms: " << genGMom->numberOfMothers() << std::endl;
+				if(debug) cout << "\t\t Number of ggmoms = " << genGMom->numberOfMothers() << std::endl;
 				if (genGGMom.isNonnull()) {
 
 					int ggmomPdgId = genGGMom->pdgId();
 					int ggmomStatus = genGGMom->status();
-					if( (ggmomPdgId == 23 || ggmomPdgId == 22) && ggmomStatus == 3 ) isFromZgamma = true;
-					//cout << "\t\t grand-grand-mom pdgId = " << ggmomPdgId << ", status: " << ggmomStatus <<endl;
+					if( (ggmomPdgId == 23 || ggmomPdgId == 3000022) && ggmomStatus == 3) isFromZgamma = true;
+					if(debug) cout << "\t\t grand-grand-mom pdgId = " << ggmomPdgId << ", status: " << ggmomStatus <<endl;
 
 					reco::GenParticleRef genGGGMom = genGGMom->numberOfMothers() > 0 ? genGGMom->motherRef() : reco::GenParticleRef();
-					//cout << "\t\t Number of gggmoms: " << genGGMom->numberOfMothers() << std::endl;
+					if(debug) cout << "\t\t Number of gggmoms = " << genGGMom->numberOfMothers() << std::endl;
 					if (genGGGMom.isNonnull()) {
 
 						int gggmomPdgId = genGGGMom->pdgId();
 						int gggmomStatus = genGGGMom->status();
-						if( (gggmomPdgId == 23 || gggmomPdgId == 22) && gggmomStatus == 3 ) isFromZgamma = true;
-						//cout << "\t\t grand-grand-grand-mom pdgId = " << gggmomPdgId << ", status: " << gggmomStatus <<endl;
+						if( (gggmomPdgId == 23 || gggmomPdgId == 3000022) && gggmomStatus == 3) isFromZgamma = true;
+						if(debug) cout << "\t\t grand-grand-grand-mom pdgId = " << gggmomPdgId << ", status: " << gggmomStatus <<endl;
 
-                    			}	
+                    			}
 
                     		}
 
@@ -93,7 +93,8 @@ bool MuonTrackValidator::isSignalFromZgamma(TrackingParticle* tpRtS){
                 }
 
 	}
-
+    
+    //cout << "Result: " << isFromZgamma << endl;
 	return isFromZgamma;
 
 }
@@ -264,6 +265,15 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
 
       h_assocvertpos.push_back( dbe_->book1D("num_assoc(simToReco)_vertpos","N of associated tracks (simToReco) vs transverse vert position",nintVertpos,minVertpos,maxVertpos) );
       h_simulvertpos.push_back( dbe_->book1D("num_simul_vertpos","N of simulated tracks vs transverse vert position",nintVertpos,minVertpos,maxVertpos) );
+        
+      h_assocLxy.push_back( dbe_->book1D("num_assoc(simToReco)_lxy","N of associated tracks (simToReco) vs Lxy",nintLxy,minLxy,maxLxy) );
+      h_simulLxy.push_back( dbe_->book1D("num_simul_lxy","N of simulated tracks vs Lxy",nintLxy,minLxy,maxLxy) );
+        
+      h_assocLz.push_back( dbe_->book1D("num_assoc(simToReco)_lz","N of associated tracks (simToReco) vs Lz",nintLz,minLz,maxLz) );
+      h_simulLz.push_back( dbe_->book1D("num_simul_lz","N of simulated tracks vs Lz",nintLz,minLz,maxLz) );
+        
+      h_assocLr.push_back( dbe_->book1D("num_assoc(simToReco)_lr","N of associated tracks (simToReco) vs R",nintLr,minLr,maxLr) );
+      h_simulLr.push_back( dbe_->book1D("num_simul_lr","N of simulated tracks vs R",nintLr,minLr,maxLr) );
 
       h_assoczpos.push_back( dbe_->book1D("num_assoc(simToReco)_zpos","N of associated tracks (simToReco) vs z vert position",nintZpos,minZpos,maxZpos) );
       h_simulzpos.push_back( dbe_->book1D("num_simul_zpos","N of simulated tracks vs z vert position",nintZpos,minZpos,maxZpos) );
@@ -538,10 +548,15 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
   }
 
+  int nVertices = -1;
   edm::Handle<reco::VertexCollection> primaryVertices;
-  event.getByLabel(vtxInputTag, primaryVertices);
-
-  int nVertices = primaryVertices->size();
+  if(vtxInputTag.label() != ""){
+      
+      event.getByLabel(vtxInputTag, primaryVertices);
+      nVertices = primaryVertices->size();
+      
+  }
+      
   int nTrueVertices = trueInt_BX;
   
   int w=0;
@@ -630,16 +645,35 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	TrackingParticle::Point vertexTP;
 	double dxySim = 0;
 	double dzSim = 0;
+    double prodRho = 0;
+    double prodZ = 0;
+    double prodR = 0;
 
 	//If the TrackingParticle is collison like, get the momentum and vertex at production state
 	if(parametersDefiner=="LhcParametersDefinerForTP")
 	  {
-	    if(! tpSelector(*tp)) continue;
-	    //if(! isSignalFromZgamma(tp)) continue;
+        momentumTP = tp->momentum();
+	    vertexTP = tp->vertex();
+		prodRho = sqrt(vertexTP.perp2());
+		prodZ = vertexTP.z();
+        prodR = sqrt(prodRho*prodRho + prodZ*prodZ);
+//        int hitsPdgId = tp->pdgId();
+//		int hitsStatus = tp->status();
+//        int bx = tp->eventId().bunchCrossing();
+//        int evtID = tp->eventId().event();
+//          
+//        bool isSignalMuon = (abs(tp->pdgId())==13 || abs(tp->pdgId())==11 || abs(tp->pdgId())==15) && !tp->genParticles().empty() && (tp->eventId().event() == 0) && (tp->eventId().bunchCrossing() == 0); //segnale muone
+//        if(isSignalMuon) {
+//            cout<<"-----------------------------------------------------------------------------------------------"<<endl;
+//            cout << "\t Particle pdgId = "<< hitsPdgId << " status: " << hitsStatus << " rho = " << prodRho << ", z = " << prodZ << ", evtID = " << evtID << ", bx = " << bx << ", L = " << prodR << ", pT: " << sqrt(momentumTP.perp2()) << endl;
+//            cout<<"-----------------------------------------------------------------------------------------------"<<endl;
+//        }
+          
+	    if(!tpSelector(*tp)) continue;
+        if(!(fabs(prodRho) < 350 && fabs(prodZ) < 500)) continue;
+	    if(! isSignalFromZgamma(tp)) continue;
 	    //if(isSignalFromZgamma(tp)) cout<<"Signal: 1"<<endl;
 	    //else cout<<"Signal: 0"<<endl;
-	    momentumTP = tp->momentum();
-	    vertexTP = tp->vertex();
 	    //Calcualte the impact parameters w.r.t. PCA
 	    TrackingParticle::Vector momentum = parametersDefinerTP->momentum(event,setup,tpr);
 	    TrackingParticle::Point vertex = parametersDefinerTP->vertex(event,setup,tpr);
@@ -672,24 +706,26 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  if (rt.size()!=0) {
 	    RefToBase<Track> assoc_recoTrack = rt.begin()->first;
 	    edm::LogVerbatim("MuonTrackValidator")<<"-----------------------------associated Track #"<<assoc_recoTrack.key();
-	    TP_is_matched = true;
-	    ats++;
-	    quality = rt.begin()->second;
-	    edm::LogVerbatim("MuonTrackValidator") << "TrackingParticle #" <<tpr.key()  
+          if(assoc_recoTrack->hitPattern().muonStationsWithValidHits() > 1){
+              TP_is_matched = true;
+              ats++;
+              quality = rt.begin()->second;
+              edm::LogVerbatim("MuonTrackValidator") << "TrackingParticle #" <<tpr.key()
 						   << " with pt=" << sqrt(momentumTP.perp2()) 
 						   << " associated with quality:" << quality <<"\n";
-	    if (MABH) {
-	      h_quality[w]->Fill(quality);
-	      h_qualityVsEta[w]->Fill(fabs(momentumTP.eta()),quality);
+              if (MABH) {
+                  h_quality[w]->Fill(quality);
+                  h_qualityVsEta[w]->Fill(fabs(momentumTP.eta()),quality);
 
-	      if (quality > 0.75) {
-		Quality075 = true;
-		Quality05  = true;
-	      } 
-	      else if (quality > 0.5) {
-		Quality05  = true;
-	      }
-	    }	    
+                  if (quality > 0.75) {
+                      Quality075 = true;
+                      Quality05  = true;
+                  }
+                  else if (quality > 0.5) {
+                      Quality05  = true;
+                  }
+              }
+          }
 	  }
 	}else{
 	  edm::LogVerbatim("MuonTrackValidator") 
@@ -833,6 +869,33 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    }
 	  }
 	} // END for (unsigned int f=0; f<vertposintervals[w].size()-1; f++){
+          
+	for (unsigned int f=0; f<lxyintervals[w].size()-1; f++){
+	  if (fabs(prodRho)>lxyintervals[w][f] && fabs(prodRho)<lxyintervals[w][f+1]) {
+	    totSIM_lxy[w][f]++;
+	    if (TP_is_matched) {
+	      totASS_lxy[w][f]++;
+	    }
+	  }
+	} // END for (unsigned int f=0; f<lxyintervals[w].size()-1; f++){
+          
+	for (unsigned int f=0; f<lzintervals[w].size()-1; f++){
+	  if (fabs(prodZ)>lzintervals[w][f] && fabs(prodZ)<lzintervals[w][f+1]) {
+	    totSIM_lz[w][f]++;
+	    if (TP_is_matched) {
+	      totASS_lz[w][f]++;
+	    }
+	  }
+	} // END for (unsigned int f=0; f<lxyintervals[w].size()-1; f++){
+          
+	for (unsigned int f=0; f<lrintervals[w].size()-1; f++){
+	  if (prodR>lrintervals[w][f] && prodR<lrintervals[w][f+1]) {
+	    totSIM_lr[w][f]++;
+	    if (TP_is_matched) {
+	      totASS_lr[w][f]++;
+	    }
+	  }
+	} // END for (unsigned int f=0; f<lxyintervals[w].size()-1; f++){
 
 	for (unsigned int f=0; f<zposintervals[w].size()-1; f++){
 	  if (vertexTP.z()>zposintervals[w][f]&&
@@ -882,6 +945,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
       int at=0;
       int rT=0;
       for(View<Track>::size_type i=0; i<trackCollectionSize; ++i){
+          
         bool Track_is_matched = false;
         bool Track_is_matched_SignalMuon = false;
         bool Track_is_matched_SignalBkg = false;
@@ -894,12 +958,13 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	bool Track_is_matched_075 = false;
 	bool Track_is_matched_050 = false;
 	RefToBase<Track> track(trackCollection, i);
+    if(track->hitPattern().muonStationsWithValidHits() <= 1) continue;
 	//if((track->numberOfValidHits()) == 0) continue;
 	rT++;
 
   	double ipxy = -1, ipz = -1;
 
-  	if (track.isNonnull()){
+  	if (track.isNonnull() && vtxInputTag.label() != ""){
 		
   		const reco::VertexCollection* vertexes = primaryVertices.product();
 
@@ -1614,6 +1679,15 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
 
       fillPlotFromVector(h_simulzpos[w],totSIM_zpos[w]);
       fillPlotFromVector(h_assoczpos[w],totASS_zpos[w]);
+        
+      fillPlotFromVector(h_simulLxy[w],totSIM_lxy[w]);
+      fillPlotFromVector(h_assocLxy[w],totASS_lxy[w]);
+        
+      fillPlotFromVector(h_simulLz[w],totSIM_lz[w]);
+      fillPlotFromVector(h_assocLz[w],totASS_lz[w]);
+        
+      fillPlotFromVector(h_simulLr[w],totSIM_lr[w]);
+      fillPlotFromVector(h_assocLr[w],totASS_lr[w]);
       
       if (MABH) {
 	fillPlotFromVector(h_assoceta_Quality05[w] ,totASSeta_Quality05[w]);

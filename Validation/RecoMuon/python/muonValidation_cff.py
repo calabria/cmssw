@@ -220,6 +220,10 @@ staMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
 staMuonTrackVMuonAssoc.label = ('standAloneMuons',)
 staMuonTrackVMuonAssoc.usetracker = False
 staMuonTrackVMuonAssoc.usemuon = True
+staMuonTrackVMuonAssoc.tipTP = 300000.
+staMuonTrackVMuonAssoc.lipTP = 300000.
+staMuonTrackVMuonAssoc.vertexSrc = ""
+#staMuonTrackVMuonAssoc.stableOnlyTP = False
 
 staUpdMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 staUpdMuonTrackVMuonAssoc.associatormap = 'tpToStaUpdMuonAssociation'
@@ -227,6 +231,10 @@ staUpdMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
 staUpdMuonTrackVMuonAssoc.label = ('standAloneMuons:UpdatedAtVtx',)
 staUpdMuonTrackVMuonAssoc.usetracker = False
 staUpdMuonTrackVMuonAssoc.usemuon = True
+staUpdMuonTrackVMuonAssoc.tipTP = 300000.
+staUpdMuonTrackVMuonAssoc.lipTP = 300000.
+staUpdMuonTrackVMuonAssoc.vertexSrc = ""
+#staUpdMuonTrackVMuonAssoc.stableOnlyTP = False
 
 staUpdMuonTrackVMuonAssoc2St = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 staUpdMuonTrackVMuonAssoc2St.associatormap = 'tpToStaUpdMuonAssociation2St'
@@ -255,6 +263,10 @@ staRefitMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
 staRefitMuonTrackVMuonAssoc.label = ('refittedStandAloneMuons',)
 staRefitMuonTrackVMuonAssoc.usetracker = False
 staRefitMuonTrackVMuonAssoc.usemuon = True
+staRefitMuonTrackVMuonAssoc.tipTP = 300000.
+staRefitMuonTrackVMuonAssoc.lipTP = 300000.
+staRefitMuonTrackVMuonAssoc.vertexSrc = ""
+#staRefitMuonTrackVMuonAssoc.stableOnlyTP = False
 
 staRefitUpdMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 staRefitUpdMuonTrackVMuonAssoc.associatormap = 'tpToStaRefitUpdMuonAssociation'
@@ -262,6 +274,10 @@ staRefitUpdMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
 staRefitUpdMuonTrackVMuonAssoc.label = ('refittedStandAloneMuons:UpdatedAtVtx',)
 staRefitUpdMuonTrackVMuonAssoc.usetracker = False
 staRefitUpdMuonTrackVMuonAssoc.usemuon = True
+staRefitUpdMuonTrackVMuonAssoc.tipTP = 300000.
+staRefitUpdMuonTrackVMuonAssoc.lipTP = 300000.
+staRefitUpdMuonTrackVMuonAssoc.vertexSrc = ""
+#staRefitUpdMuonTrackVMuonAssoc.stableOnlyTP = False
 
 staSETMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 staSETMuonTrackVMuonAssoc.associatormap = 'tpToStaSETMuonAssociation'
@@ -698,6 +714,24 @@ tightModMuonTrackVSel05MuonAssoc.usetracker = True
 tightModMuonTrackVSel05MuonAssoc.usemuon = True
 tightModMuonTrackVSel05MuonAssoc.useMCTruth = False
 
+displacedStaMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+displacedStaMuonTrackVMuonAssoc.associatormap = 'tpToDisplacedStaMuonAssociation'
+displacedStaMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
+displacedStaMuonTrackVMuonAssoc.label = ('displacedStandAloneMuons',)
+displacedStaMuonTrackVMuonAssoc.usetracker = False
+displacedStaMuonTrackVMuonAssoc.usemuon = True
+displacedStaMuonTrackVMuonAssoc.tipTP = 300000.
+displacedStaMuonTrackVMuonAssoc.lipTP = 300000.
+displacedStaMuonTrackVMuonAssoc.vertexSrc = ""
+displacedStaMuonTrackVMuonAssoc.stableOnlyTP = False
+
+displacedStaSeedTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+displacedStaSeedTrackVMuonAssoc.associatormap = 'tpToDisplacedStaSeedAssociation'
+displacedStaSeedTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
+displacedStaSeedTrackVMuonAssoc.label = ('seedsOfDisplacedSTAmuons',)
+displacedStaSeedTrackVMuonAssoc.usetracker = False
+displacedStaSeedTrackVMuonAssoc.usemuon = True
+
 ##################################################################################
 
 # Configurations for RecoMuonValidators
@@ -876,12 +910,18 @@ muonValidationSET_seq = cms.Sequence(staSETMuonTrackVMuonAssoc+staSETUpdMuonTrac
 muonValidationCosmic_seq = cms.Sequence(trkCosmicMuonTrackVTrackAssoc
                                  +staCosmicMuonTrackVMuonAssoc+glbCosmicMuonTrackVMuonAssoc)
 
+#muonValidationDisplaced_seq = cms.Sequence(staMuonTrackVMuonAssoc+staUpdMuonTrackVMuonAssoc+displacedStaMuonTrackVMuonAssoc)
+muonValidationDisplaced_seq = cms.Sequence(displacedStaMuonTrackVMuonAssoc)
+
+
 # The muon association and validation sequence
 
-recoMuonValidation = cms.Sequence((muonAssociation_seq*muonValidation_seq)
-                                 #+(muonAssociationTEV_seq*muonValidationTEV_seq)
-                                 #+(muonAssociationSET_seq*muonValidationSET_seq)
-                                 #+(muonAssociationRefit_seq*muonValidationRefit_seq)
+recoMuonValidation = cms.Sequence(
+                                  #(muonAssociation_seq*muonValidation_seq)
+                                  #+(muonAssociationTEV_seq*muonValidationTEV_seq)
+                                  #+(muonAssociationSET_seq*muonValidationSET_seq)
+                                  #(muonAssociationRefit_seq*muonValidationRefit_seq)+
+                                  (muonAssociationDisplaced_seq*muonValidationDisplaced_seq)
                                  )
 
 recoCosmicMuonValidation = cms.Sequence(muonAssociationCosmic_seq*muonValidationCosmic_seq)

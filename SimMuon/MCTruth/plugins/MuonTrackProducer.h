@@ -19,6 +19,9 @@ class MuonTrackProducer : public edm::EDProducer {
   public:
     explicit MuonTrackProducer(const edm::ParameterSet&);
      std::vector<double> findSimVtx(edm::Event& iEvent);
+     bool isGlobalTightMuon(const reco::MuonCollection::const_iterator muonRef);
+     bool isTrackerTightMuon(const reco::MuonCollection::const_iterator muonRef);
+     bool isIsolatedMuon(const reco::MuonCollection::const_iterator muonRef);
      bool isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
      bool isLooseMod(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
      bool isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);

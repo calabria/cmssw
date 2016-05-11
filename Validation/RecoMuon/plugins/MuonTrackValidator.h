@@ -137,7 +137,7 @@ private:
 			double& qoverp, double& qoverpError, double& lambda, double& lambdaError,  
 			double& phi, double& phiError) const;
 
-  bool isSignalFromZgamma(TrackingParticle* tpRtS);
+  bool isSignalFromZgamma(TrackingParticle* tpRtS, bool debug);
 
  private:
   std::string dirName_;

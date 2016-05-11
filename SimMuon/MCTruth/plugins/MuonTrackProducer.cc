@@ -84,6 +84,137 @@ std::vector<double> MuonTrackProducer::findSimVtx(edm::Event& iEvent){
 
 }
 
+bool MuonTrackProducer::isGlobalTightMuon( const reco::MuonCollection::const_iterator muonRef ) {
+
+ //if ( !muonRef.isNonnull() ) return false;
+
+ if ( !muonRef->isGlobalMuon() ) return false;
+ if ( !muonRef->isStandAloneMuon() ) return false;
+ 
+ 
+ if ( muonRef->isTrackerMuon() ) { 
+   
+   bool result = muon::isGoodMuon(*muonRef,muon::GlobalMuonPromptTight);
+   
+   bool isTM2DCompatibilityTight =  muon::isGoodMuon(*muonRef,muon::TM2DCompatibilityTight);   
+   int nMatches = muonRef->numberOfMatches();
+   bool quality = nMatches > 2 || isTM2DCompatibilityTight;
+   
+   return result && quality;
+   
+ } else {
+ 
+   reco::TrackRef standAloneMu = muonRef->standAloneMuon();
+   
+    // No tracker muon -> Request a perfect stand-alone muon, or an even better global muon
+    bool result = false;
+      
+    // Check the quality of the stand-alone muon : 
+    // good chi**2 and large number of hits and good pt error
+    if ( ( standAloneMu->hitPattern().numberOfValidMuonDTHits() < 22 &&
+	   standAloneMu->hitPattern().numberOfValidMuonCSCHits() < 15 ) ||
+	 standAloneMu->normalizedChi2() > 10. || 
+	 standAloneMu->ptError()/standAloneMu->pt() > 0.20 ) {
+      result = false;
+    } else { 
+      
+      reco::TrackRef combinedMu = muonRef->combinedMuon();
+      reco::TrackRef trackerMu = muonRef->track();
+            
+      // If the stand-alone muon is good, check the global muon
+      if ( combinedMu->normalizedChi2() > standAloneMu->normalizedChi2() ) {
+	// If the combined muon is worse than the stand-alone, it 
+	// means that either the corresponding tracker track was not 
+	// reconstructed, or that the sta muon comes from a late 
+	// pion decay (hence with a momentum smaller than the track)
+	// Take the stand-alone muon only if its momentum is larger
+	// than that of the track
+	result = standAloneMu->pt() > trackerMu->pt() ;
+     } else { 
+	// If the combined muon is better (and good enough), take the 
+	// global muon
+	result = 
+	  combinedMu->ptError()/combinedMu->pt() < 
+	  std::min(0.20,standAloneMu->ptError()/standAloneMu->pt());
+      }
+    }      
+
+    return result;    
+  }
+
+  return false;
+
+}
+
+bool MuonTrackProducer::isTrackerTightMuon( const reco::MuonCollection::const_iterator muonRef ) {
+
+  //if ( !muonRef.isNonnull() ) return false;
+    
+  if( !muonRef->isTrackerMuon() ) return false;
+  
+  reco::TrackRef trackerMu = muonRef->track();
+  const reco::Track& track = *trackerMu;
+  
+  unsigned nTrackerHits =  track.hitPattern().numberOfValidTrackerHits();
+  
+  if(nTrackerHits<=12) return false;
+  
+  bool isAllArbitrated = muon::isGoodMuon(*muonRef,muon::AllArbitrated);
+  
+  bool isTM2DCompatibilityTight = muon::isGoodMuon(*muonRef,muon::TM2DCompatibilityTight);
+  
+  if(!isAllArbitrated || !isTM2DCompatibilityTight)  return false;
+
+  if((trackerMu->ptError()/trackerMu->pt() > 0.10)){
+    //std::cout<<" PT ERROR > 10 % "<< trackerMu->pt() <<std::endl;
+    return false;
+  }
+  return true;
+  
+}
+
+bool MuonTrackProducer::isIsolatedMuon( const reco::MuonCollection::const_iterator muonRef ){
+
+
+  //if ( !muonRef.isNonnull() ) return false;
+  if ( !muonRef->isIsolationValid() ) return false;
+  
+  // Isolated Muons which are missed by standard cuts are nearly always global+tracker
+  if ( !muonRef->isGlobalMuon() ) return false;
+
+  // If it's not a tracker muon, only take it if there are valid muon hits
+
+  reco::TrackRef standAloneMu = muonRef->standAloneMuon();
+
+  if ( !muonRef->isTrackerMuon() ){
+    if(standAloneMu->hitPattern().numberOfValidMuonDTHits() == 0 &&
+       standAloneMu->hitPattern().numberOfValidMuonCSCHits() ==0) return false;
+  }
+  
+  // for isolation, take the smallest pt available to reject fakes
+
+  reco::TrackRef combinedMu = muonRef->combinedMuon();
+  double smallestMuPt = combinedMu->pt();
+  
+  if(standAloneMu->pt()<smallestMuPt) smallestMuPt = standAloneMu->pt();
+  
+  if(muonRef->isTrackerMuon())
+    {
+      reco::TrackRef trackerMu = muonRef->track();
+      if(trackerMu->pt() < smallestMuPt) smallestMuPt= trackerMu->pt();
+    }
+     
+  double sumPtR03 = muonRef->isolationR03().sumPt;
+  double emEtR03 = muonRef->isolationR03().emEt;
+  double hadEtR03 = muonRef->isolationR03().hadEt;
+  
+  double relIso = (sumPtR03 + emEtR03 + hadEtR03)/smallestMuPt;
+
+  if(relIso<0.1) return true;
+  else return false;
+}
+
+
 bool MuonTrackProducer::isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon)
 {
   bool isPF = muon->isPFMuon();
@@ -97,11 +228,12 @@ bool MuonTrackProducer::isLoose(edm::Event& iEvent, reco::MuonCollection::const_
 bool MuonTrackProducer::isLooseMod(edm::Event& iEvent, reco::MuonCollection::const_iterator muon)
 {
   //bool isPF = muon->isPFMuon();
+  bool isPF = isGlobalTightMuon(muon) || isTrackerTightMuon(muon) || isIsolatedMuon(muon);
   bool isGLB = muon->isGlobalMuon();
   bool isTrk = muon->isTrackerMuon();
-  bool matchedSt = muon->numberOfMatchedStations() >= 1;
+  //bool matchedSt = muon->numberOfMatchedStations() >= 1;
     
-  return ( (isGLB || isTrk) && matchedSt );
+  return ( (isGLB || isTrk) && isPF );
 }
 
 bool MuonTrackProducer::isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz)
@@ -329,7 +461,8 @@ bool MuonTrackProducer::isTightMod(edm::Event& iEvent, reco::MuonCollection::con
 	bool trkLayMeas = muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
 	bool isGlb = muon->isGlobalMuon(); 
 	//bool isPF = muon->isPFMuon();
-	bool chi2 = muon->globalTrack()->normalizedChi2() < 10.; 
+    bool isPF = isGlobalTightMuon(muon) || isTrackerTightMuon(muon) || isIsolatedMuon(muon);
+	bool chi2 = muon->globalTrack()->normalizedChi2() < 10.;
 	bool validHits = muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0; 
 	bool matchedSt = muon->numberOfMatchedStations() > 1;
 
@@ -364,7 +497,7 @@ bool MuonTrackProducer::isTightMod(edm::Event& iEvent, reco::MuonCollection::con
 	bool validPxlHit = muon->innerTrack()->hitPattern().pixelLayersWithMeasurement(3,2) > 0;
 	//bool validPxlHit = muon->innerTrack()->hitPattern().pixelLayersWithMeasurement(4,3) > 0;
 
-	if(trkLayMeas && isGlb && chi2 && validHits && matchedSt && ipxy && ipz && validPxlHit) result = true;
+	if(trkLayMeas && isGlb && isPF && chi2 && validHits && matchedSt && ipxy && ipz && validPxlHit) result = true;
 
   }
 
