@@ -18,12 +18,14 @@ void ME0HitsValidation::bookHistograms(DQMStore::IBooker & ibooker, edm::Run con
 
   LogDebug("MuonME0HitsValidation")<<"+++ Info : finish to get geometry information from ES.\n";
 
+  me0_sh_type = ibooker.book1D( "me0_sh_type", "SimHit partcile type", 400,0,400);
 
   for( unsigned int region_num = 0 ; region_num < nregion ; region_num++ ) {
           me0_sh_tot_zr[region_num] = BookHistZR(ibooker,"me0_sh","SimHit",region_num);
       for( unsigned int layer_num = 0 ; layer_num < 6 ; layer_num++) {
           me0_sh_zr[region_num][layer_num] = BookHistZR(ibooker,"me0_sh","SimHit",region_num,layer_num);
           me0_sh_xy[region_num][layer_num] = BookHistXY(ibooker,"me0_sh","SimHit",region_num,layer_num);
+          
           std::string hist_name_for_tof  = std::string("me0_sh_tof_r")+regionLabel[region_num]+"_l"+layerLabel[layer_num];
           std::string hist_name_for_tofMu  = std::string("me0_sh_tofMuon_r")+regionLabel[region_num]+"_l"+layerLabel[layer_num];
           std::string hist_name_for_eloss  = std::string("me0_sh_energyloss_r")+regionLabel[region_num]+"_l"+layerLabel[layer_num];
@@ -33,7 +35,6 @@ void ME0HitsValidation::bookHistograms(DQMStore::IBooker & ibooker, edm::Run con
           std::string hist_label_for_tofMu = "SimHit TOF(Muon only) : region"+regionLabel[region_num]+" layer "+layerLabel[layer_num]+" "+" ; Time of flight [ns] ; entries";
           std::string hist_label_for_eloss = "SimHit energy loss : region"+regionLabel[region_num]+" layer "+layerLabel[layer_num]+" "+" ; Energy loss [eV] ; entries";
           std::string hist_label_for_elossMu = "SimHit energy loss(Muon only) : region"+regionLabel[region_num]+" layer "+layerLabel[layer_num]+" "+" ; Energy loss [eV] ; entries";
-
 
           double tof_min, tof_max;
           tof_min = 10; tof_max = 30;
@@ -73,8 +74,6 @@ void ME0HitsValidation::analyze(const edm::Event& e,
     Int_t region = id.region();
     Int_t layer = id.layer();
 
-
-
     //Int_t even_odd = id.chamber()%2;
     if ( ME0Geometry_->idToDet(hits->detUnitId()) == nullptr) {
       std::cout<<"simHit did not matched with GEMGeometry."<<std::endl;
@@ -90,6 +89,8 @@ void ME0HitsValidation::analyze(const edm::Event& e,
     Float_t g_z = hitGP.z();
     Float_t energyLoss = hits->energyLoss();
     Float_t timeOfFlight = hits->timeOfFlight();
+      
+    me0_sh_type->Fill(hits->particleType());
 
     if (abs(hits-> particleType()) == 13)
     {

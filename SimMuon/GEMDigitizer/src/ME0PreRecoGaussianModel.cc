@@ -77,7 +77,20 @@ for (const auto & hit: simHits)
   double corr=0.;
   double tof=CLHEP::RandGaussQ::shoot(engine, hit.timeOfFlight(), sigma_t);
   int pdgid = hit.particleType();
-  ME0DigiPreReco digi(x,y,ex,ey,corr,tof,pdgid);
+  int evtId = hit.eventId().event() == 0 ? 1 : 0;
+  int bx = hit.eventId().bunchCrossing() == 0 ? 1 : 0;
+  int procType = hit.processType() == 0 ? 1 : 0;
+  int res = abs(pdgid)<<1;
+  res |= evtId;
+  res = res<<1;
+  res |= bx;
+  res = res<<1;
+  res |= procType;
+  res = res<<1;
+  res |= 1;
+  //std::cout<<"SGN Event ID: "<<evtId<<" BX: "<<bx<<" Particle type: "<<pdgid<<" Process Type: "<<procType<<" Res: "<<res<<std::endl;
+  //std::cout<<"SGN Event ID: "<<((res>>3)&1)<<" BX: "<<((res>>2)&1)<<" Particle type: "<<(res>>4)<<" Process Type: "<<((res>>1)&1)<<" Prompt: "<<(res&1)<<std::endl;
+  ME0DigiPreReco digi(x,y,ex,ey,corr,tof,res);
   digi_.insert(digi);
 
   edm::LogVerbatim("ME0PreRecoGaussianModel") << "[ME0PreRecoDigi :: simulateSignal] :: simhit in "<<roll->id()<<" at loc x = "<<std::setw(8)<<entry.x()<<" [cm]"
@@ -193,7 +206,11 @@ void ME0PreRecoGaussianModel::simulateNoise(const ME0EtaPartition* roll, CLHEP::
 	int pdgid = 0;
 	if (myrandP <= 0.5) pdgid = -11; // electron
 	else             pdgid = 11;  // positron
-	ME0DigiPreReco digi(xx_rand, yy_rand, ex, ey, corr, time, pdgid);
+    int res = abs(pdgid)<<4;
+    res |= 0;
+    //std::cout<<"BKG Event ID: "<<0<<" BX: "<<0<<" Particle type: "<<pdgid<<" Process Type: "<<0<<" Res: "<<res<<std::endl;
+    //std::cout<<"BKG Event ID: "<<((res>>3)&1)<<" BX: "<<((res>>2)&1)<<" Particle type: "<<(res>>4)<<" Process Type: "<<((res>>1)&1)<<" Prompt: "<<(res&1)<<std::endl;
+	ME0DigiPreReco digi(xx_rand, yy_rand, ex, ey, corr, time, res);
 	digi_.insert(digi);
 	edm::LogVerbatim("ME0PreRecoGaussianModelNoise") << "[ME0PreRecoDigi :: elebkg]["<<roll->id().rawId()<<"] =====> electron hit in "<<roll->id()<<" pdgid = "<<pdgid<<" bx = "<<bx
 							 <<" ==> digitized"
@@ -231,7 +248,7 @@ void ME0PreRecoGaussianModel::simulateNoise(const ME0EtaPartition* roll, CLHEP::
 	double ey = sigma_v;
 	double corr = 0.;
 	// extract random BX
-        double myrandBX= CLHEP::RandFlat::shoot(engine);
+    double myrandBX= CLHEP::RandFlat::shoot(engine);
 	int bx = int((maxBunch_-minBunch_+1)*myrandBX)+minBunch_;
 	// extract random time in this BX
 	double myrandT = CLHEP::RandFlat::shoot(engine);
@@ -241,7 +258,11 @@ void ME0PreRecoGaussianModel::simulateNoise(const ME0EtaPartition* roll, CLHEP::
 	double myrandP = CLHEP::RandFlat::shoot(engine);
 	if (myrandP <= 0.08) pdgid = 2112; // neutrons: GEM sensitivity for neutrons: 0.08%
 	else                 pdgid = 22;   // photons:  GEM sensitivity for photons:  1.04% ==> neutron fraction = (0.08 / 1.04) = 0.077 = 0.08
-	ME0DigiPreReco digi(xx_rand, yy_rand, ex, ey, corr, time, pdgid);
+    int res = abs(pdgid)<<4;
+    res |= 0;
+    //std::cout<<"BKG Event ID: "<<0<<" BX: "<<0<<" Particle type: "<<pdgid<<" Process Type: "<<0<<" Res: "<<res<<std::endl;
+    //std::cout<<"BKG Event ID: "<<((res>>3)&1)<<" BX: "<<((res>>2)&1)<<" Particle type: "<<(res>>4)<<" Process Type: "<<((res>>1)&1)<<" Prompt: "<<(res&1)<<std::endl;
+	ME0DigiPreReco digi(xx_rand, yy_rand, ex, ey, corr, time, res);
 	digi_.insert(digi);
 	edm::LogVerbatim("ME0PreRecoGaussianModelNoise") << "[ME0PreRecoDigi :: neubkg]["<<roll->id().rawId()<<"] ======> neutral hit in "<<roll->id()<<" pdgid = "<<pdgid<<" bx = "<<bx
 							 <<" ==> digitized"
