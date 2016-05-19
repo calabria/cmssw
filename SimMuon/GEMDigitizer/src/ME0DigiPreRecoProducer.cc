@@ -27,6 +27,7 @@ ME0DigiPreRecoProducer::ME0DigiPreRecoProducer(const edm::ParameterSet& ps)
   : digiPreRecoModelString_(ps.getParameter<std::string>("digiPreRecoModelString"))
 {
   produces<ME0DigiPreRecoCollection>();
+  produces<ME0DigiSimLinks>("ME0");
 
   edm::Service<edm::RandomNumberGenerator> rng;
   if (!rng.isAvailable()){
@@ -72,6 +73,7 @@ void ME0DigiPreRecoProducer::produce(edm::Event& e, const edm::EventSetup& event
 
   // Create empty output
   std::auto_ptr<ME0DigiPreRecoCollection> digis(new ME0DigiPreRecoCollection());
+  std::auto_ptr<ME0DigiSimLinks> me0DigiSimLinks(new ME0DigiSimLinks() );
 
   // arrange the hits by eta partition
   std::map<uint32_t, edm::PSimHitContainer> hitMap;
@@ -93,9 +95,11 @@ void ME0DigiPreRecoProducer::produce(edm::Event& e, const edm::EventSetup& event
     me0DigiPreRecoModel_->simulateSignal(roll, simHits, engine);
     me0DigiPreRecoModel_->simulateNoise(roll, engine);
     me0DigiPreRecoModel_->fillDigis(rawId, *digis);
+    (*me0DigiSimLinks).insert(me0DigiPreRecoModel_->me0DigiSimLinks());
   }
   
   // store them in the event
   e.put(digis);
+  e.put(me0DigiSimLinks,"ME0");
 }
 

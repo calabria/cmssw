@@ -48,6 +48,11 @@ ME0PreRecoGaussianModel::~ME0PreRecoGaussianModel()
 
 void ME0PreRecoGaussianModel::simulateSignal(const ME0EtaPartition* roll, const edm::PSimHitContainer& simHits, CLHEP::HepRandomEngine* engine)
 {
+
+  detectorHitMap_.clear();
+  theMe0DigiSimLinks_.clear();
+  theMe0DigiSimLinks_ = ME0DigiSimLinks(roll->id().rawId());
+    
 for (const auto & hit: simHits)
 {
   // Digitize only Muons?
@@ -78,6 +83,7 @@ for (const auto & hit: simHits)
   double tof=CLHEP::RandGaussQ::shoot(engine, hit.timeOfFlight(), sigma_t);
   int pdgid = hit.particleType();
   ME0DigiPreReco digi(x,y,ex,ey,corr,tof,pdgid);
+  detectorHitMap_.insert(DetectorHitMap::value_type(digi,&hit));
   digi_.insert(digi);
 
   edm::LogVerbatim("ME0PreRecoGaussianModel") << "[ME0PreRecoDigi :: simulateSignal] :: simhit in "<<roll->id()<<" at loc x = "<<std::setw(8)<<entry.x()<<" [cm]"

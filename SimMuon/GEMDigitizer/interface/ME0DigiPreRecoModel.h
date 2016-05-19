@@ -13,6 +13,8 @@
 #include "DataFormats/Common/interface/DetSet.h"
 #include "SimDataFormats/TrackingHit/interface/PSimHitContainer.h"
 #include "SimDataFormats/CrossingFrame/interface/MixCollection.h"
+#include "SimDataFormats/ME0DigiSimLink/interface/ME0DigiSimLink.h"
+#include "SimDataFormats/EncodedEventId/interface/EncodedEventId.h"
 
 #include <map>
 #include <set>
@@ -28,6 +30,8 @@ class PSimHit;
 class ME0DigiPreRecoModel
 {
 public:
+    
+  typedef edm::DetSet<ME0DigiSimLink> ME0DigiSimLinks;
   
   virtual ~ME0DigiPreRecoModel() {}
 
@@ -45,14 +49,25 @@ public:
   void fillDigis(int rollDetId, ME0DigiPreRecoCollection&);
 
   virtual void setup() = 0;
+    
+  const ME0DigiSimLinks & me0DigiSimLinks() const {return theMe0DigiSimLinks_;}
 
 protected:
-  std::set< ME0DigiPreReco> digi_;
+  std::set< ME0DigiPreReco > digi_;
+    
+  void addLinksWithPartId(float x, float y, float ex, float ey, float corr, float tof);
 
   ME0DigiPreRecoModel(const edm::ParameterSet&) {}
 
   const ME0Geometry * geometry_;
+    
+  typedef std::multimap<
+      ME0DigiPreReco,
+      const PSimHit*,
+      std::less< ME0DigiPreReco >
+    >  DetectorHitMap;
   
-  //  DetectorHitMap detectorHitMap_;
+  DetectorHitMap detectorHitMap_;
+  ME0DigiSimLinks theMe0DigiSimLinks_;
 };
 #endif

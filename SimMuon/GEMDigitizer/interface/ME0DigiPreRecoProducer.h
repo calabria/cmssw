@@ -8,6 +8,8 @@
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 #include "SimDataFormats/TrackingHit/interface/PSimHitContainer.h"
 #include "SimDataFormats/CrossingFrame/interface/MixCollection.h"
+#include "DataFormats/Common/interface/DetSetVector.h"
+#include "SimDataFormats/ME0DigiSimLink/interface/ME0DigiSimLink.h"
 
 #include <string>
 
@@ -17,6 +19,8 @@ class ME0DigiPreRecoModel;
 class ME0DigiPreRecoProducer : public edm::stream::EDProducer<>
 {
 public:
+
+  typedef edm::DetSetVector<ME0DigiSimLink> ME0DigiSimLinks;
 
   explicit ME0DigiPreRecoProducer(const edm::ParameterSet& ps);
 
