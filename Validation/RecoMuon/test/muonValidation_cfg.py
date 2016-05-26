@@ -1,19 +1,17 @@
 import FWCore.ParameterSet.Config as cms
 
-processName = "MuonSuite"
-process = cms.Process(processName)
+from Configuration.StandardSequences.Eras import eras
+
+processName = 'MuonSuite'
+process = cms.Process(processName,eras.Phase2)
 
 readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
 process.source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles)
 readFiles.extend( (
-    '/store/relval/CMSSW_2_2_0/RelValSingleMuPt10/GEN-SIM-RECO/IDEAL_V9_v1/0000/10C12A24-74B9-DD11-85B2-001617DBCF6A.root',
-    '/store/relval/CMSSW_2_2_0/RelValSingleMuPt10/GEN-SIM-RECO/IDEAL_V9_v1/0000/3A14ADED-B4B9-DD11-8F0B-001617E30D40.root' ,
+    'file:/cmshome/calabria/ValidazioneOfficial2/Handicap/CMSSW_8_1_0_pre5/src/out_local_reco.root',
     ))
 secFiles.extend((
-    '/store/relval/CMSSW_2_2_0/RelValSingleMuPt10/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_V9_v1/0000/526D7CD6-68B9-DD11-886D-001617DBD224.root',
-    '/store/relval/CMSSW_2_2_0/RelValSingleMuPt10/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_V9_v1/0000/A2C70EEE-B4B9-DD11-8170-001617DBD316.root',
-    '/store/relval/CMSSW_2_2_0/RelValSingleMuPt10/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_V9_v1/0000/D437AC21-6FB9-DD11-BEA1-001617E30CC8.root' 
     ))
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -52,10 +50,11 @@ process.load("DQMServices.Components.MEtoEDMConverter_cfi")
 process.MEtoEDMConverter_step = cms.Path(process.MEtoEDMConverter)
 
 process.load("Configuration.StandardSequences.Services_cff")
-process.load("Configuration.StandardSequences.GeometryRecoDB_cff")
+process.load("Configuration.Geometry.GeometryExtended2023LRecoReco_cff")
 process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = "IDEAL_V9::All"
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 
 #---- Validation stuffs ----#
 ## Default validation modules
@@ -63,11 +62,20 @@ process.load("Configuration.StandardSequences.Validation_cff")
 process.validation_step = cms.Path(process.validation)
 ## Load muon validation modules
 #process.recoMuonVMuAssoc.outputFileName = 'validationME.root'
-process.muonValidation_step = cms.Path(cms.SequencePlaceholder("mix")+process.recoMuonValidation)
+process.muonValidation_step = cms.Path(process.recoMuonValidation)
 
 process.schedule = cms.Schedule(
-    process.raw2digi_step,
+#    process.raw2digi_step,
 #    process.validation_step,
     process.muonValidation_step,
     process.MEtoEDMConverter_step,process.outpath)
 
+# customisation of the process.
+
+# Automatic addition of the customisation function from SLHCUpgradeSimulations.Configuration.combinedCustoms
+from SLHCUpgradeSimulations.Configuration.combinedCustoms import cust_2023LReco
+
+#call to customisation function cust_2023LReco imported from SLHCUpgradeSimulations.Configuration.combinedCustoms
+process = cust_2023LReco(process)
+
+# End of customisation functions
