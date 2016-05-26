@@ -64,13 +64,18 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
     //
     // 1st, primary vertex
     //
+    double phi_vtx    = CLHEP::RandFlat::shoot(engine, fMinPhi, fMaxPhi) ;
     HepMC::GenVertex* Vtx = 0;
     if( d0Min_ == d0Max_ ) {
-        Vtx = new HepMC::GenVertex(HepMC::FourVector(d0Min_,0.,0.));
+        double d0Min_x = d0Min_*sin(phi_vtx);
+        double d0Min_y = d0Min_*cos(phi_vtx);
+        Vtx = new HepMC::GenVertex(HepMC::FourVector(d0Min_x,d0Min_y,0.));
     }
     else {
         double d0 = CLHEP::RandFlat::shoot(engine, d0Min_, d0Max_) ;
-        Vtx = new HepMC::GenVertex(HepMC::FourVector(d0,0.,0.));
+        double d0_x = d0*sin(phi_vtx);
+        double d0_y = d0*cos(phi_vtx);
+        Vtx = new HepMC::GenVertex(HepMC::FourVector(d0_x,d0_y,0.));
     }
     
     // loop over particles
