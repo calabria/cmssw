@@ -13,6 +13,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/Utilities/interface/RandomNumberGenerator.h"
+#include "DataFormats/Math/interface/deltaR.h"
 
 #include "CLHEP/Random/RandFlat.h"
 
@@ -32,6 +33,7 @@ BaseFlatGunProducer(pset)
     fMaxPt = pgun_params.getParameter<double>("MaxPt");
     d0Min_ = pgun_params.getParameter<double>("D0Min");
     d0Max_ = pgun_params.getParameter<double>("D0Max");
+    drMax_ = pgun_params.getParameter<double>("drMax");
     
     produces<HepMCProduct>("unsmeared");
     produces<GenEventInfoProduct>();
@@ -75,7 +77,7 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
         Vtx = new HepMC::GenVertex(HepMC::FourVector(d0Min_x,d0Min_y,d0Min_z));
     }
     else {
-        double d0 = CLHEP::RandFlat::shoot(engine, d0Min_, d0Max_) ;
+        double d0 = CLHEP::RandFlat::shoot(engine, d0Min_, d0Max_)/10 ;
         double d0_x = d0*sin(theta_vtx)*cos(phi_vtx);
         double d0_y = d0*sin(theta_vtx)*sin(phi_vtx);
         double d0_z = d0*cos(theta_vtx);
@@ -91,6 +93,7 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
         double pt     = CLHEP::RandFlat::shoot(engine, fMinPt, fMaxPt) ;
         double eta    = CLHEP::RandFlat::shoot(engine, fMinEta, fMaxEta) ;
         double phi    = CLHEP::RandFlat::shoot(engine, fMinPhi, fMaxPhi) ;
+        double dr     = deltaR(eta, phi, eta_vtx, phi_vtx);
         int PartID = fPartIDs[ip] ;
         const HepPDT::ParticleData*
         PData = fPDGTable->particle(HepPDT::ParticleID(abs(PartID))) ;
@@ -107,7 +110,7 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
         new HepMC::GenParticle(p,PartID,1);
         Part->suggest_barcode( barcode ) ;
         barcode++ ;
-        Vtx->add_particle_out(Part);
+        if( dr < drMax_ ) Vtx->add_particle_out(Part);
         
         if ( fAddAntiParticle )
         {
@@ -121,7 +124,7 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
             new HepMC::GenParticle(ap,APartID,1);
             APart->suggest_barcode( barcode ) ;
             barcode++ ;
-            Vtx->add_particle_out(APart) ;
+            if( dr < drMax_ ) Vtx->add_particle_out(APart) ;
         }
         
     }
