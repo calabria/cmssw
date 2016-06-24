@@ -77,7 +77,7 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
         Vtx = new HepMC::GenVertex(HepMC::FourVector(d0Min_x,d0Min_y,d0Min_z));
     }
     else {
-        double d0 = CLHEP::RandFlat::shoot(engine, d0Min_, d0Max_)/10 ;
+        double d0 = CLHEP::RandFlat::shoot(engine, d0Min_, d0Max_)*10;
         double d0_x = d0*sin(theta_vtx)*cos(phi_vtx);
         double d0_y = d0*sin(theta_vtx)*sin(phi_vtx);
         double d0_z = d0*cos(theta_vtx);
