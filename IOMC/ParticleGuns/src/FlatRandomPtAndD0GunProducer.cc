@@ -90,10 +90,21 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
     int barcode = 1 ;
     for (unsigned int ip=0; ip<fPartIDs.size(); ++ip)
     {
-        double pt     = CLHEP::RandFlat::shoot(engine, fMinPt, fMaxPt) ;
-        double eta    = CLHEP::RandFlat::shoot(engine, fMinEta, fMaxEta) ;
-        double phi    = CLHEP::RandFlat::shoot(engine, fMinPhi, fMaxPhi) ;
-        double dr     = deltaR(eta, phi, eta_vtx, phi_vtx);
+        
+        double pt     = 0;
+        double eta    = 0;
+        double phi    = 0;
+        double dr     = 999;
+        
+        do{
+            
+            pt     = CLHEP::RandFlat::shoot(engine, fMinPt, fMaxPt) ;
+            eta    = CLHEP::RandFlat::shoot(engine, fMinEta, fMaxEta) ;
+            phi    = CLHEP::RandFlat::shoot(engine, fMinPhi, fMaxPhi) ;
+            dr     = deltaR(eta, phi, eta_vtx, phi_vtx);
+            
+        }while(dr > drMax_);
+        
         int PartID = fPartIDs[ip] ;
         const HepPDT::ParticleData*
         PData = fPDGTable->particle(HepPDT::ParticleID(abs(PartID))) ;
@@ -110,7 +121,7 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
         new HepMC::GenParticle(p,PartID,1);
         Part->suggest_barcode( barcode ) ;
         barcode++ ;
-        if( dr < drMax_ ) Vtx->add_particle_out(Part);
+        Vtx->add_particle_out(Part);
         
         if ( fAddAntiParticle )
         {
