@@ -9,8 +9,8 @@ generator = cms.EDProducer("FlatRandomPtAndD0GunProducer",
         MaxPhi = cms.double(3.14159265359),
         MinEta = cms.double(-3.0),
         MinPhi = cms.double(-3.14159265359),
-        D0Min  = cms.double(0.1),#in cm
-        D0Max  = cms.double(100.),#in cm
+        LMin  = cms.double(0.1),#in cm
+        LMax  = cms.double(100.),#in cm
         drMax  = cms.double(4.0)
 
     ),

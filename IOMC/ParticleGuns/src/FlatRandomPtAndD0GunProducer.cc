@@ -31,8 +31,8 @@ BaseFlatGunProducer(pset)
     
     fMinPt = pgun_params.getParameter<double>("MinPt");
     fMaxPt = pgun_params.getParameter<double>("MaxPt");
-    d0Min_ = pgun_params.getParameter<double>("D0Min");
-    d0Max_ = pgun_params.getParameter<double>("D0Max");
+    LMin_ = pgun_params.getParameter<double>("LMin");
+    LMax_ = pgun_params.getParameter<double>("LMax");
     drMax_ = pgun_params.getParameter<double>("drMax");
     
     produces<HepMCProduct>("unsmeared");
@@ -70,19 +70,19 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
     double eta_vtx    = CLHEP::RandFlat::shoot(engine, fMinEta, fMaxEta);
     double theta_vtx  = 2.*atan(exp(-eta_vtx));
     HepMC::GenVertex* Vtx = 0;
-    if( d0Min_ == d0Max_ ) {
-        double d0Min_x = d0Min_*sin(theta_vtx)*cos(phi_vtx);
-        double d0Min_y = d0Min_*sin(theta_vtx)*sin(phi_vtx);
-        double d0Min_z = d0Min_*cos(theta_vtx);
-        Vtx = new HepMC::GenVertex(HepMC::FourVector(d0Min_x,d0Min_y,d0Min_z));
+    if( LMin_ == LMax_ ) {
+        double LMin_x = LMin_*sin(theta_vtx)*cos(phi_vtx);
+        double LMin_y = LMin_*sin(theta_vtx)*sin(phi_vtx);
+        double LMin_z = LMin_*cos(theta_vtx);
+        Vtx = new HepMC::GenVertex(HepMC::FourVector(LMin_x,LMin_y,LMin_z));
     }
     else {
-        double d0 = CLHEP::RandFlat::shoot(engine, d0Min_, d0Max_)*10;
-        double d0_x = d0*sin(theta_vtx)*cos(phi_vtx);
-        double d0_y = d0*sin(theta_vtx)*sin(phi_vtx);
-        double d0_z = d0*cos(theta_vtx);
-        std::cout<<d0<<" "<<d0_x<<" "<<d0_y<<" "<<d0_z<<std::endl;
-        Vtx = new HepMC::GenVertex(HepMC::FourVector(d0_x,d0_y,d0_z));
+        double len = CLHEP::RandFlat::shoot(engine, LMin_, LMax_)*10;
+        double len_x = len*sin(theta_vtx)*cos(phi_vtx);
+        double len_y = len*sin(theta_vtx)*sin(phi_vtx);
+        double len_z = len*cos(theta_vtx);
+        std::cout<<len<<" "<<len_x<<" "<<len_y<<" "<<len_z<<std::endl;
+        Vtx = new HepMC::GenVertex(HepMC::FourVector(len_x,len_y,len_z));
     }
     
     // loop over particles
