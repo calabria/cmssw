@@ -27,7 +27,7 @@ BaseFlatGunProducer(pset)
     
     ParameterSet defpset ;
     ParameterSet pgun_params =
-    pset.getParameter<ParameterSet>("PGunParameters") ;
+        pset.getParameter<ParameterSet>("PGunParameters") ;
     
     fMinPt = pgun_params.getParameter<double>("MinPt");
     fMaxPt = pgun_params.getParameter<double>("MaxPt");
@@ -35,7 +35,7 @@ BaseFlatGunProducer(pset)
     LMax_ = pgun_params.getParameter<double>("LMax");
     drMax_ = pgun_params.getParameter<double>("drMax");
     
-    produces<HepMCProduct>("unsmeared");
+    produces<HepMCProduct>();
     produces<GenEventInfoProduct>();
 }
 
