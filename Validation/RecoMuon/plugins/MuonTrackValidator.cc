@@ -20,11 +20,84 @@
 #include "SimTracker/TrackAssociation/plugins/ParametersDefinerForTPESProducer.h"
 #include "SimTracker/TrackAssociation/plugins/CosmicParametersDefinerForTPESProducer.h"
 
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h" 
 #include "TMath.h"
 #include <TF1.h>
 
+#include <DataFormats/MuonDetId/interface/CSCDetId.h>
+#include <DataFormats/MuonDetId/interface/GEMDetId.h>
+#include <DataFormats/MuonDetId/interface/RPCDetId.h>
+
 using namespace std;
 using namespace edm;
+
+bool MuonTrackValidator::isSignalFromZgamma(TrackingParticle* tpRtS, bool debug = false){
+
+	bool isSignalMuon = abs(tpRtS->pdgId())==13 && !tpRtS->genParticles().empty() && (tpRtS->eventId().event() == 0) && (tpRtS->eventId().bunchCrossing() == 0); //segnale muone
+
+	bool isFromZgamma = false;
+	if (isSignalMuon){
+
+		int hitsPdgId = tpRtS->pdgId();
+		int hitsStatus = tpRtS->status();
+		double prodRho = tpRtS->vertex().Rho();
+		double prodZ = tpRtS->vz();
+		if(debug) cout << "\t Particle pdgId = "<< hitsPdgId << " status:" << hitsStatus << " produced at rho = " << prodRho << ", z = " << prodZ <<endl;
+
+		reco::GenParticleRef genp   = tpRtS->genParticles()[0];
+		reco::GenParticleRef genMom = genp->numberOfMothers() > 0 ? genp->motherRef() : reco::GenParticleRef();
+		if(debug) cout << "\t Number of mothers = "<< genp->numberOfMothers() << std::endl;
+		if (genMom.isNonnull()) {
+
+			int momPdgId  = genMom->pdgId();
+			int momStatus = genMom->status();
+			if( (momPdgId == 23 || momPdgId == 3000022 ) && momStatus == 3) isFromZgamma = true;
+			double momRho = genMom->vertex().Rho();
+			double momZ = genMom->vz();
+			if(debug) cout << "\t Particle pdgId = "<<hitsPdgId << ", has GEN mother pdgId = " << momPdgId << ", mom status: " << momStatus <<endl;
+			reco::GenParticleRef genGMom = genMom->numberOfMothers() > 0 ? genMom->motherRef() : reco::GenParticleRef();
+			if(debug) cout << "\t\t Number of gmoms = " << genMom->numberOfMothers() << std::endl;
+			if (genGMom.isNonnull()) {
+
+				int gmomPdgId = genGMom->pdgId();
+				int gmomStatus = genGMom->status();
+				if( (gmomPdgId == 23 || gmomPdgId == 3000022) && gmomStatus == 3) isFromZgamma = true;
+				if(debug) cout << "\t\t mother prod. vertex rho = " << momRho << ", z = " << momZ << ", grand-mom pdgId = " << gmomPdgId << ", status: " << gmomStatus << " mass = " <<genGMom->mass()<<endl;
+
+				reco::GenParticleRef genGGMom = genGMom->numberOfMothers() > 0 ? genGMom->motherRef() : reco::GenParticleRef();
+				if(debug) cout << "\t\t Number of ggmoms = " << genGMom->numberOfMothers() << std::endl;
+				if (genGGMom.isNonnull()) {
+
+					int ggmomPdgId = genGGMom->pdgId();
+					int ggmomStatus = genGGMom->status();
+					if( (ggmomPdgId == 23 || ggmomPdgId == 3000022) && ggmomStatus == 3) isFromZgamma = true;
+					if(debug) cout << "\t\t grand-grand-mom pdgId = " << ggmomPdgId << ", status: " << ggmomStatus <<endl;
+
+					reco::GenParticleRef genGGGMom = genGGMom->numberOfMothers() > 0 ? genGGMom->motherRef() : reco::GenParticleRef();
+					if(debug) cout << "\t\t Number of gggmoms = " << genGGMom->numberOfMothers() << std::endl;
+					if (genGGGMom.isNonnull()) {
+
+						int gggmomPdgId = genGGGMom->pdgId();
+						int gggmomStatus = genGGGMom->status();
+						if( (gggmomPdgId == 23 || gggmomPdgId == 3000022) && gggmomStatus == 3) isFromZgamma = true;
+						if(debug) cout << "\t\t grand-grand-grand-mom pdgId = " << gggmomPdgId << ", status: " << gggmomStatus <<endl;
+
+                    			}
+
+                    		}
+
+                    	}
+
+                }
+
+	}
+    
+    //cout << "Result: " << isFromZgamma << endl;
+	return isFromZgamma;
+
+}
 
 void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
 
@@ -75,14 +148,98 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       h_nchi2_prob.push_back( dbe_->book1D("chi2_prob", "normalized #chi^{2} probability",100,0,1));
 
       /// this are needed to calculate efficiency during tha harvesting for the automated validation
+      h_numEvt.push_back( dbe_->book1D("numEvt","N of events",2,0,2) );
       h_recoeta.push_back( dbe_->book1D("num_reco_eta","N of reco track vs eta",nint,min,max) );
+      h_recoetaBin1.push_back( dbe_->book1D("num_reco_eta_bin1","N of reco track vs eta bin1",nint,min,max) );
+      h_recoetaBin2.push_back( dbe_->book1D("num_reco_eta_bin2","N of reco track vs eta bin2",nint,min,max) );
+      h_recoetaBin3.push_back( dbe_->book1D("num_reco_eta_bin3","N of reco track vs eta bin3",nint,min,max) );
+      h_recoetaBin4.push_back( dbe_->book1D("num_reco_eta_bin4","N of reco track vs eta bin4",nint,min,max) );
+      h_recoetaPt10.push_back( dbe_->book1D("num_reco_eta_pt10","N of reco track vs eta bin2",nint,min,max) );
+
       h_assoceta.push_back( dbe_->book1D("num_assoc(simToReco)_eta","N of associated tracks (simToReco) vs eta",nint,min,max) );
+      h_assocetaBin1.push_back( dbe_->book1D("num_assoc(simToReco)_eta_bin1","N of associated tracks (simToReco) vs eta bin1",nint,min,max) );
+      h_assocetaBin2.push_back( dbe_->book1D("num_assoc(simToReco)_eta_bin2","N of associated tracks (simToReco) vs eta bin2",nint,min,max) );
+      h_assocetaBin3.push_back( dbe_->book1D("num_assoc(simToReco)_eta_bin3","N of associated tracks (simToReco) vs eta bin3",nint,min,max) );
+      h_assocetaBin4.push_back( dbe_->book1D("num_assoc(simToReco)_eta_bin4","N of associated tracks (simToReco) vs eta bin4",nint,min,max) );
+      h_assocetaPt10.push_back( dbe_->book1D("num_assoc(simToReco)_eta_pt10","N of associated tracks (simToReco) vs eta bin2",nint,min,max) );
+
+      h_assocvtx.push_back( dbe_->book1D("num_assoc(simToReco)_vtx","N of associated tracks (simToReco) vs vtx",nintVtx,minVtx,maxVtx) );
+      h_assocvtxBarrel.push_back( dbe_->book1D("num_assoc(simToReco)_vtx_barrel","N of associated tracks (simToReco) vs vtx barrel",nintVtx,minVtx,maxVtx) );
+      h_assocvtxEndcap.push_back( dbe_->book1D("num_assoc(simToReco)_vtx_endcap","N of associated tracks (simToReco) vs vtx endcap",nintVtx,minVtx,maxVtx) );
+      h_assocvtxOverlap.push_back( dbe_->book1D("num_assoc(simToReco)_vtx_overlap","N of associated tracks (simToReco) vs vtx overlap",nintVtx,minVtx,maxVtx) );
+
+      h_numRecVtx.push_back( dbe_->book1D("num_rec_vtx","N of reco vtx",nintVtx,minVtx,maxVtx) );
+      h_numSimVtx.push_back( dbe_->book1D("num_sim_vtx","N of sim vtx",nintVtx,minVtx,maxVtx) );
+      h_numSimVtxBx.push_back( dbe_->book1D("num_sim_vtx_bx","N of sim vtx BX = 0",nintVtx,minVtx,maxVtx) );
+      h_numTrueInt.push_back( dbe_->book1D("num_trueInt","N of true interactions",nintVtx,minVtx,maxVtx) );
+
+      h_dxyDistr.push_back( dbe_->book1D("distr_reco_dxy","dxy distributions",nintDxy,minDxy,maxDxy) );
+      h_dzDistr.push_back( dbe_->book1D("distr_reco_dz","dz distribution",nintDz,minDz,maxDz) );
+
       h_assoc2eta.push_back( dbe_->book1D("num_assoc(recoToSim)_eta","N of associated (recoToSim) tracks vs eta",nint,min,max) );
+      h_assoc2etaphi.push_back( dbe_->book2D("num_assoc(recoToSim)_etaphi","N of associated (recoToSim) tracks vs eta",nint,min,max,nintPhi,minPhi,maxPhi) );
+
+      h_assoc2eta_SgnMu.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_SgnMu","N of associated (recoToSim) tracks vs eta",nint,min,max) );
+      h_assoc2eta_SgnBkg.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_SgnBkg","N of associated (recoToSim) tracks vs eta",nint,min,max) );
+      h_assoc2eta_Pu.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_Pu","N of associated (recoToSim) tracks vs eta",nint,min,max) );
+      h_assoc2eta_PuIT.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_PuIT","N of associated (recoToSim) tracks vs eta",nint,min,max) );
+      h_assoc2eta_PuOOT.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_PuOOT","N of associated (recoToSim) tracks vs eta",nint,min,max) );
+      h_assoc2eta_PuMu.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_PuMu","N of associated (recoToSim) tracks vs eta",nint,min,max) );
+      h_assoc2eta_PuITMu.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_PuITMu","N of associated (recoToSim) tracks vs eta",nint,min,max) );
+      h_assoc2eta_PuOOTMu.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_PuOOTMu","N of associated (recoToSim) tracks vs eta",nint,min,max) );
+
+      h_assoc2etaBin1.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_bin1","N of associated (recoToSim) tracks vs eta bin1",nint,min,max) );
+      h_assoc2etaBin2.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_bin2","N of associated (recoToSim) tracks vs eta bin2",nint,min,max) );
+      h_assoc2etaBin3.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_bin3","N of associated (recoToSim) tracks vs eta bin3",nint,min,max) );
+      h_assoc2etaBin4.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_bin4","N of associated (recoToSim) tracks vs eta bin4",nint,min,max) );
+      h_assoc2etaPt10.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_pt10","N of associated (recoToSim) tracks vs eta bin2",nint,min,max) );
+
       h_simuleta.push_back( dbe_->book1D("num_simul_eta","N of simulated tracks vs eta",nint,min,max) );
+      h_simuletaBin1.push_back( dbe_->book1D("num_simul_eta_bin1","N of simulated tracks vs eta bin1",nint,min,max) );
+      h_simuletaBin2.push_back( dbe_->book1D("num_simul_eta_bin2","N of simulated tracks vs eta bin2",nint,min,max) );
+      h_simuletaBin3.push_back( dbe_->book1D("num_simul_eta_bin3","N of simulated tracks vs eta bin3",nint,min,max) );
+      h_simuletaBin4.push_back( dbe_->book1D("num_simul_eta_bin4","N of simulated tracks vs eta bin4",nint,min,max) );
+      h_simuletaPt10.push_back( dbe_->book1D("num_simul_eta_pt10","N of simulated tracks vs eta bin2",nint,min,max) );
+
+      h_simulvtx.push_back( dbe_->book1D("num_simul_vtx","N of simulated tracks vs vtx",nintVtx,minVtx,maxVtx) );
+      h_simulvtxBarrel.push_back( dbe_->book1D("num_simul_vtx_barrel","N of simulated tracks vs vtx barrel",nintVtx,minVtx,maxVtx) );
+      h_simulvtxEndcap.push_back( dbe_->book1D("num_simul_vtx_endcap","N of simulated tracks vs vtx endcap",nintVtx,minVtx,maxVtx) );
+      h_simulvtxOverlap.push_back( dbe_->book1D("num_simul_vtx_overlap","N of simulated tracks vs vtx overlap",nintVtx,minVtx,maxVtx) );
       h_recopT.push_back( dbe_->book1D("num_reco_pT","N of reco track vs pT",nintpT,minpT,maxpT) );
+      h_recopTBin1.push_back( dbe_->book1D("num_reco_pT_barrel","N of reco track vs pT barrel",nintpT,minpT,maxpT) );
+      h_recopTBin2.push_back( dbe_->book1D("num_reco_pT_overlap","N of reco track vs pT overlap",nintpT,minpT,maxpT) );
+      h_recopTBin3.push_back( dbe_->book1D("num_reco_pT_endcap","N of reco track vs pT endcap",nintpT,minpT,maxpT) );
+
       h_assocpT.push_back( dbe_->book1D("num_assoc(simToReco)_pT","N of associated tracks (simToReco) vs pT",nintpT,minpT,maxpT) );
+      h_assocpTvsEta.push_back( dbe_->book2D("num_assoc(simToReco)_pTEta","N of associated tracks (simToReco) vs pT",nintpT,minpT,maxpT,nint,min,max) );
+      h_assocpTvsPhi.push_back( dbe_->book2D("num_assoc(simToReco)_pTPhi","N of associated tracks (simToReco) vs pT",nintpT,minpT,maxpT,nintPhi,minPhi,maxPhi) );
+      h_assocpTBin1.push_back( dbe_->book1D("num_assoc(simToReco)_pT_barrel","N of associated tracks (simToReco) vs pT barrel",nintpT,minpT,maxpT) );
+      h_assocpTBin2.push_back( dbe_->book1D("num_assoc(simToReco)_pT_overlap","N of associated tracks (simToReco) vs pT overlap",nintpT,minpT,maxpT) );
+      h_assocpTBin3.push_back( dbe_->book1D("num_assoc(simToReco)_pT_endcap","N of associated tracks (simToReco) vs pT endcap",nintpT,minpT,maxpT) );
+
       h_assoc2pT.push_back( dbe_->book1D("num_assoc(recoToSim)_pT","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+
+      h_assoc2pT_SgnMu.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_SgnMu","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_SgnBkg.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_SgnBkg","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_Pu.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_Pu","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_PuIT.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_PuIT","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_PuOOT.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_PuOOT","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_PuMu.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_PuMu","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_PuITMu.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_PuITMu","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_PuOOTMu.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_PuOOTMu","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+
+      h_assoc2pTBin1.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_barrel","N of associated (recoToSim) tracks vs pT barrel",nintpT,minpT,maxpT) );
+      h_assoc2pTBin2.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_overlap","N of associated (recoToSim) tracks vs pT overlap",nintpT,minpT,maxpT) );
+      h_assoc2pTBin3.push_back( dbe_->book1D("num_assoc(recoToSim)_pT_endcap","N of associated (recoToSim) tracks vs pT endcap",nintpT,minpT,maxpT) );
+
       h_simulpT.push_back( dbe_->book1D("num_simul_pT","N of simulated tracks vs pT",nintpT,minpT,maxpT) );
+
+      h_simulpTvsEta.push_back( dbe_->book2D("num_simul_pTEta","N of simulated tracks (simToReco) vs pT",nintpT,minpT,maxpT,nint,min,max) );
+      h_simulpTvsPhi.push_back( dbe_->book2D("num_simul_pTPhi","N of simulated tracks (simToReco) vs pT",nintpT,minpT,maxpT,nintPhi,minPhi,maxPhi) );
+
+      h_simulpTBin1.push_back( dbe_->book1D("num_simul_pT_barrel","N of simulated tracks vs pT barrel",nintpT,minpT,maxpT) );
+      h_simulpTBin2.push_back( dbe_->book1D("num_simul_pT_overlap","N of simulated tracks vs pT overlap",nintpT,minpT,maxpT) );
+      h_simulpTBin3.push_back( dbe_->book1D("num_simul_pT_endcap","N of simulated tracks vs pT endcap",nintpT,minpT,maxpT) );
       //
       h_recohit.push_back( dbe_->book1D("num_reco_hit","N of reco track vs hit",nintHit,minHit,maxHit) );
       h_assochit.push_back( dbe_->book1D("num_assoc(simToReco)_hit","N of associated tracks (simToReco) vs hit",nintHit,minHit,maxHit) );
@@ -90,6 +247,8 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       h_simulhit.push_back( dbe_->book1D("num_simul_hit","N of simulated tracks vs hit",nintHit,minHit,maxHit) );
       //
       h_recophi.push_back( dbe_->book1D("num_reco_phi","N of reco track vs phi",nintPhi,minPhi,maxPhi) );
+      h_recoetaphi.push_back( dbe_->book2D("num_reco_etaphi","N of reco track vs phi",nint,min,max,nintPhi,minPhi,maxPhi) );
+
       h_assocphi.push_back( dbe_->book1D("num_assoc(simToReco)_phi","N of associated tracks (simToReco) vs phi",nintPhi,minPhi,maxPhi) );
       h_assoc2phi.push_back( dbe_->book1D("num_assoc(recoToSim)_phi","N of associated (recoToSim) tracks vs phi",nintPhi,minPhi,maxPhi) );
       h_simulphi.push_back( dbe_->book1D("num_simul_phi","N of simulated tracks vs phi",nintPhi,minPhi,maxPhi) );
@@ -106,10 +265,18 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
 
       h_assocvertpos.push_back( dbe_->book1D("num_assoc(simToReco)_vertpos","N of associated tracks (simToReco) vs transverse vert position",nintVertpos,minVertpos,maxVertpos) );
       h_simulvertpos.push_back( dbe_->book1D("num_simul_vertpos","N of simulated tracks vs transverse vert position",nintVertpos,minVertpos,maxVertpos) );
+        
+      h_assocLxy.push_back( dbe_->book1D("num_assoc(simToReco)_lxy","N of associated tracks (simToReco) vs Lxy",nintLxy,minLxy,maxLxy) );
+      h_simulLxy.push_back( dbe_->book1D("num_simul_lxy","N of simulated tracks vs Lxy",nintLxy,minLxy,maxLxy) );
+        
+      h_assocLz.push_back( dbe_->book1D("num_assoc(simToReco)_lz","N of associated tracks (simToReco) vs Lz",nintLz,minLz,maxLz) );
+      h_simulLz.push_back( dbe_->book1D("num_simul_lz","N of simulated tracks vs Lz",nintLz,minLz,maxLz) );
+        
+      h_assocLr.push_back( dbe_->book1D("num_assoc(simToReco)_lr","N of associated tracks (simToReco) vs R",nintLr,minLr,maxLr) );
+      h_simulLr.push_back( dbe_->book1D("num_simul_lr","N of simulated tracks vs R",nintLr,minLr,maxLr) );
 
       h_assoczpos.push_back( dbe_->book1D("num_assoc(simToReco)_zpos","N of associated tracks (simToReco) vs z vert position",nintZpos,minZpos,maxZpos) );
       h_simulzpos.push_back( dbe_->book1D("num_simul_zpos","N of simulated tracks vs z vert position",nintZpos,minZpos,maxZpos) );
-
 
       /////////////////////////////////
 
@@ -120,10 +287,16 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       h_pullDxy.push_back( dbe_->book1D("pullDxy","pull of dxy parameter",250,-25,25) );
       h_pullDz.push_back( dbe_->book1D("pullDz","pull of dz parameter",250,-25,25) );
       h_pullQoverp.push_back( dbe_->book1D("pullQoverp","pull of qoverp parameter",250,-25,25) );
+      h_Qoverptres.push_back( dbe_->book1D("qoverptres","qoverpt res.",250,-6,6) );
+      h_invptres.push_back( dbe_->book1D("invptres","invpt res.",250,-6,6) );
+      h_Qoverptres_sim.push_back( dbe_->book1D("qoverptres_sim","qoverpt res. sim",250,-6,6) );
+      h_invptres_sim.push_back( dbe_->book1D("invptres_sim","invpt res. sim",250,-6,6) );
       
       if (associators[ww]=="TrackAssociatorByChi2"){
 	h_assochi2.push_back( dbe_->book1D("assocChi2","track association #chi^{2}",1000000,0,100000) );
 	h_assochi2_prob.push_back(dbe_->book1D("assocChi2_prob","probability of association #chi^{2}",100,0,1));
+      }else if (associators[ww]=="TrackAssociatorByPull"){
+	h_assoPull.push_back( dbe_->book1D("assoPull","track association pull",100,0,100) );
       } else if (associators[ww]=="TrackAssociatorByHits"){
 	h_assocFraction.push_back( dbe_->book1D("assocFraction","fraction of shared hits",200,0,2) );
 	h_assocSharedHit.push_back(dbe_->book1D("assocSharedHit","number of shared hits",20,0,20));
@@ -139,6 +312,12 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       h_chi2meanh.push_back( dbe_->bookProfile("chi2mean","mean #chi^{2} vs #eta",nint,min,max, 200, 0, 20) );
       chi2_vs_phi.push_back( dbe_->book2D("chi2_vs_phi","#chi^{2} vs #phi",nintPhi,minPhi,maxPhi, 200, 0, 20 ) );
       h_chi2mean_vs_phi.push_back( dbe_->bookProfile("chi2mean_vs_phi","mean of #chi^{2} vs #phi",nintPhi,minPhi,maxPhi, 200, 0, 20) );
+
+      n_trkLayersOld.push_back( dbe_->book1D("nhits_trkLayersOld","nhits trkLayersOld",nintHit,minHit,maxHit) );
+      n_pxlHitsOld.push_back( dbe_->book1D("nhits_pxlHitsOld","nhits pixelHitsOld",nintHit,minHit,maxHit) );
+      n_pxlHitsNew.push_back( dbe_->book1D("nhits_pxlHitsNew","nhits pxlHitsNew",nintHit,minHit,maxHit) );
+      n_pxlHitsNew43Inn.push_back( dbe_->book1D("nhits_pxlHitsNew43Inn","nhits pxlHitsNew43Inn",nintHit,minHit,maxHit) );
+      n_pxlHitsNew32Inn.push_back( dbe_->book1D("nhits_pxlHitsNew32Inn","nhits pxlHitsNew32Inn",nintHit,minHit,maxHit) );
 
       nhits_vs_eta.push_back( dbe_->book2D("nhits_vs_eta","nhits vs eta",nint,min,max,nintHit,minHit,maxHit) );
       nDThits_vs_eta.push_back( dbe_->book2D("nDThits_vs_eta","# DT hits vs eta",nint,min,max,nintHit,minHit,maxHit) );
@@ -160,6 +339,72 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
       ptres_vs_eta.push_back(dbe_->book2D("ptres_vs_eta","ptres_vs_eta",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       ptres_vs_phi.push_back( dbe_->book2D("ptres_vs_phi","p_{t} res vs #phi",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
       ptres_vs_pt.push_back(dbe_->book2D("ptres_vs_pt","ptres_vs_pt",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      invptres_vs_eta.push_back(dbe_->book2D("invptres_vs_eta","invptres_vs_eta",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      invptres_vs_phi.push_back( dbe_->book2D("invptres_vs_phi","1/p_{t} res vs #phi",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      invptres_vs_pt.push_back(dbe_->book2D("invptres_vs_pt","invptres_vs_pt",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      qOverPtres_vs_eta.push_back(dbe_->book2D("qOverPtres_vs_eta","qOverPtres_vs_eta",nint,min,max, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres_vs_phi.push_back( dbe_->book2D("qOverPtres_vs_phi","q/p_{t} res vs #phi",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres_vs_pt.push_back(dbe_->book2D("qOverPtres_vs_pt","qOverPtres_vs_pt",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      qOverPtresXL_vs_eta.push_back(dbe_->book2D("qOverPtresXL_vs_eta","qOverPtres_vs_eta",nint,min,max, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL_vs_phi.push_back( dbe_->book2D("qOverPtresXL_vs_phi","q/p_{t} res vs #phi",nintPhi,minPhi,maxPhi, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL_vs_pt.push_back(dbe_->book2D("qOverPtresXL_vs_pt","qOverPtres_vs_pt",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+
+      chargeMisID_vs_eta.push_back(dbe_->book2D("chargeMisID_vs_eta","chargeMisID_vs_eta",nint,min,max,5,-2.5,2.5));
+      chargeMisID_vs_phi.push_back(dbe_->book2D("chargeMisID_vs_phi","chargeMisID vs #phi",nintPhi,minPhi,maxPhi,5,-2.5,2.5));
+      chargeMisID_vs_pt.push_back(dbe_->book2D("chargeMisID_vs_pt","chargeMisID_vs_pt",nintpT,minpT,maxpT,5,-2.5,2.5));
+
+      ptres_vs_eta_sim.push_back(dbe_->book2D("ptres_vs_eta_sim","ptres_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      ptres_vs_phi_sim.push_back( dbe_->book2D("ptres_vs_phi_sim","p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      ptres_vs_pt_sim.push_back(dbe_->book2D("ptres_vs_pt_sim","ptres_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      invptres_vs_eta_sim.push_back(dbe_->book2D("invptres_vs_eta_sim","invptres_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      invptres_vs_phi_sim.push_back( dbe_->book2D("invptres_vs_phi_sim","1/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      invptres_vs_pt_sim.push_back(dbe_->book2D("invptres_vs_pt_sim","invptres_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      qOverPtres_vs_eta_sim.push_back(dbe_->book2D("qOverPtres_vs_eta_sim","qOverPtres_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres1_vs_eta_sim.push_back(dbe_->book2D("qOverPtres1_vs_eta_sim","qOverPtres1_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres2_vs_eta_sim.push_back(dbe_->book2D("qOverPtres2_vs_eta_sim","qOverPtres2_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres3_vs_eta_sim.push_back(dbe_->book2D("qOverPtres3_vs_eta_sim","qOverPtres3_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres4_vs_eta_sim.push_back(dbe_->book2D("qOverPtres4_vs_eta_sim","qOverPtres4_vs_eta sim",nintRes,minRes,maxRes, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      qOverPtres_vs_phi_sim.push_back( dbe_->book2D("qOverPtres_vs_phi_sim","q/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtres_vs_pt_sim.push_back(dbe_->book2D("qOverPtres_vs_pt_sim","qOverPtres_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtresB_vs_pt_sim.push_back(dbe_->book2D("qOverPtresB_vs_pt_sim","qOverPtresB_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtresO_vs_pt_sim.push_back(dbe_->book2D("qOverPtresO_vs_pt_sim","qOverPtresO_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+      qOverPtresE_vs_pt_sim.push_back(dbe_->book2D("qOverPtresE_vs_pt_sim","qOverPtresE_vs_pt sim",nintpT,minpT,maxpT, ptRes_nbin, ptRes_rangeMin, ptRes_rangeMax));
+
+      qOverPtresXL_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL_vs_eta_sim","qOverPtres_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL1_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL1_vs_eta_sim","qOverPtres1_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL2_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL2_vs_eta_sim","qOverPtres2_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL3_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL3_vs_eta_sim","qOverPtres3_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL4_vs_eta_sim.push_back(dbe_->book2D("qOverPtresXL4_vs_eta_sim","qOverPtres4_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+
+      qOverPtresXL_vs_phi_sim.push_back( dbe_->book2D("qOverPtresXL_vs_phi_sim","q/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL_vs_pt_sim.push_back(dbe_->book2D("qOverPtresXL_vs_pt_sim","qOverPtres_vs_pt sim",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXLB_vs_pt_sim.push_back(dbe_->book2D("qOverPtresXLB_vs_pt_sim","qOverPtresB_vs_pt sim",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXLO_vs_pt_sim.push_back(dbe_->book2D("qOverPtresXLO_vs_pt_sim","qOverPtresO_vs_pt sim",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXLE_vs_pt_sim.push_back(dbe_->book2D("qOverPtresXLE_vs_pt_sim","qOverPtresE_vs_pt sim",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+
+      chargeMisID_vs_eta_sim.push_back(dbe_->book2D("chargeMisID_vs_eta_sim","chargeMisID_vs_eta sim",nint,min,max,5,-2.5,2.5));
+      chargeMisID_vs_phi_sim.push_back(dbe_->book2D("chargeMisID_vs_phi_sim","chargeMisID vs #phi sim",nintPhi,minPhi,maxPhi,5,-2.5,2.5));
+      chargeMisID_vs_pt_sim.push_back(dbe_->book2D("chargeMisID_vs_pt_sim","chargeMisID_vs_pt sim",nintpT,minpT,maxpT,5,-2.5,2.5));
+
+      chargeMisID_vs_etaNum.push_back(dbe_->book1D("chargeMisID_vs_etaNum","chargeMisID_vs_etaNum",nint,min,max));
+      chargeMisID_vs_etaDen.push_back(dbe_->book1D("chargeMisID_vs_etaDen","chargeMisID_vs_etaDen",nint,min,max));
+      chargeMisID_vs_ptNum.push_back(dbe_->book1D("chargeMisID_vs_ptNum","chargeMisID_vs_ptNum",nintpT,minpT,maxpT));
+      chargeMisID_vs_ptDen.push_back(dbe_->book1D("chargeMisID_vs_ptDen","chargeMisID_vs_ptDen",nintpT,minpT,maxpT));
+      chargeMisID_vs_phiNum.push_back(dbe_->book1D("chargeMisID_vs_phiNum","chargeMisID_vs_phiNum",nintPhi,minPhi,maxPhi));
+      chargeMisID_vs_phiDen.push_back(dbe_->book1D("chargeMisID_vs_phiDen","chargeMisID_vs_phiDen",nintPhi,minPhi,maxPhi));
+
+      chargeMisID_vs_etaNum_sim.push_back(dbe_->book1D("chargeMisID_vs_etaNum_sim","chargeMisID_vs_etaNum sim",nint,min,max));
+      chargeMisID_vs_etaDen_sim.push_back(dbe_->book1D("chargeMisID_vs_etaDen_sim","chargeMisID_vs_etaDen sim",nint,min,max));
+      chargeMisID_vs_ptNum_sim.push_back(dbe_->book1D("chargeMisID_vs_ptNum_sim","chargeMisID_vs_ptNum sim",nintpT,minpT,maxpT));
+      chargeMisID_vs_ptDen_sim.push_back(dbe_->book1D("chargeMisID_vs_ptDen_sim","chargeMisID_vs_ptDen sim",nintpT,minpT,maxpT));
+      chargeMisID_vs_phiNum_sim.push_back(dbe_->book1D("chargeMisID_vs_phiNum_sim","chargeMisID_vs_phiNum sim",nintPhi,minPhi,maxPhi));
+      chargeMisID_vs_phiDen_sim.push_back(dbe_->book1D("chargeMisID_vs_phiDen_sim","chargeMisID_vs_phiDen sim",nintPhi,minPhi,maxPhi));
 
       cotThetares_vs_eta.push_back(dbe_->book2D("cotThetares_vs_eta","cotThetares_vs_eta",nint,min,max,cotThetaRes_nbin, cotThetaRes_rangeMin, cotThetaRes_rangeMax));
       cotThetares_vs_pt.push_back(dbe_->book2D("cotThetares_vs_pt","cotThetares_vs_pt",nintpT,minpT,maxpT, cotThetaRes_nbin, cotThetaRes_rangeMin, cotThetaRes_rangeMax));
@@ -200,6 +445,13 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
 	h_assocpT_Quality075.push_back( dbe_->book1D("num_assoc(simToReco)_pT_Q075","N of associated tracks (simToReco) vs pT (Quality>0.75)",nintpT,minpT,maxpT) );
 	h_assocphi_Quality05.push_back( dbe_->book1D("num_assoc(simToReco)_phi_Q05","N of associated tracks (simToReco) vs phi (Quality>0.5)",nintPhi,minPhi,maxPhi) );
 	h_assocphi_Quality075.push_back( dbe_->book1D("num_assoc(simToReco)_phi_Q075","N of associated tracks (simToReco) vs phi (Quality>0.75)",nintPhi,minPhi,maxPhi) );
+	h_quality.push_back( dbe_->book1D("quality","Quality (MABH)",20,0.01,1.01) );
+	h_qualityVsEta.push_back( dbe_->book2D("qualityVsEta","Quality vs eta (MABH)",nint,min,max,20,0.01,1.01) );
+
+        h_assoc2eta_075.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_075","N of associated (recoToSim) tracks vs eta Q>75%",nint,min,max) );
+        h_assoc2eta_050.push_back( dbe_->book1D("num_assoc(recoToSim)_eta_050","N of associated (recoToSim) tracks vs eta Q>50%",nint,min,max) );
+        h_assoc2pT_075.push_back( dbe_->book1D("num_assoc(recoToSim)_pt_075","N of associated (recoToSim) tracks vs pt Q>75%",nintpT,minpT,maxpT) );
+        h_assoc2pT_050.push_back( dbe_->book1D("num_assoc(recoToSim)_pt_050","N of associated (recoToSim) tracks vs pt Q>50%",nintpT,minpT,maxpT) );
       }
 
       if(useLogPt){
@@ -209,9 +461,37 @@ void MuonTrackValidator::beginRun(Run const&, EventSetup const& setup) {
 	BinLogX(cotThetares_vs_pt[j]->getTH2F());
 	BinLogX(ptres_vs_pt[j]->getTH2F());
 	BinLogX(h_recopT[j]->getTH1F());
+	BinLogX(h_recopTBin1[j]->getTH1F());
+	BinLogX(h_recopTBin2[j]->getTH1F());
+	BinLogX(h_recopTBin3[j]->getTH1F());
 	BinLogX(h_assocpT[j]->getTH1F());
+	BinLogX(h_assocpTvsEta[j]->getTH1F());
+	BinLogX(h_assocpTvsPhi[j]->getTH1F());
+	BinLogX(h_assocpTBin1[j]->getTH1F());
+	BinLogX(h_assocpTBin2[j]->getTH1F());
+	BinLogX(h_assocpTBin3[j]->getTH1F());
 	BinLogX(h_assoc2pT[j]->getTH1F());
+ 	BinLogX(h_assoc2pT_075[j]->getTH1F());
+	BinLogX(h_assoc2pT_050[j]->getTH1F());
+	BinLogX(h_assoc2pTBin1[j]->getTH1F());
+	BinLogX(h_assoc2pTBin2[j]->getTH1F());
+	BinLogX(h_assoc2pTBin3[j]->getTH1F());
+
+	BinLogX(h_assoc2pT_SgnMu[j]->getTH1F());
+	BinLogX(h_assoc2pT_SgnBkg[j]->getTH1F());
+	BinLogX(h_assoc2pT_Pu[j]->getTH1F());
+	BinLogX(h_assoc2pT_PuIT[j]->getTH1F());
+	BinLogX(h_assoc2pT_PuOOT[j]->getTH1F());
+	BinLogX(h_assoc2pT_PuMu[j]->getTH1F());
+	BinLogX(h_assoc2pT_PuITMu[j]->getTH1F());
+	BinLogX(h_assoc2pT_PuOOTMu[j]->getTH1F());
+
 	BinLogX(h_simulpT[j]->getTH1F());
+	BinLogX(h_simulpTvsEta[j]->getTH1F());
+	BinLogX(h_simulpTvsPhi[j]->getTH1F());
+	BinLogX(h_simulpTBin1[j]->getTH1F());
+	BinLogX(h_simulpTBin2[j]->getTH1F());
+	BinLogX(h_simulpTBin3[j]->getTH1F());
 	if (MABH) 	{
 	  BinLogX(h_assocpT_Quality05[j]->getTH1F());
 	  BinLogX(h_assocpT_Quality075[j]->getTH1F());
@@ -245,11 +525,39 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
   
   edm::Handle<TrackingParticleCollection>  TPCollectionHfake ;
   event.getByLabel(label_tp_fake,TPCollectionHfake);
-  const TrackingParticleCollection tPCfake = *(TPCollectionHfake.product());
+  //const TrackingParticleCollection tPCfake = *(TPCollectionHfake.product());
   
   edm::Handle<reco::BeamSpot> recoBeamSpotHandle;
   event.getByLabel(bsSrc,recoBeamSpotHandle);
   reco::BeamSpot bs = *recoBeamSpotHandle;      
+
+  Handle<std::vector< PileupSummaryInfo > > PupInfo;
+  event.getByLabel(edm::InputTag("addPileupInfo"), PupInfo);
+
+  std::vector<PileupSummaryInfo>::const_iterator PVI;
+
+  int npv = -1;
+  int trueInt = -1;
+  int trueInt_BX = -1;
+  for(PVI = PupInfo->begin(); PVI != PupInfo->end(); ++PVI) {
+
+	int BX = PVI->getBunchCrossing();
+	trueInt = PVI->getTrueNumInteractions();
+	npv = PVI->getPU_NumInteractions();
+	if(BX == 0) trueInt_BX = npv;
+
+  }
+
+  int nVertices = -1;
+  edm::Handle<reco::VertexCollection> primaryVertices;
+  if(vtxInputTag.label() != ""){
+      
+      event.getByLabel(vtxInputTag, primaryVertices);
+      nVertices = primaryVertices->size();
+      
+  }
+      
+  int nTrueVertices = trueInt_BX;
   
   int w=0;
   for (unsigned int ww=0;ww<associators.size();ww++){
@@ -282,11 +590,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 						 << label[www].instance()<<" with "
 						 << associators[ww].c_str() <<"\n";
 	
-	  LogTrace("MuonTrackValidator") << "Calling associateRecoToSim method" << "\n";
+	  edm::LogVerbatim("MuonTrackValidator") << "Calling associateRecoToSim method" << "\n";
 	  recSimColl=associator[ww]->associateRecoToSim(trackCollection,
 							TPCollectionHfake,
 							&event,&setup);
-	  LogTrace("MuonTrackValidator") << "Calling associateSimToReco method" << "\n";
+	  edm::LogVerbatim("MuonTrackValidator") << "Calling associateSimToReco method" << "\n";
 	  simRecColl=associator[ww]->associateSimToReco(trackCollection,
 							TPCollectionHeff, 
 							&event,&setup);
@@ -311,7 +619,13 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
       }
 
-      
+      h_numEvt[w]->Fill(1);
+      h_numSimVtx[w]->Fill(npv);
+      h_numTrueInt[w]->Fill(trueInt);
+      h_numSimVtxBx[w]->Fill(trueInt_BX);
+
+      h_numRecVtx[w]->Fill(nVertices);
+
       //
       //fill simulation histograms
       //compute number of tracks per eta interval
@@ -327,17 +641,39 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
 	TrackingParticleRef tpr(TPCollectionHeff, i);
 	TrackingParticle* tp=const_cast<TrackingParticle*>(tpr.get());
-	TrackingParticle::Vector momentumTP; 
+	TrackingParticle::Vector momentumTP;
 	TrackingParticle::Point vertexTP;
 	double dxySim = 0;
-	double dzSim = 0; 
+	double dzSim = 0;
+    double prodRho = 0;
+    double prodZ = 0;
+    double prodR = 0;
 
 	//If the TrackingParticle is collison like, get the momentum and vertex at production state
 	if(parametersDefiner=="LhcParametersDefinerForTP")
 	  {
-	    if(! tpSelector(*tp)) continue;
-	    momentumTP = tp->momentum();
+        momentumTP = tp->momentum();
 	    vertexTP = tp->vertex();
+		prodRho = sqrt(vertexTP.perp2());
+		prodZ = vertexTP.z();
+        prodR = sqrt(prodRho*prodRho + prodZ*prodZ);
+//        int hitsPdgId = tp->pdgId();
+//		int hitsStatus = tp->status();
+//        int bx = tp->eventId().bunchCrossing();
+//        int evtID = tp->eventId().event();
+//          
+//        bool isSignalMuon = (abs(tp->pdgId())==13 || abs(tp->pdgId())==11 || abs(tp->pdgId())==15) && !tp->genParticles().empty() && (tp->eventId().event() == 0) && (tp->eventId().bunchCrossing() == 0); //segnale muone
+//        if(isSignalMuon) {
+//            cout<<"-----------------------------------------------------------------------------------------------"<<endl;
+//            cout << "\t Particle pdgId = "<< hitsPdgId << " status: " << hitsStatus << " rho = " << prodRho << ", z = " << prodZ << ", evtID = " << evtID << ", bx = " << bx << ", L = " << prodR << ", pT: " << sqrt(momentumTP.perp2()) << endl;
+//            cout<<"-----------------------------------------------------------------------------------------------"<<endl;
+//        }
+          
+	    if(!tpSelector(*tp)) continue;
+        if(!(fabs(prodRho) < 350 && fabs(prodZ) < 500)) continue;
+	    if(! isSignalFromZgamma(tp)) continue;
+	    //if(isSignalFromZgamma(tp)) cout<<"Signal: 1"<<endl;
+	    //else cout<<"Signal: 0"<<endl;
 	    //Calcualte the impact parameters w.r.t. PCA
 	    TrackingParticle::Vector momentum = parametersDefinerTP->momentum(event,setup,tpr);
 	    TrackingParticle::Point vertex = parametersDefinerTP->vertex(event,setup,tpr);
@@ -358,6 +694,10 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
 	h_ptSIM[w]->Fill(sqrt(momentumTP.perp2()));
 	h_etaSIM[w]->Fill(momentumTP.eta());
+
+	h_simulpTvsEta[w]->Fill(sqrt(momentumTP.perp2()), momentumTP.eta());
+	h_simulpTvsPhi[w]->Fill(sqrt(momentumTP.perp2()), momentumTP.phi());
+
 	h_vertposSIM[w]->Fill(sqrt(vertexTP.perp2()));
 	
 	std::vector<std::pair<RefToBase<Track>, double> > rt;
@@ -366,21 +706,26 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  if (rt.size()!=0) {
 	    RefToBase<Track> assoc_recoTrack = rt.begin()->first;
 	    edm::LogVerbatim("MuonTrackValidator")<<"-----------------------------associated Track #"<<assoc_recoTrack.key();
-	    TP_is_matched = true;
-	    ats++;
-	    quality = rt.begin()->second;
-	    edm::LogVerbatim("MuonTrackValidator") << "TrackingParticle #" <<tpr.key()  
+          if(assoc_recoTrack->hitPattern().muonStationsWithValidHits() > 1){
+              TP_is_matched = true;
+              ats++;
+              quality = rt.begin()->second;
+              edm::LogVerbatim("MuonTrackValidator") << "TrackingParticle #" <<tpr.key()
 						   << " with pt=" << sqrt(momentumTP.perp2()) 
 						   << " associated with quality:" << quality <<"\n";
-	    if (MABH) {
-	      if (quality > 0.75) {
-		Quality075 = true;
-		Quality05  = true;
-	      } 
-	      else if (quality > 0.5) {
-		Quality05  = true;
-	      }
-	    }	    
+              if (MABH) {
+                  h_quality[w]->Fill(quality);
+                  h_qualityVsEta[w]->Fill(fabs(momentumTP.eta()),quality);
+
+                  if (quality > 0.75) {
+                      Quality075 = true;
+                      Quality05  = true;
+                  }
+                  else if (quality > 0.5) {
+                      Quality05  = true;
+                  }
+              }
+          }
 	  }
 	}else{
 	  edm::LogVerbatim("MuonTrackValidator") 
@@ -392,20 +737,57 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    << " NOT associated to any reco::Track" << "\n";
 	}
 	
-	for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
-	  if (getEta(momentumTP.eta())>etaintervals[w][f]&&
-	      getEta(momentumTP.eta())<etaintervals[w][f+1]) {
-	    totSIMeta[w][f]++;
+	for (unsigned int f=0; f<vtxintervals[w].size()-1; f++){
+	  if (nTrueVertices>=vtxintervals[w][f]&&
+	      nTrueVertices<vtxintervals[w][f+1]) {
+	    totSIMvtx[w][f]++;
+	    if(fabs(momentumTP.eta()) < 1.2) totSIMvtxBarrel[w][f]++;
+	    else if(fabs(momentumTP.eta()) > 1.2 && fabs(momentumTP.eta()) < 1.7) totSIMvtxOverlap[w][f]++;
+	    else if(fabs(momentumTP.eta()) > 1.7) totSIMvtxEndcap[w][f]++;
 	    if (TP_is_matched) {
-	      totASSeta[w][f]++;
+	      totASSvtx[w][f]++;
+	      if(fabs(momentumTP.eta()) < 1.2) totASSvtxBarrel[w][f]++;
+	      else if(fabs(momentumTP.eta()) > 1.2 && fabs(momentumTP.eta()) < 1.7) totASSvtxOverlap[w][f]++;
+	      else if(fabs(momentumTP.eta()) > 1.7) totASSvtxEndcap[w][f]++;
 
-	      if (MABH) {
+	      /*if (MABH) {
 		if (Quality075) {
 		  totASSeta_Quality075[w][f]++;
 		  totASSeta_Quality05[w][f]++;
 		}
 		else if (Quality05) {
 		  totASSeta_Quality05[w][f]++;
+		}
+	      }*/
+	    }
+	  }
+	} // END for (unsigned int f=0; f<vtxintervals[w].size()-1; f++){
+	
+	for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
+	  if (getEta(momentumTP.eta())>etaintervals[w][f]&&
+	      getEta(momentumTP.eta())<etaintervals[w][f+1]) {
+	    totSIMeta[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 5 && sqrt(momentumTP.perp2()) < 10) totSIMetaBin1[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 10 && sqrt(momentumTP.perp2()) < 15) totSIMetaBin2[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 15 && sqrt(momentumTP.perp2()) < 20) totSIMetaBin3[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 20) totSIMetaBin4[w][f]++;
+	    if(sqrt(momentumTP.perp2()) > 10) totSIMetaPt10[w][f]++;
+	    if (TP_is_matched) {
+	      totASSeta[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 5 && sqrt(momentumTP.perp2()) < 10) totASSetaBin1[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 10 && sqrt(momentumTP.perp2()) < 15) totASSetaBin2[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 15 && sqrt(momentumTP.perp2()) < 20) totASSetaBin3[w][f]++;
+	      if(sqrt(momentumTP.perp2()) > 20) totASSetaBin4[w][f]++;
+
+	      if (MABH) {
+		if (Quality075) {
+		  totASSeta_Quality075[w][f]++;
+		  totASSeta_Quality05[w][f]++;
+	          if(sqrt(momentumTP.perp2()) > 10) totASSetaPt10[w][f]++;
+		}
+		else if (Quality05) {
+		  totASSeta_Quality05[w][f]++;
+	          if(sqrt(momentumTP.perp2()) > 10) totASSetaPt10[w][f]++;
 		}
 	      }
 	    }
@@ -432,13 +814,18 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  }
 	} // END for (unsigned int f=0; f<phiintervals[w].size()-1; f++){
 	
-	
 	for (unsigned int f=0; f<pTintervals[w].size()-1; f++){
           if (getPt(sqrt(momentumTP.perp2()))>pTintervals[w][f]&&
               getPt(sqrt(momentumTP.perp2()))<pTintervals[w][f+1]) {
             totSIMpT[w][f]++;
+	    if(fabs(momentumTP.eta()) < 1.2) totSIMpTBin1[w][f]++;
+	    if(fabs(momentumTP.eta()) > 1.2 && fabs(momentumTP.eta()) < 1.7) totSIMpTBin2[w][f]++;
+	    if(fabs(momentumTP.eta()) > 1.7) totSIMpTBin3[w][f]++;
 	    if (TP_is_matched) {
 	      totASSpT[w][f]++;
+	      if(fabs(momentumTP.eta()) < 1.2) totASSpTBin1[w][f]++;
+	      if(fabs(momentumTP.eta()) > 1.2 && fabs(momentumTP.eta()) < 1.7) totASSpTBin2[w][f]++;
+	      if(fabs(momentumTP.eta()) > 1.7) totASSpTBin3[w][f]++;
 	      
 	      if (MABH) {
 		if (Quality075) {
@@ -482,6 +869,33 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    }
 	  }
 	} // END for (unsigned int f=0; f<vertposintervals[w].size()-1; f++){
+          
+	for (unsigned int f=0; f<lxyintervals[w].size()-1; f++){
+	  if (fabs(prodRho)>lxyintervals[w][f] && fabs(prodRho)<lxyintervals[w][f+1]) {
+	    totSIM_lxy[w][f]++;
+	    if (TP_is_matched) {
+	      totASS_lxy[w][f]++;
+	    }
+	  }
+	} // END for (unsigned int f=0; f<lxyintervals[w].size()-1; f++){
+          
+	for (unsigned int f=0; f<lzintervals[w].size()-1; f++){
+	  if (fabs(prodZ)>lzintervals[w][f] && fabs(prodZ)<lzintervals[w][f+1]) {
+	    totSIM_lz[w][f]++;
+	    if (TP_is_matched) {
+	      totASS_lz[w][f]++;
+	    }
+	  }
+	} // END for (unsigned int f=0; f<lxyintervals[w].size()-1; f++){
+          
+	for (unsigned int f=0; f<lrintervals[w].size()-1; f++){
+	  if (prodR>lrintervals[w][f] && prodR<lrintervals[w][f+1]) {
+	    totSIM_lr[w][f]++;
+	    if (TP_is_matched) {
+	      totASS_lr[w][f]++;
+	    }
+	  }
+	} // END for (unsigned int f=0; f<lxyintervals[w].size()-1; f++){
 
 	for (unsigned int f=0; f<zposintervals[w].size()-1; f++){
 	  if (vertexTP.z()>zposintervals[w][f]&&
@@ -531,21 +945,53 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
       int at=0;
       int rT=0;
       for(View<Track>::size_type i=0; i<trackCollectionSize; ++i){
-        bool Track_is_matched = false; 
+          
+        bool Track_is_matched = false;
+        bool Track_is_matched_SignalMuon = false;
+        bool Track_is_matched_SignalBkg = false;
+        bool Track_is_matched_Pu = false;
+        bool Track_is_matched_PuIT = false;
+        bool Track_is_matched_PuOOT = false;
+        bool Track_is_matched_PuMuon = false;
+  	bool Track_is_matched_PuITMuon = false;
+	bool Track_is_matched_PuOOTMuon = false;
+	bool Track_is_matched_075 = false;
+	bool Track_is_matched_050 = false;
 	RefToBase<Track> track(trackCollection, i);
+    if(track->hitPattern().muonStationsWithValidHits() <= 1) continue;
+	//if((track->numberOfValidHits()) == 0) continue;
 	rT++;
+
+  	double ipxy = -1, ipz = -1;
+
+  	if (track.isNonnull() && vtxInputTag.label() != ""){
+		
+  		const reco::VertexCollection* vertexes = primaryVertices.product();
+
+		if(vertexes->size()!=0){ 
+
+			ipxy = fabs(track->dxy((*vertexes)[0].position()));
+ 			ipz = fabs(track->dz((*vertexes)[0].position()));
+
+		}
+
+  	}
+
+	h_dxyDistr[w]->Fill(ipxy);
+	h_dzDistr[w]->Fill(ipz);
 
 	std::vector<std::pair<TrackingParticleRef, double> > tp;
 	TrackingParticleRef tpr;
 
 	// new logic (bidirectional)
 	if (BiDirectional_RecoToSim_association) {	  
-	  edm::LogVerbatim("MuonTrackValidator")<<"----------------------------------------Track #"<< track.key();
+	  edm::LogVerbatim("MuonTrackValidator")<<"----------------------------------------Track #"<< track.key()<<endl;
 
 	  if(recSimColl.find(track) != recSimColl.end()) {
 	    tp = recSimColl[track];	    
 	    if (tp.size() != 0) {
-	      tpr = tp.begin()->first;	      
+	      tpr = tp.begin()->first;
+
 	      // RtS and StR must associate the same pair !
 	      if(simRecColl.find(tpr) != simRecColl.end()) {
 		std::vector<std::pair<RefToBase<Track>, double> > track_checkback  = simRecColl[tpr];
@@ -554,20 +1000,114 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
 		if ( assoc_track_checkback.key() == track.key() ) {
 		  edm::LogVerbatim("MuonTrackValidator")<<"------------------associated TrackingParticle #"<<tpr.key();
-		  Track_is_matched = true;
-		  at++;
-		  double Purity = tp.begin()->second;
-		  double Quality = track_checkback.begin()->second;
-		  edm::LogVerbatim("MuonTrackValidator") << "reco::Track #" << track.key() << " with pt=" << track->pt() 
-							 << " associated with quality:" << Purity <<"\n";
-		  if (MABH) h_PurityVsQuality[w]->Fill(Quality,Purity);
+
+		  TrackingParticle* tpRtS=const_cast<TrackingParticle*>(tpr.get());
+
+		  bool signalEvent = (tpRtS->eventId().event() == 0) && (tpRtS->eventId().bunchCrossing() == 0);
+
+		  bool isSignalMuon = abs(tpRtS->pdgId())==13 && !tpRtS->genParticles().empty() && signalEvent; //segnale muone
+		  //bool isBkgTPGen = abs(tpRtS->pdgId())!=13 && !tpRtS->genParticles().empty() && signalEvent; //segnale non muone
+		  //bool isBkgTPGeant = tpRtS->genParticles().empty() && signalEvent; //GEANT
+		  bool bkgSignalEventMatchedMuon = signalEvent && ( tpRtS->genParticles().empty() || abs(tpRtS->pdgId())!=13 );
+
+		  bool isPuTP = !signalEvent; //PU
+		  bool isPuTPMuon = abs(tpRtS->pdgId())==13 && isPuTP; //PU muon
+		  bool isPuTPMuonIT = abs(tpRtS->pdgId())==13 && (tpRtS->eventId().event() != 0) && tpRtS->eventId().bunchCrossing()==0; //PU muon IT
+		  bool isPuTPMuonOOT = abs(tpRtS->pdgId())==13 && (tpRtS->eventId().event() != 0) && tpRtS->eventId().bunchCrossing()!=0; //PU muon OOT
+		  bool isPuTPIT = (tpRtS->eventId().event() != 0) && tpRtS->eventId().bunchCrossing()==0; //PU IT
+		  bool isPuTPOOT = (tpRtS->eventId().event() != 0) && tpRtS->eventId().bunchCrossing()!=0; //PU OOT
+
+		  //std::cout<<isSignalMuon<<" "<<isBkgTP<<" "<<isPuTP<<" "<<isPuTPMuon<<" "<<isPuTPMuonIT<<" "<<isPuTPMuonOOT<<" "<<isPuTPIT<<" "<<isPuTPOOT<<std::endl;
+
+		  for(TrackingParticle::g4t_iterator g4T=(*tpRtS).g4Track_begin(); g4T!=(*tpRtS).g4Track_end(); ++g4T) {
+
+			edm::LogVerbatim("MuonTrackValidator")<<"\t"<< " Id:"<<(*g4T).trackId()<<"/Evt:("<<(*g4T).eventId().event()<<","<<(*g4T).eventId().bunchCrossing()<<")";
+
+		  }
+
+		  if (isSignalMuon) {
+
+			int hitsPdgId = tpRtS->pdgId();
+			int hitsStatus = tpRtS->status();
+			double prodRho = tpRtS->vertex().Rho();
+			double prodZ = tpRtS->vz();
+			edm::LogVerbatim("MuonTrackValidator") << "\t Particle pdgId = "<< hitsPdgId << " status:" << hitsStatus << " produced at rho = " << prodRho << ", z = " << prodZ;
+
+                	reco::GenParticleRef genp   = tpRtS->genParticles()[0];
+                	reco::GenParticleRef genMom = genp->numberOfMothers() > 0 ? genp->motherRef() : reco::GenParticleRef();
+			//cout << "\t Number of mothers: "<< genp->numberOfMothers() << std::endl;
+                	if (genMom.isNonnull()) {
+
+                    		int momPdgId  = genMom->pdgId();
+                    		int momStatus = genMom->status();
+                    		double momRho = genMom->vertex().Rho(); 
+				double momZ = genMom->vz();
+                    		edm::LogVerbatim("MuonTrackValidator") << "\t Particle pdgId = "<<hitsPdgId << ", has GEN mother pdgId = " << momPdgId << ", mom status: " << momStatus;
+                    		reco::GenParticleRef genGMom = genMom->numberOfMothers() > 0 ? genMom->motherRef() : reco::GenParticleRef();
+				//cout << "\t\t Number of gmoms: " << genMom->numberOfMothers() << std::endl;
+                    		if (genGMom.isNonnull()) {
+
+                        		int gmomPdgId = genGMom->pdgId();
+					int gmomStatus = genGMom->status();
+                        		edm::LogVerbatim("MuonTrackValidator") << "\t\t mother prod. vertex rho = " << momRho << ", z = " << momZ << ", grand-mom pdgId = " << gmomPdgId << ", status: " << gmomStatus;
+
+                    			reco::GenParticleRef genGGMom = genGMom->numberOfMothers() > 0 ? genGMom->motherRef() : reco::GenParticleRef();
+					//cout << "\t\t Number of ggmoms: " << genGMom->numberOfMothers() << std::endl;
+                    			if (genGGMom.isNonnull()) {
+
+                        			int ggmomPdgId = genGGMom->pdgId();
+                        			int ggmomStatus = genGGMom->status();
+                        			edm::LogVerbatim("MuonTrackValidator") << "\t\t grand-grand-mom pdgId = " << ggmomPdgId << ", status: " << ggmomStatus;
+
+                    				reco::GenParticleRef genGGGMom = genGGMom->numberOfMothers() > 0 ? genGGMom->motherRef() : reco::GenParticleRef();
+						//cout << "\t\t Number of gggmoms: " << genGGMom->numberOfMothers() << std::endl;
+                    				if (genGGGMom.isNonnull()) {
+
+                        				int gggmomPdgId = genGGGMom->pdgId();
+                        				int gggmomStatus = genGGGMom->status();
+                        				edm::LogVerbatim("MuonAssociatorByHitsHelper") << "\t\t grand-grand-grand-mom pdgId = " << gggmomPdgId << ", status: " << gggmomStatus;
+
+                    				}	
+
+                    			}
+
+                    		}
+
+                	}
+
+		  }
+		  if (!useMCTruth_ || (useMCTruth_ && isSignalMuon)) {
+
+			Track_is_matched = true;
+			at++;
+			double Purity = tp.begin()->second;
+			double Quality = track_checkback.begin()->second;
+
+	 		if(MABH && Quality > 0.75) Track_is_matched_075 = true;
+			if(MABH && Quality > 0.50) Track_is_matched_050 = true;
+
+			edm::LogVerbatim("MuonTrackValidator") << "reco::Track #" << track.key() << " with pt=" << track->pt() 
+								 << " associated with quality:" << Purity <<"\n";
+			if (MABH) h_PurityVsQuality[w]->Fill(Quality,Purity);
+
+		  }
+
+        	  if(isSignalMuon) Track_is_matched_SignalMuon = true;
+        	  if(bkgSignalEventMatchedMuon) Track_is_matched_SignalBkg = true;
+        	  if(isPuTP) Track_is_matched_Pu = true;
+        	  if(isPuTPIT) Track_is_matched_PuIT = true;
+        	  if(isPuTPOOT) Track_is_matched_PuOOT = true;
+        	  if(isPuTPMuon) Track_is_matched_PuMuon = true;
+        	  if(isPuTPMuonIT) Track_is_matched_PuITMuon = true;
+        	  if(isPuTPMuonOOT) Track_is_matched_PuOOTMuon = true; 
+
 		}
 	      }
 	    }
 	  }
 
 	  if (!Track_is_matched) edm::LogVerbatim("MuonTrackValidator") 
-	    << "reco::Track #" << track.key() << " with pt=" << track->pt() << " NOT associated to any TrackingParticle" << "\n";
+	    << "reco::Track #" << track.key() << " with pt=" << track->pt() << " eta = " << track->eta() << " NOT associated to any TrackingParticle" << "\n";
 	}
 	// old logic (bugged)
 	else {
@@ -585,15 +1125,44 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 						   << " NOT associated to any TrackingParticle" << "\n";		  
 	  }
 	}
+
+        h_recoetaphi[w]->Fill(track->momentum().eta(), track->momentum().phi());
+        if(Track_is_matched_SignalMuon) h_assoc2etaphi[w]->Fill(track->momentum().eta(), track->momentum().phi());
 	
 	//Compute fake rate vs eta
 	for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
 	  if (getEta(track->momentum().eta())>etaintervals[w][f]&&
 	      getEta(track->momentum().eta())<etaintervals[w][f+1]) {
-	    totRECeta[w][f]++; 
+	    totRECeta[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 5 && sqrt(track->momentum().perp2()) < 10) totRECetaBin1[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 10 && sqrt(track->momentum().perp2()) < 15) totRECetaBin2[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 15 && sqrt(track->momentum().perp2()) < 20) totRECetaBin3[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 20) totRECetaBin4[w][f]++;
+	    if(sqrt(track->momentum().perp2()) > 10) totRECetaPt10[w][f]++;
+
 	    if (Track_is_matched) {
 	      totASS2eta[w][f]++;
-	    }		
+	      if(sqrt(track->momentum().perp2()) > 5 && sqrt(track->momentum().perp2()) < 10) totASS2etaBin1[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 10 && sqrt(track->momentum().perp2()) < 15) totASS2etaBin2[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 15 && sqrt(track->momentum().perp2()) < 20) totASS2etaBin3[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 20) totASS2etaBin4[w][f]++;
+	    }
+
+	    if(Track_is_matched_SignalMuon) totASS2eta_SgnMu[w][f]++;
+	    if(Track_is_matched_SignalBkg) totASS2eta_SgnBkg[w][f]++;
+	    if(Track_is_matched_Pu) totASS2eta_Pu[w][f]++;
+	    if(Track_is_matched_PuIT) totASS2eta_PuIT[w][f]++;
+	    if(Track_is_matched_PuOOT) totASS2eta_PuOOT[w][f]++;
+	    if(Track_is_matched_PuMuon) totASS2eta_PuMu[w][f]++;
+	    if(Track_is_matched_PuITMuon) totASS2eta_PuITMu[w][f]++;
+	    if(Track_is_matched_PuOOTMuon) totASS2eta_PuOOTMu[w][f]++; 
+
+	    if (MABH && Track_is_matched_075) totASS2eta_075[w][f]++;
+	    if (MABH && Track_is_matched_050){
+	      totASS2eta_050[w][f]++;
+	      if(sqrt(track->momentum().perp2()) > 10) totASS2etaPt10[w][f]++;
+	    }
+	
 	  }
 	} // End for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
 
@@ -611,10 +1180,29 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	for (unsigned int f=0; f<pTintervals[w].size()-1; f++){
 	  if (getPt(sqrt(track->momentum().perp2()))>pTintervals[w][f]&&
 	      getPt(sqrt(track->momentum().perp2()))<pTintervals[w][f+1]) {
-	    totRECpT[w][f]++; 
+	    totRECpT[w][f]++;
+	    if(fabs(track->momentum().eta()) < 1.2) totRECpTBin1[w][f]++;
+	    if(fabs(track->momentum().eta()) > 1.2 && fabs(track->momentum().eta()) < 1.7) totRECpTBin2[w][f]++;
+	    if(fabs(track->momentum().eta()) > 1.7) totRECpTBin3[w][f]++;
 	    if (Track_is_matched) {
 	      totASS2pT[w][f]++;
-	    }	      
+	      if(fabs(track->momentum().eta()) < 1.2) totASS2pTBin1[w][f]++;
+	      if(fabs(track->momentum().eta()) > 1.2 && fabs(track->momentum().eta()) < 1.7) totASS2pTBin2[w][f]++;
+	      if(fabs(track->momentum().eta()) > 1.7) totASS2pTBin3[w][f]++;
+	    }
+
+	    if(Track_is_matched_SignalMuon) totASS2pT_SgnMu[w][f]++;
+	    if(Track_is_matched_SignalBkg) totASS2pT_SgnBkg[w][f]++;
+	    if(Track_is_matched_Pu) totASS2pT_Pu[w][f]++;
+	    if(Track_is_matched_PuIT) totASS2pT_PuIT[w][f]++;
+	    if(Track_is_matched_PuOOT) totASS2pT_PuOOT[w][f]++;
+	    if(Track_is_matched_PuMuon) totASS2pT_PuMu[w][f]++;
+	    if(Track_is_matched_PuITMuon) totASS2pT_PuITMu[w][f]++;
+	    if(Track_is_matched_PuOOTMuon) totASS2pT_PuOOTMu[w][f]++; 
+
+ 	    if (MABH && Track_is_matched_075) totASS2pT_075[w][f]++; 
+            if (MABH && Track_is_matched_050) totASS2pT_050[w][f]++;
+ 
 	  }
 	} // End for (unsigned int f=0; f<pTintervals[w].size()-1; f++){
 
@@ -646,7 +1234,8 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 
 	//Fill other histos
  	try{
-	  if (!Track_is_matched) continue;
+
+	if (! (Track_is_matched && tpSelector(*tpr)) ) continue;
 
 	  if (associators[ww]=="TrackAssociatorByChi2"){
 	    //association chi2
@@ -671,13 +1260,21 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  //Get tracking particle parameters at point of closest approach to the beamline
 	  TrackingParticle::Vector momentumTP = parametersDefinerTP->momentum(event,setup,tpr) ;
 	  TrackingParticle::Point vertexTP = parametersDefinerTP->vertex(event,setup,tpr);
+	  //TrackingParticle::Vector momentumTP = parametersDefinerTP->momentum(event,setup,*(tpr.get()));
+	  //TrackingParticle::Point vertexTP = parametersDefinerTP->vertex(event,setup,*(tpr.get()));
+
 	  double ptSim = sqrt(momentumTP.perp2());
+	  double chargeSim = tpr->charge();
 	  double qoverpSim = tpr->charge()/sqrt(momentumTP.x()*momentumTP.x()+momentumTP.y()*momentumTP.y()+momentumTP.z()*momentumTP.z());
 	  double thetaSim = momentumTP.theta();
+	  double etaSim = momentumTP.eta();
 	  double lambdaSim = M_PI/2-momentumTP.theta();
 	  double phiSim    = momentumTP.phi();
 	  double dxySim    = (-vertexTP.x()*sin(momentumTP.phi())+vertexTP.y()*cos(momentumTP.phi()));
 	  double dzSim     = vertexTP.z() - (vertexTP.x()*momentumTP.x()+vertexTP.y()*momentumTP.y())/sqrt(momentumTP.perp2()) * momentumTP.z()/sqrt(momentumTP.perp2());
+
+   	  h_assocpTvsEta[w]->Fill(ptSim, etaSim);
+	  h_assocpTvsPhi[w]->Fill(ptSim, phiSim);
 	  
 	  // removed unused variable, left this in case it has side effects
 	  track->parameters();
@@ -712,6 +1309,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  }
 	 
 	  double thetaRec = track->theta();
+	  double chargeRec = track->charge();
 	  double ptError = ptErrorRec;
 	  double ptres = ptRec - ptSim; 
 	  double etares = track->eta()-momentumTP.Eta();
@@ -774,11 +1372,16 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  h_pullPhi[w]->Fill(phiPull);
 	  h_pullDxy[w]->Fill(dxyPull);
 	  h_pullDz[w]->Fill(dzPull);
+	  h_Qoverptres_sim[w]->Fill((chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  h_invptres_sim[w]->Fill((1/ptRec-1/ptSim)/(1/ptSim));
+	  h_Qoverptres[w]->Fill((chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+	  h_invptres[w]->Fill((1/ptRec-1/ptSim)/(1/ptRec));
 
 
 	  h_pt[w]->Fill(ptres/ptError);
 	  h_eta[w]->Fill(etares);
-	  etares_vs_eta[w]->Fill(getEta(track->eta()),etares);
+  	  etares_vs_eta[w]->Fill(getEta(track->eta()),etares);
+	  //etares_vs_eta[w]->Fill(getEta(etaSim),etares);
  
 
 	  //chi2 and #hit vs eta: fill 2D histos
@@ -790,30 +1393,109 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  //	  std::cout<<track->eta()<<" "<<track->hitPattern().numberOfValidMuonGEMHits()<<std::endl;
 	  if(useGEMs_) nGEMhits_vs_eta[w]->Fill(getEta(track->eta()),track->hitPattern().numberOfValidMuonGEMHits());
 
+	  n_trkLayersOld[w]->Fill(track->hitPattern().trackerLayersWithMeasurement());
+	  n_pxlHitsOld[w]->Fill(track->hitPattern().numberOfValidPixelHits());
+	  n_pxlHitsNew[w]->Fill(track->hitPattern().pixelLayersWithMeasurement());
+	  n_pxlHitsNew43Inn[w]->Fill(track->hitPattern().pixelLayersWithMeasurement(4,3));
+	  n_pxlHitsNew32Inn[w]->Fill(track->hitPattern().pixelLayersWithMeasurement(3,2));
+
 	  nlosthits_vs_eta[w]->Fill(getEta(track->eta()),track->numberOfLostHits());
 
 	  //resolution of track params: fill 2D histos
+
 	  dxyres_vs_eta[w]->Fill(getEta(track->eta()),dxyRec-dxySim);
 	  ptres_vs_eta[w]->Fill(getEta(track->eta()),(ptRec-ptSim)/ptRec);
 	  dzres_vs_eta[w]->Fill(getEta(track->eta()),dzRec-dzSim);
 	  phires_vs_eta[w]->Fill(getEta(track->eta()),phiDiff);
 	  cotThetares_vs_eta[w]->Fill(getEta(track->eta()), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
-	  
+	  invptres_vs_eta[w]->Fill(getEta(track->eta()),(1/ptRec-1/ptSim)/(1/ptRec));
+	  qOverPtres_vs_eta[w]->Fill(getEta(track->eta()),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+	  qOverPtresXL_vs_eta[w]->Fill(getEta(track->eta()),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+
+	  //dxyres_vs_eta[w]->Fill(getEta(etaSim),dxyRec-dxySim);
+	  ptres_vs_eta_sim[w]->Fill(getEta(etaSim),(ptRec-ptSim)/ptSim);
+	  invptres_vs_eta_sim[w]->Fill(getEta(etaSim),(1/ptRec-1/ptSim)/(1/ptSim));
+	  qOverPtres_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+
+	  if(ptSim > 5 && ptSim < 10){
+ 		qOverPtres1_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  	qOverPtresXL1_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  }
+	  else if(ptSim > 10 && ptSim < 15){
+	 	qOverPtres2_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  	qOverPtresXL2_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  }
+	  else if(ptSim > 15 && ptSim < 20){
+ 		qOverPtres3_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+		qOverPtresXL3_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  }
+	  else if(ptSim > 20){
+ 		qOverPtres4_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  	qOverPtresXL4_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  }
+
+	  qOverPtresXL_vs_eta_sim[w]->Fill(getEta(etaSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  //dzres_vs_eta[w]->Fill(getEta(etaSim),dzRec-dzSim);
+	  //phires_vs_eta[w]->Fill(getEta(etaSim),phiDiff);
+	  //cotThetares_vs_eta[w]->Fill(getEta(etaSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
+
 	  //same as before but vs pT
+
 	  dxyres_vs_pt[w]->Fill(getPt(ptRec),dxyRec-dxySim);
 	  ptres_vs_pt[w]->Fill(getPt(ptRec),(ptRec-ptSim)/ptRec);
 	  dzres_vs_pt[w]->Fill(getPt(ptRec),dzRec-dzSim);
 	  phires_vs_pt[w]->Fill(getPt(ptRec),phiDiff);
  	  cotThetares_vs_pt[w]->Fill(getPt(ptRec), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
- 	   	 
+	  invptres_vs_pt[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptRec));
+	  qOverPtres_vs_pt[w]->Fill(getPt(ptRec),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+	  qOverPtresXL_vs_pt[w]->Fill(getPt(ptRec),(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+
+	  chargeMisID_vs_eta[w]->Fill(getEta(track->eta()),chargeSim*chargeRec);
+	  chargeMisID_vs_pt[w]->Fill(getPt(ptRec),chargeSim*chargeRec);
+	  chargeMisID_vs_phi[w]->Fill(phiRec,chargeSim*chargeRec);
+	  //dxyres_vs_pt[w]->Fill(getPt(ptSim),dxyRec-dxySim);
+	  ptres_vs_pt_sim[w]->Fill(getPt(ptSim),(ptRec-ptSim)/ptSim);
+	  invptres_vs_pt_sim[w]->Fill(getPt(ptSim),(1/ptRec-1/ptSim)/(1/ptSim));
+	  qOverPtres_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  qOverPtresXL_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+
+	  if(fabs(etaSim) > 0 && fabs(etaSim) < 1.2){
+	  	qOverPtresB_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  	qOverPtresXLB_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  }
+	  else if(fabs(etaSim) > 1.2 && fabs(etaSim) < 1.7){
+	  	qOverPtresO_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  	qOverPtresXLO_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  }
+ 	  else if(fabs(etaSim) > 1.7){
+	  	qOverPtresE_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  	qOverPtresXLE_vs_pt_sim[w]->Fill(getPt(ptSim),(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  }
+
+	  //dzres_vs_pt[w]->Fill(getPt(ptSim),dzRec-dzSim);
+	  //phires_vs_pt[w]->Fill(getPt(ptSim),phiDiff);
+ 	  //cotThetares_vs_pt[w]->Fill(getPt(ptSim), cos(thetaRec)/sin(thetaRec) - cos(thetaSim)/sin(thetaSim));
+
+	  chargeMisID_vs_eta_sim[w]->Fill(getEta(etaSim),chargeSim*chargeRec);
+	  chargeMisID_vs_pt_sim[w]->Fill(getPt(ptSim),chargeSim*chargeRec);
+	  chargeMisID_vs_phi_sim[w]->Fill(phiSim,chargeSim*chargeRec);
+
 	  //pulls of track params vs eta: fill 2D histos
+
 	  dxypull_vs_eta[w]->Fill(getEta(track->eta()),dxyPull);
 	  ptpull_vs_eta[w]->Fill(getEta(track->eta()),ptres/ptError);
 	  dzpull_vs_eta[w]->Fill(getEta(track->eta()),dzPull);
 	  phipull_vs_eta[w]->Fill(getEta(track->eta()),phiPull);
 	  thetapull_vs_eta[w]->Fill(getEta(track->eta()),thetaPull);
 
+	  //dxypull_vs_eta[w]->Fill(getEta(etaSim),dxyPull);
+	  //ptpull_vs_eta[w]->Fill(getEta(etaSim),ptres/ptError);
+	  //dzpull_vs_eta[w]->Fill(getEta(etaSim),dzPull);
+	  //phipull_vs_eta[w]->Fill(getEta(etaSim),phiPull);
+	  //thetapull_vs_eta[w]->Fill(getEta(etaSim),thetaPull);
+
 	  //plots vs phi
+
 	  nhits_vs_phi[w]->Fill(phiRec,track->numberOfValidHits());
 	  chi2_vs_phi[w]->Fill(phiRec,track->normalizedChi2());
 	  ptmean_vs_eta_phi[w]->Fill(phiRec,getEta(track->eta()),ptRec);
@@ -823,6 +1505,18 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  ptpull_vs_phi[w]->Fill(phiRec,ptres/ptError);
 	  phipull_vs_phi[w]->Fill(phiRec,phiPull); 
 	  thetapull_vs_phi[w]->Fill(phiRec,thetaPull); 
+	  invptres_vs_phi[w]->Fill(phiRec,(1/ptRec-1/ptSim)/(1/ptRec));
+	  qOverPtres_vs_phi[w]->Fill(phiRec,(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+	  qOverPtresXL_vs_phi[w]->Fill(phiRec,(chargeRec/ptRec-chargeSim/ptSim)/(chargeRec/ptRec));
+
+	  ptres_vs_phi_sim[w]->Fill(phiSim,(ptRec-ptSim)/ptSim);
+	  invptres_vs_phi_sim[w]->Fill(phiSim,(1/ptRec-1/ptSim)/(1/ptSim));
+	  qOverPtres_vs_phi_sim[w]->Fill(phiSim,(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  qOverPtresXL_vs_phi_sim[w]->Fill(phiSim,(chargeRec/ptRec-chargeSim/ptSim)/(chargeSim/ptSim));
+	  //phires_vs_phi[w]->Fill(phiSim,phiDiff);
+	  //ptpull_vs_phi[w]->Fill(phiSim,ptres/ptError);
+	  //phipull_vs_phi[w]->Fill(phiSim,phiPull); 
+	  //thetapull_vs_phi[w]->Fill(phiSim,thetaPull); 
 	  
 	  int nSimHits = 0;
 	  if (usetracker && usemuon) {
@@ -861,6 +1555,14 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
   for (unsigned int ww=0;ww<associators.size();ww++){
     for (unsigned int www=0;www<label.size();www++){
 
+      extractCharge(chargeMisID_vs_eta[w], chargeMisID_vs_etaNum[w], chargeMisID_vs_etaDen[w]);
+      extractCharge(chargeMisID_vs_pt[w], chargeMisID_vs_ptNum[w], chargeMisID_vs_ptDen[w]);
+      extractCharge(chargeMisID_vs_phi[w], chargeMisID_vs_phiNum[w], chargeMisID_vs_phiDen[w]);
+
+      extractCharge(chargeMisID_vs_eta_sim[w], chargeMisID_vs_etaNum_sim[w], chargeMisID_vs_etaDen_sim[w]);
+      extractCharge(chargeMisID_vs_pt_sim[w], chargeMisID_vs_ptNum_sim[w], chargeMisID_vs_ptDen_sim[w]);
+      extractCharge(chargeMisID_vs_phi_sim[w], chargeMisID_vs_phiNum_sim[w], chargeMisID_vs_phiDen_sim[w]);
+
       //chi2 and #hit vs eta: get mean from 2D histos
       doProfileX(chi2_vs_eta[w],h_chi2meanh[w]);
       doProfileX(nhits_vs_eta[w],h_hits_eta[w]);    
@@ -876,14 +1578,81 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
       doProfileX(nhits_vs_phi[w],h_hits_phi[w]);
 
       fillPlotFromVector(h_recoeta[w],totRECeta[w]);
+      fillPlotFromVector(h_recoetaBin1[w],totRECetaBin1[w]);
+      fillPlotFromVector(h_recoetaBin2[w],totRECetaBin2[w]);
+      fillPlotFromVector(h_recoetaBin3[w],totRECetaBin3[w]);
+      fillPlotFromVector(h_recoetaBin4[w],totRECetaBin4[w]);
+      fillPlotFromVector(h_recoetaPt10[w],totRECetaPt10[w]);
+
       fillPlotFromVector(h_simuleta[w],totSIMeta[w]);
+      fillPlotFromVector(h_simuletaBin1[w],totSIMetaBin1[w]);
+      fillPlotFromVector(h_simuletaBin2[w],totSIMetaBin2[w]);
+      fillPlotFromVector(h_simuletaBin3[w],totSIMetaBin3[w]);
+      fillPlotFromVector(h_simuletaBin4[w],totSIMetaBin4[w]);
+      fillPlotFromVector(h_simuletaPt10[w],totSIMetaPt10[w]);
+
+      fillPlotFromVector(h_simulvtx[w],totSIMvtx[w]);
+      fillPlotFromVector(h_simulvtxBarrel[w],totSIMvtxBarrel[w]);
+      fillPlotFromVector(h_simulvtxEndcap[w],totSIMvtxEndcap[w]);
+      fillPlotFromVector(h_simulvtxOverlap[w],totSIMvtxOverlap[w]);
+
       fillPlotFromVector(h_assoceta[w],totASSeta[w]);
+      fillPlotFromVector(h_assocetaBin1[w],totASSetaBin1[w]);
+      fillPlotFromVector(h_assocetaBin2[w],totASSetaBin2[w]);
+      fillPlotFromVector(h_assocetaBin3[w],totASSetaBin3[w]);
+      fillPlotFromVector(h_assocetaBin4[w],totASSetaBin4[w]);
+      fillPlotFromVector(h_assocetaPt10[w],totASSetaPt10[w]);
+
+      fillPlotFromVector(h_assocvtx[w],totASSvtx[w]);
+      fillPlotFromVector(h_assocvtxBarrel[w],totASSvtxBarrel[w]);
+      fillPlotFromVector(h_assocvtxEndcap[w],totASSvtxEndcap[w]);
+      fillPlotFromVector(h_assocvtxOverlap[w],totASSvtxOverlap[w]);
+
       fillPlotFromVector(h_assoc2eta[w],totASS2eta[w]);
+      fillPlotFromVector(h_assoc2etaBin1[w],totASS2etaBin1[w]);
+      fillPlotFromVector(h_assoc2etaBin2[w],totASS2etaBin2[w]);
+      fillPlotFromVector(h_assoc2etaBin3[w],totASS2etaBin3[w]);
+      fillPlotFromVector(h_assoc2etaBin4[w],totASS2etaBin4[w]);
+      fillPlotFromVector(h_assoc2etaPt10[w],totASS2etaPt10[w]);
+
+      fillPlotFromVector(h_assoc2eta_SgnMu[w],totASS2eta_SgnMu[w]);
+      fillPlotFromVector(h_assoc2eta_SgnBkg[w],totASS2eta_SgnBkg[w]);
+      fillPlotFromVector(h_assoc2eta_Pu[w],totASS2eta_Pu[w]);
+      fillPlotFromVector(h_assoc2eta_PuIT[w],totASS2eta_PuIT[w]);
+      fillPlotFromVector(h_assoc2eta_PuOOT[w],totASS2eta_PuOOT[w]);
+      fillPlotFromVector(h_assoc2eta_PuMu[w],totASS2eta_PuMu[w]);
+      fillPlotFromVector(h_assoc2eta_PuITMu[w],totASS2eta_PuITMu[w]);
+      fillPlotFromVector(h_assoc2eta_PuOOTMu[w],totASS2eta_PuOOTMu[w]); 
 
       fillPlotFromVector(h_recopT[w],totRECpT[w]);
+      fillPlotFromVector(h_recopTBin1[w],totRECpTBin1[w]);
+      fillPlotFromVector(h_recopTBin2[w],totRECpTBin2[w]);
+      fillPlotFromVector(h_recopTBin3[w],totRECpTBin3[w]);
+
       fillPlotFromVector(h_simulpT[w],totSIMpT[w]);
+      fillPlotFromVector(h_simulpTBin1[w],totSIMpTBin1[w]);
+      fillPlotFromVector(h_simulpTBin2[w],totSIMpTBin2[w]);
+      fillPlotFromVector(h_simulpTBin3[w],totSIMpTBin3[w]);
+
       fillPlotFromVector(h_assocpT[w],totASSpT[w]);
+      fillPlotFromVector(h_assocpTBin1[w],totASSpTBin1[w]);
+      fillPlotFromVector(h_assocpTBin2[w],totASSpTBin2[w]);
+      fillPlotFromVector(h_assocpTBin3[w],totASSpTBin3[w]);
+
       fillPlotFromVector(h_assoc2pT[w],totASS2pT[w]);
+
+      fillPlotFromVector(h_assoc2pT_SgnMu[w],totASS2pT_SgnMu[w]);
+      fillPlotFromVector(h_assoc2pT_SgnBkg[w],totASS2pT_SgnBkg[w]);
+      fillPlotFromVector(h_assoc2pT_Pu[w],totASS2pT_Pu[w]);
+      fillPlotFromVector(h_assoc2pT_PuIT[w],totASS2pT_PuIT[w]);
+      fillPlotFromVector(h_assoc2pT_PuOOT[w],totASS2pT_PuOOT[w]);
+      fillPlotFromVector(h_assoc2pT_PuMu[w],totASS2pT_PuMu[w]);
+      fillPlotFromVector(h_assoc2pT_PuITMu[w],totASS2pT_PuITMu[w]);
+      fillPlotFromVector(h_assoc2pT_PuOOTMu[w],totASS2pT_PuOOTMu[w]); 
+
+      fillPlotFromVector(h_assoc2pTBin1[w],totASS2pTBin1[w]);
+      fillPlotFromVector(h_assoc2pTBin2[w],totASS2pTBin2[w]);
+      fillPlotFromVector(h_assoc2pTBin3[w],totASS2pTBin3[w]);
 
       fillPlotFromVector(h_recohit[w],totREC_hit[w]);
       fillPlotFromVector(h_simulhit[w],totSIM_hit[w]);
@@ -910,6 +1679,15 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
 
       fillPlotFromVector(h_simulzpos[w],totSIM_zpos[w]);
       fillPlotFromVector(h_assoczpos[w],totASS_zpos[w]);
+        
+      fillPlotFromVector(h_simulLxy[w],totSIM_lxy[w]);
+      fillPlotFromVector(h_assocLxy[w],totASS_lxy[w]);
+        
+      fillPlotFromVector(h_simulLz[w],totSIM_lz[w]);
+      fillPlotFromVector(h_assocLz[w],totASS_lz[w]);
+        
+      fillPlotFromVector(h_simulLr[w],totSIM_lr[w]);
+      fillPlotFromVector(h_assocLr[w],totASS_lr[w]);
       
       if (MABH) {
 	fillPlotFromVector(h_assoceta_Quality05[w] ,totASSeta_Quality05[w]);
@@ -918,6 +1696,10 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&)
 	fillPlotFromVector(h_assocpT_Quality075[w],totASSpT_Quality075[w]);
 	fillPlotFromVector(h_assocphi_Quality05[w] ,totASS_phi_Quality05[w]);
 	fillPlotFromVector(h_assocphi_Quality075[w],totASS_phi_Quality075[w]);
+        fillPlotFromVector(h_assoc2eta_075[w],totASS2eta_075[w]);
+        fillPlotFromVector(h_assoc2eta_050[w],totASS2eta_050[w]);
+        fillPlotFromVector(h_assoc2pT_075[w],totASS2pT_075[w]);
+        fillPlotFromVector(h_assoc2pT_050[w],totASS2pT_050[w]);
       }
       
       w++;

@@ -659,7 +659,7 @@ MuonAssociatorByHits::associateSimToRecoIndices( const TrackHitsCollection & tC,
     int n_selected_hits = n_tracker_selected_hits + n_muon_selected_hits;
     int n_matched = n_tracker_matched + n_muon_matched;
 
-    if (printRtS) edm::LogVerbatim("MuonAssociatorByHits")
+    edm::LogVerbatim("MuonAssociatorByHits")
       <<"\n"<<"# TrackingRecHits: "<<(track->second - track->first) 
       <<"\n"<< "# used RecHits     = " <<n_all    <<" ("<<n_tracker_all<<"/"
       <<n_dt_all<<"/"<<n_csc_all<<"/"<<n_rpc_all<<"/"<<n_gem_all<<" in Tracker/DT/CSC/RPC/GEM)"<<", obtained from " << n_matching_simhits << " SimHits"

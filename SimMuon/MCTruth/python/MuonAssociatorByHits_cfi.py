@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 
 muonAssociatorByHitsCommonParameters = cms.PSet(
-    dumpInputCollections = cms.bool(False),
+    dumpInputCollections = cms.bool(True),
     #
     #....... general input parameters
     #
@@ -61,7 +61,7 @@ muonAssociatorByHitsCommonParameters = cms.PSet(
     RPCdigisimlinkTag = cms.InputTag("simMuonRPCDigis","RPCDigiSimLink"),
     #
     # for GEM Hit associator
-    useGEMs = cms.bool(False),
+    useGEMs = cms.bool(True),
     GEMsimhitsTag = cms.InputTag("g4SimHits","MuonGEMHits"),
     GEMsimhitsXFTag = cms.InputTag("mix","g4SimHitsMuonGEMHits"),
     GEMdigisimlinkTag = cms.InputTag("simMuonGEMDigis","GEM"),

@@ -36,6 +36,8 @@ def customise_Digi(process):
     process.mix.mixObjects.mixSH.crossingFrames.append('MuonGEMHits')
     process.mix.mixObjects.mixSH.input.append(cms.InputTag("g4SimHits","MuonGEMHits"))
     process.mix.mixObjects.mixSH.subdets.append('MuonGEMHits')
+    
+    #process.mix.digitizers.mergedtruth.simHitCollections.muon.append(cms.InputTag("g4SimHits","MuonGEMHits"))
 
     process.load('SimMuon.GEMDigitizer.muonGEMDigi_cff')
     process.muonDigi += process.muonGEMDigi
@@ -81,9 +83,16 @@ def customise_Reco(process):
     process.load('RecoLocalMuon.GEMRecHit.gemRecHits_cfi')
     process.muonlocalreco += process.gemRecHits
     process.standAloneMuons.STATrajBuilderParameters.EnableGEMMeasurement = cms.bool(True)
+    #process.standAloneMuons.STATrajBuilderParameters.FilterParameters.EnableGEMMeasurement = cms.bool(True)
     process.standAloneMuons.STATrajBuilderParameters.BWFilterParameters.EnableGEMMeasurement = cms.bool(True)
     process.refittedStandAloneMuons.STATrajBuilderParameters.EnableGEMMeasurement = cms.bool(True)
+    #process.refittedStandAloneMuons.STATrajBuilderParameters.FilterParameters.EnableGEMMeasurement = cms.bool(True)
     process.refittedStandAloneMuons.STATrajBuilderParameters.BWFilterParameters.EnableGEMMeasurement = cms.bool(True)
+    
+    process.displacedStandAloneMuons.STATrajBuilderParameters.EnableGEMMeasurement = cms.bool(True)
+    #process.displacedStandAloneMuons.STATrajBuilderParameters.FilterParameters.EnableGEMMeasurement = cms.bool(True)
+    process.displacedStandAloneMuons.STATrajBuilderParameters.BWFilterParameters.EnableGEMMeasurement = cms.bool(True)
+
     process=outputCustoms(process)
     return process
 
@@ -117,7 +126,19 @@ def outputCustoms(process):
 
     
 def customise_gem_hlt(process):
+    process.load('RecoLocalMuon.GEMRecHit.gemRecHits_cfi')
+    process.HLTMuonLocalRecoSequence += process.gemRecHits
+    
     process.hltL2OfflineMuonSeeds.EnableGEMMeasurement = cms.bool( True )
+    
+    process.hltL2MuonSeeds.ServiceParameters.GEMLayers = cms.untracked.bool(True)
+    
     process.hltL2Muons.L2TrajBuilderParameters.EnableGEMMeasurement = cms.bool( True )
-    process.hltL2Muons.BWFilterParameters.EnableGEMMeasurement = cms.bool( True )
+    process.hltL2Muons.L2TrajBuilderParameters.BWFilterParameters.EnableGEMMeasurement = cms.bool( True )
+    process.hltL2Muons.L2TrajBuilderParameters.FilterParameters.EnableGEMMeasurement = cms.bool( True )
+    process.hltL2Muons.ServiceParameters.GEMLayers = cms.untracked.bool(True)
+
+    process.hltL3MuonsOIState.ServiceParameters.GEMLayers = cms.untracked.bool(True)
+    process.hltL3MuonsOIHit.ServiceParameters.GEMLayers = cms.untracked.bool(True)
+    process.hltL3MuonsIOHit.ServiceParameters.GEMLayers = cms.untracked.bool(True)
     return process
