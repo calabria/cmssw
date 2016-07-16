@@ -1293,7 +1293,7 @@ muonAssociationHLT_seq = cms.Sequence(
 )
 
 muonAssociationDisplaced_seq = cms.Sequence(
-                                            #tpToStaMuonAssociation+tpToStaUpdMuonAssociation+
+    #tpToStaMuonAssociation+tpToStaUpdMuonAssociation+
     tpToDisplacedStaMuonAssociation
 )
 

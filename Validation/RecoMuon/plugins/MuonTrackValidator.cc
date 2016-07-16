@@ -670,8 +670,8 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 //        }
           
 	    if(!tpSelector(*tp)) continue;
-        if(!(fabs(prodRho) < 350 && fabs(prodZ) < 500)) continue;
-	    if(! isSignalFromZgamma(tp)) continue;
+        if(!(fabs(prodRho) < prodRho_ && fabs(prodZ) < prodZ_)) continue;
+	    //if(! isSignalFromZgamma(tp)) continue;
 	    //if(isSignalFromZgamma(tp)) cout<<"Signal: 1"<<endl;
 	    //else cout<<"Signal: 0"<<endl;
 	    //Calcualte the impact parameters w.r.t. PCA

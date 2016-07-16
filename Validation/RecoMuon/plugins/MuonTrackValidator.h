@@ -34,6 +34,8 @@ class MuonTrackValidator : public edm::EDAnalyzer, protected MuonTrackValidatorB
 					  pset.getParameter<bool>("chargedOnlyTP"),
 					  pset.getParameter<bool>("stableOnlyTP"),
 					  pset.getParameter<std::vector<int> >("pdgIdTP"));
+    prodRho_ = pset.getParameter<double>("prodRho");
+    prodZ_ = pset.getParameter<double>("prodZ");
     cosmictpSelector = CosmicTrackingParticleSelector(pset.getParameter<double>("ptMinTP"),
 						      pset.getParameter<double>("minRapidityTP"),
 						      pset.getParameter<double>("maxRapidityTP"),
@@ -146,6 +148,7 @@ private:
   bool useGEMs_;
   bool useMCTruth_;
   double minPhi, maxPhi;
+  double prodRho_, prodZ_;
   int nintPhi;
   bool useGsf;
   // select tracking particles 

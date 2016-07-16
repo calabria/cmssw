@@ -724,6 +724,9 @@ displacedStaMuonTrackVMuonAssoc.tipTP = 300000.
 displacedStaMuonTrackVMuonAssoc.lipTP = 300000.
 displacedStaMuonTrackVMuonAssoc.vertexSrc = ""
 displacedStaMuonTrackVMuonAssoc.stableOnlyTP = False
+displacedStaMuonTrackVMuonAssoc.prodRho = 350.
+displacedStaMuonTrackVMuonAssoc.prodZ = 500.
+
 
 displacedStaSeedTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 displacedStaSeedTrackVMuonAssoc.associatormap = 'tpToDisplacedStaSeedAssociation'

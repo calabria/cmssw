@@ -22,7 +22,7 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     #
     # selection of TP for evaluation of efficiency, from "TrackingParticleSelectionForEfficiency"
     signalOnlyTP = cms.bool(True),
-    stableOnlyTP = cms.bool(True),
+    stableOnlyTP = cms.bool(False),
     chargedOnlyTP = cms.bool(True),
     pdgIdTP = cms.vint32(13,-13),
     minHitTP = cms.int32(0),
@@ -31,6 +31,8 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     maxRapidityTP = cms.double(2.4),
     tipTP = cms.double(3.5),
     lipTP = cms.double(30.0),
+    prodRho = cms.double(0.0),
+    prodZ = cms.double(0.0),
     # collision like tracks
     parametersDefiner = cms.string('LhcParametersDefinerForTP'),
     # cosmics tracks
