@@ -727,13 +727,14 @@ displacedStaMuonTrackVMuonAssoc.stableOnlyTP = False
 displacedStaMuonTrackVMuonAssoc.prodRho = 350.
 displacedStaMuonTrackVMuonAssoc.prodZ = 500.
 
-
 displacedStaSeedTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 displacedStaSeedTrackVMuonAssoc.associatormap = 'tpToDisplacedStaSeedAssociation'
 displacedStaSeedTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
 displacedStaSeedTrackVMuonAssoc.label = ('seedsOfDisplacedSTAmuons',)
 displacedStaSeedTrackVMuonAssoc.usetracker = False
 displacedStaSeedTrackVMuonAssoc.usemuon = True
+displacedStaSeedTrackVMuonAssoc.prodRho = 350.
+displacedStaSeedTrackVMuonAssoc.prodZ = 500.
 
 ##################################################################################
 
