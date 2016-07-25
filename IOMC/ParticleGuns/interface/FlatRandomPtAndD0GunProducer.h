@@ -27,8 +27,10 @@ namespace edm
         
         double            fMinPt   ;
         double            fMaxPt   ;
-        double            LMin_   ;
-        double            LMax_   ;
+        double            LxyMin_   ;
+        double            LxyMax_   ;
+        double            LzMin_   ;
+        double            LzMax_   ;
         double            dxyMin_   ;
         double            dxyMax_   ;
         

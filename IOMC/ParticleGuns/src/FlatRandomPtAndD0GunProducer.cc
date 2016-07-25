@@ -31,8 +31,10 @@ BaseFlatGunProducer(pset)
     
     fMinPt = pgun_params.getParameter<double>("MinPt");
     fMaxPt = pgun_params.getParameter<double>("MaxPt");
-    LMin_ = pgun_params.getParameter<double>("LMin");
-    LMax_ = pgun_params.getParameter<double>("LMax");
+    LxyMin_ = pgun_params.getParameter<double>("LxyMin");
+    LxyMax_ = pgun_params.getParameter<double>("LxyMax");
+    LzMin_ = pgun_params.getParameter<double>("LzMin");
+    LzMax_ = pgun_params.getParameter<double>("LzMax");
     dxyMin_ = pgun_params.getParameter<double>("dxyMin");
     dxyMax_ = pgun_params.getParameter<double>("dxyMax");
     
@@ -66,23 +68,32 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
     // 1st, primary vertex
     //
     double phi_vtx    = fRandomGenerator->fire(fMinPhi, fMaxPhi);
-    double eta_vtx    = fRandomGenerator->fire(fMinEta, fMaxEta);
-    double theta_vtx  = 2.*atan(exp(-eta_vtx));
+    double lenXY = 0;
+    double lenZ = 0;
+    double len_x = 0;
+    double len_y = 0;
+    double len_z = 0;
     HepMC::GenVertex* Vtx = 0;
-    if( LMin_ == LMax_ ) {
-        double LMin_x = LMin_*sin(theta_vtx)*cos(phi_vtx);
-        double LMin_y = LMin_*sin(theta_vtx)*sin(phi_vtx);
-        double LMin_z = LMin_*cos(theta_vtx);
-        Vtx = new HepMC::GenVertex(HepMC::FourVector(LMin_x,LMin_y,LMin_z));
+    
+    if( LxyMin_ == LxyMax_ ) {
+        len_x = lenXY*cos(phi_vtx);
+        len_y = lenXY*sin(phi_vtx);
+    }
+    else{
+        lenXY = fRandomGenerator->fire(LxyMin_, LxyMax_)*10;
+        len_x = lenXY*cos(phi_vtx);
+        len_y = lenXY*sin(phi_vtx);
+    }
+    
+    if( LzMin_ == LzMax_ ) {
+        len_z = LzMin_;
     }
     else {
-        double len = fRandomGenerator->fire(LMin_, LMax_)*10;
-        double len_x = len*sin(theta_vtx)*cos(phi_vtx);
-        double len_y = len*sin(theta_vtx)*sin(phi_vtx);
-        double len_z = len*cos(theta_vtx);
-        std::cout<<"L: "<<len<<" Lx: "<<len_x<<" Ly: "<<len_y<<" Lz: "<<len_z<<std::endl;
-        Vtx = new HepMC::GenVertex(HepMC::FourVector(len_x,len_y,len_z));
+        lenZ = fRandomGenerator->fire(LzMin_, LzMax_)*10;
+        len_z = lenZ;
     }
+    std::cout<<"LXY[mm]: "<<lenXY<<" LZ "<<lenZ<<" Lx: "<<len_x<<" Ly: "<<len_y<<" Lz: "<<len_z<<std::endl;
+    Vtx = new HepMC::GenVertex(HepMC::FourVector(len_x,len_y,len_z));
     
     // loop over particles
     //
@@ -103,11 +114,11 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
             phi    = fRandomGenerator->fire(fMinPhi, fMaxPhi) ;
             //dr     = deltaR(eta, phi, eta_vtx, phi_vtx);
             dxySim = (-Vtx->point3d().x()*sin(phi)+Vtx->point3d().y()*cos(phi));
-            std::cout<<" dxy: "<<dxySim<<std::endl;
+            //std::cout<<" dxy: "<<dxySim<<std::endl;
             
         //}while(dr > drMax_);
-        }while(!(dxySim > dxyMin_ && dxySim < dxyMax_));
-        //std::cout<<" dxy: "<<dxySim<<std::endl;
+        }while(!(dxySim > dxyMin_*10 && dxySim < dxyMax_*10));
+        std::cout<<" pT: "<<pt<<" eta: "<<eta<<" phi: "<<phi<<" dxy[mm]: "<<dxySim<<std::endl;
         
         int PartID = fPartIDs[ip] ;
         const HepPDT::ParticleData*
