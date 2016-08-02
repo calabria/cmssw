@@ -14,3 +14,4 @@ CSCChannelMapperESProducer = cms.ESProducer("CSCChannelMapperESProducer",
 #
 from Configuration.StandardSequences.Eras import eras
 eras.run2_common.toModify( CSCChannelMapperESProducer, AlgoName=cms.string("CSCChannelMapperPostls1") )
+eras.phase2_muon.toModify( CSCChannelMapperESProducer, AlgoName=cms.string("CSCChannelMapperPostls1") )

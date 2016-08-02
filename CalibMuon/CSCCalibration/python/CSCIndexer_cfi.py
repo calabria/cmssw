@@ -14,3 +14,4 @@ CSCIndexerESProducer = cms.ESProducer("CSCIndexerESProducer",
 #
 from Configuration.StandardSequences.Eras import eras
 eras.run2_common.toModify( CSCIndexerESProducer, AlgoName=cms.string("CSCIndexerPostls1") )
+eras.phase2_muon.toModify( CSCIndexerESProducer, AlgoName=cms.string("CSCIndexerPostls1") )

@@ -68,4 +68,5 @@ csc2DRecHits = cms.EDProducer("CSCRecHitDProducer",
 ##
 eras.run2_common.toModify( csc2DRecHits, readBadChannels = False )
 eras.run2_common.toModify( csc2DRecHits, CSCUseGasGainCorrections = False )
-
+eras.phase2_muon.toModify( csc2DRecHits, readBadChannels = False )
+eras.phase2_muon.toModify( csc2DRecHits, CSCUseGasGainCorrections = False )
