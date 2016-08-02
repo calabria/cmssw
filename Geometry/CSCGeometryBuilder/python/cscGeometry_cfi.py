@@ -23,3 +23,4 @@ CSCGeometryESModule = cms.ESProducer("CSCGeometryESModule",
 #
 from Configuration.StandardSequences.Eras import eras
 eras.run2_common.toModify( CSCGeometryESModule, useGangedStripsInME1a=False )
+eras.phase2_muon.toModify( CSCGeometryESModule, useGangedStripsInME1a=False )
