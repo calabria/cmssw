@@ -26,3 +26,7 @@ from Configuration.StandardSequences.Eras import eras
 eras.run2_common.toModify( cscpacker, useFormatVersion = cms.uint32(2013) )
 eras.run2_common.toModify( cscpacker, usePreTriggers = cms.bool(False) )
 eras.run2_common.toModify( cscpacker, packEverything = cms.bool(True) )
+
+eras.phase2_muon.toModify( cscpacker, useFormatVersion = cms.uint32(2013) )
+eras.phase2_muon.toModify( cscpacker, usePreTriggers = cms.bool(False) )
+eras.phase2_muon.toModify( cscpacker, packEverything = cms.bool(True) )
