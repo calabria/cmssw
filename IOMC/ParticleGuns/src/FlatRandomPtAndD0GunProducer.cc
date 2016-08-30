@@ -104,7 +104,6 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
         double pt     = 0;
         double eta    = 0;
         double phi    = 0;
-        //double dr     = 999;
         double dxySim = 999;
         
         do{
@@ -112,11 +111,8 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
             pt     = fRandomGenerator->fire(fMinPt, fMaxPt) ;
             eta    = fRandomGenerator->fire(fMinEta, fMaxEta) ;
             phi    = fRandomGenerator->fire(fMinPhi, fMaxPhi) ;
-            //dr     = deltaR(eta, phi, eta_vtx, phi_vtx);
             dxySim = (-Vtx->point3d().x()*sin(phi)+Vtx->point3d().y()*cos(phi));
-            //std::cout<<" dxy: "<<dxySim<<std::endl;
             
-        //}while(dr > drMax_);
         }while(!(fabs(dxySim) > dxyMin_*10 && fabs(dxySim) < dxyMax_*10));
         //std::cout<<" pT: "<<pt<<" eta: "<<eta<<" phi: "<<phi<<" dxy[mm]: "<<dxySim<<std::endl;
         
