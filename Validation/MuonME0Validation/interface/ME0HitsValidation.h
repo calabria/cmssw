@@ -14,6 +14,7 @@ public:
   void analyze(const edm::Event& e, const edm::EventSetup&) override;
  private:
 
+  MonitorElement* me0_sh_type;
   MonitorElement* me0_sh_xy[2][6];
   MonitorElement* me0_sh_zr[2][6];
   MonitorElement* me0_sh_tot_zr[2];
@@ -24,7 +25,6 @@ public:
   MonitorElement* me0_sh_elossMu[2][6];
 
   Int_t npart;
-  
 
 };
 
