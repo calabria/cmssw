@@ -92,7 +92,7 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
         lenZ = fRandomGenerator->fire(LzMin_, LzMax_)*10;
         len_z = lenZ;
     }
-    std::cout<<"LXY[mm]: "<<lenXY<<" LZ "<<lenZ<<" Lx: "<<len_x<<" Ly: "<<len_y<<" Lz: "<<len_z<<std::endl;
+    //std::cout<<"LXY[mm]: "<<lenXY<<" LZ "<<lenZ<<" Lx: "<<len_x<<" Ly: "<<len_y<<" Lz: "<<len_z<<std::endl;
     Vtx = new HepMC::GenVertex(HepMC::FourVector(len_x,len_y,len_z));
     
     // loop over particles
@@ -117,8 +117,8 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
             //std::cout<<" dxy: "<<dxySim<<std::endl;
             
         //}while(dr > drMax_);
-        }while(!(dxySim > dxyMin_*10 && dxySim < dxyMax_*10));
-        std::cout<<" pT: "<<pt<<" eta: "<<eta<<" phi: "<<phi<<" dxy[mm]: "<<dxySim<<std::endl;
+        }while(!(fabs(dxySim) > dxyMin_*10 && fabs(dxySim) < dxyMax_*10));
+        //std::cout<<" pT: "<<pt<<" eta: "<<eta<<" phi: "<<phi<<" dxy[mm]: "<<dxySim<<std::endl;
         
         int PartID = fPartIDs[ip] ;
         const HepPDT::ParticleData*
@@ -171,7 +171,7 @@ void FlatRandomPtAndD0GunProducer::produce(Event &e, const EventSetup& es)
     auto_ptr<GenEventInfoProduct> genEventInfo(new GenEventInfoProduct(fEvt));
     e.put(genEventInfo);
     
-    if ( fVerbosity > 0 )
+    if ( true )
     {
         // for testing purpose only
         // fEvt->print() ; // prints empty info after it's made into edm::Event
