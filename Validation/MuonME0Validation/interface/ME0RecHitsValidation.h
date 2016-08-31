@@ -4,6 +4,8 @@
 #include "Validation/MuonME0Validation/interface/ME0BaseValidation.h"
 
 //Data Format
+#include "DataFormats/GEMDigi/interface/ME0DigiPreReco.h"
+#include "DataFormats/GEMDigi/interface/ME0DigiPreRecoCollection.h"
 #include <DataFormats/GEMRecHit/interface/ME0RecHit.h>
 #include "DataFormats/MuonDetId/interface/GEMDetId.h"
 #include "DataFormats/GEMRecHit/interface/ME0RecHitCollection.h"
@@ -18,6 +20,7 @@ public:
   ~ME0RecHitsValidation();
   void bookHistograms(DQMStore::IBooker &, edm::Run const &, edm::EventSetup const &) override;
   void analyze(const edm::Event& e, const edm::EventSetup&) override;
+  bool isSignal(ME0RecHitCollection::const_iterator, edm::Handle<ME0DigiPreRecoCollection>);
  private:
 
   MonitorElement* me0_rh_xy[2][6];
@@ -27,7 +30,10 @@ public:
   MonitorElement* me0_rh_DeltaY[2][6];
   MonitorElement* me0_rh_PullX[2][6];
   MonitorElement* me0_rh_PullY[2][6];
+    
+  MonitorElement* me0_rh_time;
 
+  edm::EDGetToken InputTagToken_Digi;
   edm::EDGetToken InputTagToken_RecHit;
 
   Int_t npart;

@@ -4,6 +4,7 @@ import FWCore.ParameterSet.Config as cms
 me0RecHitsValidation = cms.EDAnalyzer('ME0RecHitsValidation',
     verboseSimHit = cms.untracked.int32(1),
     simInputLabel = cms.InputTag('g4SimHits',"MuonME0Hits"),
+    digiInputLabel = cms.InputTag("simMuonME0Digis"),
     recHitInputLabel = cms.InputTag("me0RecHits"),
     segmentInputLabel = cms.InputTag("me0Segments"),
     # st1, st2_short, st2_long of xbin, st1,st2_short,st2_long of ybin

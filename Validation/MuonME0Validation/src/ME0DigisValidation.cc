@@ -21,6 +21,7 @@ void ME0DigisValidation::bookHistograms(DQMStore::IBooker & ibooker, edm::Run co
   me0_strip_dg_dx_local_tot_Muon = ibooker.book1D( "me0_strip_dg_dx_local_tot", "Local DeltaX; #Delta X_{local} [cm]; Entries", 50, -0.1, +0.1);
   me0_strip_dg_dy_local_tot_Muon = ibooker.book1D( "me0_strip_dg_dy_local_tot", "Local DeltaY; #Delta Y_{local} [cm]; Entries", 500, -10.0, +10.0);
   me0_strip_dg_dphi_global_tot_Muon = ibooker.book1D( "me0_strip_dg_dphi_global_tot", "Global DeltaPhi; #Delta #phi_{global} [rad]; Entries", 50, -0.01, +0.01);
+  me0_strip_dg_time_tot_Muon = ibooker.book1D( "me0_strip_dg_time_tot", "DeltaToF; #Delta ToF [ns]; Entries", 50, -5, +5);
     
   me0_strip_dg_dphi_vs_phi_global_tot_Muon = ibooker.book2D( "me0_strip_dg_dphi_vs_phi_global_tot", "Global DeltaPhi vs. Phi; #phi_{global} [rad]; #Delta #phi_{global} [rad]", 72,-M_PI,+M_PI,50,-0.01,+0.01);
     
@@ -74,6 +75,7 @@ void ME0DigisValidation::analyze(const edm::Event& e,
  edm::ESHandle<ME0Geometry> hGeom;
  iSetup.get<MuonGeometryRecord>().get(hGeom);
  const ME0Geometry* ME0Geometry_ =( &*hGeom);
+    
   edm::Handle<edm::PSimHitContainer> ME0Hits;
   e.getByToken(InputTagToken_, ME0Hits);
 
@@ -118,6 +120,8 @@ void ME0DigisValidation::analyze(const edm::Event& e,
       Float_t g_x = (Float_t) gp.x();
       Float_t g_y = (Float_t) gp.y();
       Float_t g_z = (Float_t) gp.z();
+    
+      Float_t timeOfFlight = digiItr->tof();
 
       // fill hist
       int region_num = 0 ;
@@ -132,12 +136,13 @@ void ME0DigisValidation::analyze(const edm::Event& e,
           
         for (auto hits=ME0Hits->begin(); hits!=ME0Hits->end(); hits++) {
             
-            int pdgid = hits->particleType();
-            int evtId = hits->eventId().event() == 0 ? 1 : 0;
-            int bx = hits->eventId().bunchCrossing() == 0 ? 1 : 0;
-            int procType = hits->processType() == 0 ? 1 : 0;
+            int particleType_sh = hits->particleType();
+            int evtId_sh = hits->eventId().event() == 0 ? 1 : 0;
+            int bx_sh = hits->eventId().bunchCrossing() == 0 ? 1 : 0;
+            int procType_sh = hits->processType() == 0 ? 1 : 0;
+            Float_t timeOfFlight_sh = hits->tof();
             
-            if(!(abs(pdgid) == 13 && evtId == 1 && bx == 1 && procType == 1)) continue;
+            if(!(abs(particleType_sh) == 13 && evtId_sh == 1 && bx_sh == 1 && procType_sh == 1)) continue;
             
             const ME0DetId id(hits->detUnitId());
             Short_t region_sh = id.region();
@@ -177,6 +182,7 @@ void ME0DigisValidation::analyze(const edm::Event& e,
             
                 me0_strip_dg_num_eta[region_num][layer_num]->Fill(fabs(gp_sh.eta()));
                 me0_strip_dg_num_eta_tot->Fill(fabs(gp_sh.eta()));
+                me0_strip_dg_time_tot_Muon->Fill(timeOfFlight - timeOfFlight_sh);
             
             }
             

@@ -31,6 +31,7 @@ public:
   MonitorElement* me0_strip_dg_dy_local_tot_Muon;
   MonitorElement* me0_strip_dg_dphi_global_tot_Muon;
   MonitorElement* me0_strip_dg_dphi_vs_phi_global_tot_Muon;
+  MonitorElement* me0_strip_dg_time_tot_Muon;
     
   MonitorElement* me0_strip_dg_den_eta[2][6];
   MonitorElement* me0_strip_dg_num_eta[2][6];
