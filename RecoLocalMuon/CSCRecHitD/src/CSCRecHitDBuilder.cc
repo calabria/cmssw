@@ -29,7 +29,7 @@
 
 CSCRecHitDBuilder::CSCRecHitDBuilder( const edm::ParameterSet& ps ): 
   geom_(0),
-  stationToUse_(ps.getUntrackedParameter<int>("stationToUse",1))
+  stationToUse_(ps.getUntrackedParameter<int>("stationToUse",0))
 {
   
   // Receives ParameterSet percolated down from EDProducer	
