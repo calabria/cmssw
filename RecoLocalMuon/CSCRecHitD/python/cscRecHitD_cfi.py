@@ -58,8 +58,15 @@ csc2DRecHits = cms.EDProducer("CSCRecHitDProducer",
     CSCstripWireDeltaTime = cms.int32(8),
     # to be deleted
     CSCStripClusterSize = cms.untracked.int32(3),
+    
+    # case 0  :: all detectors in
+	# case 1  :: ME1/1 switched off
+	# case 2  :: ME2/1 switched off
+    # case 3  :: ME3/1 switched off       
+    # case 4  :: ME4/1 switched off       
+    # default :: all detectors in
 
-    stationToUse = cms.untracked.int32(1), #0 not to use ME11, 1 all the CSC are used
+    stationToUse = cms.untracked.int32(0), #1 not to use ME11, 0 all the CSC are used
 )
 
 
