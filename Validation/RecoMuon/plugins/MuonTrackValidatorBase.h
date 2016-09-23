@@ -21,13 +21,16 @@
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "SimDataFormats/TrackingAnalysis/interface/TrackingParticle.h"
 #include "SimDataFormats/TrackingAnalysis/interface/TrackingParticleFwd.h"
-
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
 #include "DQMServices/Core/interface/MonitorElement.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 
 #include "SimTracker/Common/interface/TrackingParticleSelector.h"
 #include "CommonTools/RecoAlgos/interface/CosmicTrackingParticleSelector.h"
+
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 
 #include <iostream>
 #include <sstream>
@@ -48,6 +51,8 @@ class MuonTrackValidatorBase {
       for (unsigned int www=0;www<label.size();www++){
 	track_Collection_Token[www] = iC.consumes<edm::View<reco::Track> >(label[www]);
       }
+      PuInfo_Token = iC.consumes< std::vector< PileupSummaryInfo > >(edm::InputTag("addPileupInfo"));
+      genP_Token = iC.consumes<reco::GenParticleCollection>(edm::InputTag("genParticles"));
     }
 
   MuonTrackValidatorBase(const edm::ParameterSet& pset):
@@ -560,6 +565,8 @@ h->setBinContent(j+1, 0);
   edm::EDGetTokenT<reco::VertexCollection> vtxTag_Token;
   edm::EDGetTokenT<TrackingParticleCollection> tp_effic_Token;
   edm::EDGetTokenT<TrackingParticleCollection> tp_fake_Token;
+  edm::EDGetTokenT< std::vector< PileupSummaryInfo > > PuInfo_Token;
+  edm::EDGetTokenT<reco::GenParticleCollection> genP_Token;
        
   double min, max;
   int nint;

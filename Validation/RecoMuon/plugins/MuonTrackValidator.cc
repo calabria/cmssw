@@ -565,8 +565,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
   }
     
   Handle<std::vector< PileupSummaryInfo > > PupInfo;
-  event.getByLabel(edm::InputTag("addPileupInfo"), PupInfo);
-
+  event.getByToken(PuInfo_Token, PupInfo);
   std::vector<PileupSummaryInfo>::const_iterator PVI;
 
   int npv = -1;

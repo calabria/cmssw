@@ -17,6 +17,7 @@
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
+#include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
 class MuonTrackProducer : public edm::stream::EDProducer<> {
   public:
@@ -43,6 +44,9 @@ class MuonTrackProducer : public edm::stream::EDProducer<> {
 
     edm::EDGetTokenT<reco::MuonCollection> muonsToken;
     edm::EDGetTokenT<reco::VertexCollection> vxtTag;
+    edm::EDGetTokenT<reco::GenParticleCollection> genP_Token;
+    edm::EDGetTokenT<reco::BeamSpot> bs_Token;
+
     bool useIPxy, useIPz;
     edm::EDGetTokenT<DTRecSegment4DCollection> inputDTRecSegment4DToken_;
     edm::EDGetTokenT<CSCSegmentCollection> inputCSCSegmentToken_;

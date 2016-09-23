@@ -23,7 +23,7 @@
 std::vector<double> MuonTrackProducer::findSimVtx(edm::Event& iEvent){
 
   edm::Handle<reco::GenParticleCollection> genParticles;
-  iEvent.getByToken(consumes<reco::GenParticleCollection>(edm::InputTag("genParticles")), genParticles);
+  iEvent.getByToken(genP_Token, genParticles);
     
   std::vector<double> vtxCoord;
   vtxCoord.push_back(0);
@@ -377,9 +377,9 @@ bool MuonTrackProducer::isTightBS(edm::Event& iEvent, reco::MuonCollection::cons
   if (muon->muonBestTrack().isNonnull() && muon->innerTrack().isNonnull() && muon->globalTrack().isNonnull()){
 		
    	edm::Handle<reco::BeamSpot> recoBeamSpotHandle;
-   	iEvent.getByToken(consumes<reco::BeamSpot>(edm::InputTag("offlineBeamSpot")), recoBeamSpotHandle);
+   	iEvent.getByToken(bs_Token, recoBeamSpotHandle);
    	reco::BeamSpot vertexBeamSpot= *recoBeamSpotHandle;
-        //math::XYZPoint bs(vertexBeamSpot.x(), vertexBeamSpot.y(), vertexBeamSpot.z());
+    //math::XYZPoint bs(vertexBeamSpot.x(), vertexBeamSpot.y(), vertexBeamSpot.z());
 
 	bool trkLayMeas = muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5; 
 	bool isGlb = muon->isGlobalMuon(); 
@@ -610,6 +610,8 @@ bool MuonTrackProducer::isLoose2(edm::Event& iEvent, reco::MuonCollection::const
 MuonTrackProducer::MuonTrackProducer(const edm::ParameterSet& parset) :
   muonsToken(consumes<reco::MuonCollection>(parset.getParameter< edm::InputTag >("muonsTag"))),
   vxtTag(consumes<reco::VertexCollection>(parset.getParameter< edm::InputTag >("vxtTag"))),
+  genP_Token(consumes<reco::GenParticleCollection>(edm::InputTag("genParticles"))),
+  bs_Token(consumes<reco::BeamSpot>(edm::InputTag("offlineBeamSpot"))),
   useIPxy(parset.getUntrackedParameter< bool >("useIPxy", true)),
   useIPz(parset.getUntrackedParameter< bool >("useIPz", true)),
   inputDTRecSegment4DToken_(consumes<DTRecSegment4DCollection>(parset.getParameter<edm::InputTag>("inputDTRecSegment4DCollection"))),

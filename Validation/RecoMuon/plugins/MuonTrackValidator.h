@@ -56,11 +56,14 @@ class MuonTrackValidator : public DQMEDAnalyzer, protected MuonTrackValidatorBas
     
     // Declare consumes (also for the base class)
     bsSrc_Token = consumes<reco::BeamSpot>(bsSrc);
+    vtxTag_Token = consumes<reco::VertexCollection>(vtxInputTag),
     tp_effic_Token = consumes<TrackingParticleCollection>(label_tp_effic);
     tp_fake_Token = consumes<TrackingParticleCollection>(label_tp_fake);
     for (unsigned int www=0;www<label.size();www++){
       track_Collection_Token.push_back(consumes<edm::View<reco::Track> >(label[www]));
     }
+    PuInfo_Token = consumes< std::vector< PileupSummaryInfo > >(edm::InputTag("addPileupInfo"));
+    genP_Token = consumes<reco::GenParticleCollection>(edm::InputTag("genParticles"));
     simToRecoCollection_Token = consumes<reco::SimToRecoCollection>(associatormap);
     recoToSimCollection_Token = consumes<reco::RecoToSimCollection>(associatormap);
 
