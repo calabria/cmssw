@@ -802,11 +802,11 @@ muonAssociation_seq = cms.Sequence(
     #+probeTracks_seq
     #+(tpToTkMuonAssociation+tpToTkmuTrackAssociation)
 #    +(tpToStaSeedAssociation+tpToStaMuonAssociation
-    #+tpToStaUpdMuonAssociation
-    #+tpToGlbMuonAssociation)
+    +tpToStaUpdMuonAssociation
+    +tpToGlbMuonAssociation
+    #)
     #+(
 	#tpToStaMuonAssociation+
-	#tpToStaUpdMuonAssociation
 	#tpToStaUpdMuonAssociation2StTime
 	#+tpToGlbMuonAssociation
     #+tpToLooseMuonAssociation#+tpToLoose5MuonAssociation

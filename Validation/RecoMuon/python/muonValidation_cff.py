@@ -693,21 +693,21 @@ muonValidation_seq = cms.Sequence(
 #   trkProbeTrackVMuonAssoc+trkMuonTrackVTrackAssoc
 #   + staSeedTrackVMuonAssoc
 #	+ staMuonTrackVMuonAssoc + 
-#	staUpdMuonTrackVMuonAssoc
+	staUpdMuonTrackVMuonAssoc
 #	+staUpdMuonTrackVMuonAssoc2St+
-#	staUpdMuonTrackVMuonAssoc2StTime
-#	+ glbMuonTrackVMuonAssoc
+#   +staUpdMuonTrackVMuonAssoc2StTime
+	+ glbMuonTrackVMuonAssoc
 #
 	#+ trkProbeTrackVSelMuonAssoc
 	#+ staUpdMuonTrackVSelMuonAssoc+staUpdMuonTrackVSel2MuonAssoc
 	#+ staUpdMuonTrackVSelMuonAssoc2StTime
- 	staUpdMuonTrackVSel2MuonAssoc2StTime
+ 	+staUpdMuonTrackVSel2MuonAssoc2StTime
     +staUpdMuonTrackVSel2MuonAssoc2StTime05
 	#+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc+glbMuonTrackVSel4MuonAssoc
 	#+ looseMuonTrackVSelMuonAssoc+looseMuonTrackVSel2MuonAssoc
 	#+ looseMuonTrackVSel3MuonAssoc 
 	+ looseMuonTrackVSel0MuonAssoc
-	+ looseMuonTrackVSelUncMuonAssoc
+    #+ looseMuonTrackVSelUncMuonAssoc
 	#+looseMuonTrackVSel4MuonAssoc
 	#+ looseMuonTrackVSel35MuonAssoc
  	+ looseMuonTrackVSel05MuonAssoc
@@ -716,7 +716,7 @@ muonValidation_seq = cms.Sequence(
 	#+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc
 	#+ tightMuonTrackVSel3MuonAssoc 
 	+ tightMuonTrackVSel0MuonAssoc
-	+ tightMuonTrackVSelUncMuonAssoc
+    #+ tightMuonTrackVSelUncMuonAssoc
 	#+tightMuonTrackVSel4MuonAssoc
 	#+ tightMuonTrackVSel35MuonAssoc 
 	+ tightMuonTrackVSel05MuonAssoc

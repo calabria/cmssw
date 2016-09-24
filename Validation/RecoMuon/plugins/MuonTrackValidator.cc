@@ -105,21 +105,19 @@ void MuonTrackValidator::bookHistograms(DQMStore::IBooker& ibooker, edm::Run con
       InputTag algo = label[www];
       string dirName=dirName_;
       if (algo.process()!="")
-	dirName+=algo.process()+"_";
+        dirName+=algo.process()+"_";
       if(algo.label()!="")
-	dirName+=algo.label();
+        dirName+=algo.label()+"_";
       if(algo.instance()!="")
-        dirName+=("_"+algo.instance());
+        dirName+=algo.instance()+"_";
       if (dirName.find("Tracks")<dirName.length()){
-	dirName.replace(dirName.find("Tracks"),6,"Trks");
-      }
-      if (dirName.find("UpdatedAtVtx")<dirName.length()){
-        dirName.replace(dirName.find("UpdatedAtVtx"),12,"UpdAtVtx");
+        dirName.replace(dirName.find("Tracks"),6,"");
       }
       string assoc= associators[ww];
-      if (assoc.find("tpToTkmuTrackAssociation")<assoc.length()){
-        dirName+="_TkAsso";
+      if (assoc.find("Track")<assoc.length()){
+        assoc.replace(assoc.find("Track"),5,"");
       }
+      dirName+=assoc;
       std::replace(dirName.begin(), dirName.end(), ':', '_');
       ibooker.setCurrentFolder(dirName.c_str());
 
@@ -692,17 +690,17 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
         prodRho = sqrt(vertexTP.perp2());
 		prodZ = vertexTP.z();
         prodR = sqrt(prodRho*prodRho + prodZ*prodZ);
-//        int hitsPdgId = tp->pdgId();
+//      int hitsPdgId = tp->pdgId();
 //		int hitsStatus = tp->status();
-//        int bx = tp->eventId().bunchCrossing();
-//        int evtID = tp->eventId().event();
+//      int bx = tp->eventId().bunchCrossing();
+//      int evtID = tp->eventId().event();
 //          
-//        bool isSignalMuon = (abs(tp->pdgId())==13 || abs(tp->pdgId())==11 || abs(tp->pdgId())==15) && !tp->genParticles().empty() && (tp->eventId().event() == 0) && (tp->eventId().bunchCrossing() == 0); //segnale muone
-//        if(isSignalMuon) {
-//            cout<<"-----------------------------------------------------------------------------------------------"<<endl;
-//            cout << "\t Particle pdgId = "<< hitsPdgId << " status: " << hitsStatus << " rho = " << prodRho << ", z = " << prodZ << ", evtID = " << evtID << ", bx = " << bx << ", L = " << prodR << ", pT: " << sqrt(momentumTP.perp2()) << endl;
-//            cout<<"-----------------------------------------------------------------------------------------------"<<endl;
-//        }
+//      bool isSignalMuon = (abs(tp->pdgId())==13 || abs(tp->pdgId())==11 || abs(tp->pdgId())==15) && !tp->genParticles().empty() && (tp->eventId().event() == 0) && (tp->eventId().bunchCrossing() == 0); //segnale muone
+//      if(isSignalMuon) {
+//          cout<<"-----------------------------------------------------------------------------------------------"<<endl;
+//          cout << "\t Particle pdgId = "<< hitsPdgId << " status: " << hitsStatus << " rho = " << prodRho << ", z = " << prodZ << ", evtID = " << evtID << ", bx = " << bx << ", L = " << prodR << ", pT: " << sqrt(momentumTP.perp2()) << endl;
+//          cout<<"-----------------------------------------------------------------------------------------------"<<endl;
+//      }
           
         if(!(fabs(prodRho) < prodRho_ && fabs(prodZ) < prodZ_)) continue;
 	    //if(! isSignalFromZgamma(tp)) continue;
