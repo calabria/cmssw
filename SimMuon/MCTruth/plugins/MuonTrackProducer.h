@@ -27,12 +27,7 @@ class MuonTrackProducer : public edm::stream::EDProducer<> {
     bool isTrackerTightMuon(const reco::MuonCollection::const_iterator muonRef);
     bool isIsolatedMuon(const reco::MuonCollection::const_iterator muonRef);
     bool isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
-    bool isLooseMod(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
-    bool isSoft(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
     bool isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
-    bool isTightBS(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
-    bool isTightMod(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
-    bool isLoose2(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
     virtual ~MuonTrackProducer();
 
   private:
@@ -43,7 +38,7 @@ class MuonTrackProducer : public edm::stream::EDProducer<> {
     edm::Handle<CSCSegmentCollection> cscSegmentCollectionH_;
 
     edm::EDGetTokenT<reco::MuonCollection> muonsToken;
-    edm::EDGetTokenT<reco::VertexCollection> vxtTag;
+    edm::EDGetTokenT<reco::VertexCollection> vtx_Token;
     edm::EDGetTokenT<reco::GenParticleCollection> genP_Token;
     edm::EDGetTokenT<reco::BeamSpot> bs_Token;
 
