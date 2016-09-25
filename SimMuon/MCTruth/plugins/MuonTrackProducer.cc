@@ -65,7 +65,7 @@ std::vector<double> MuonTrackProducer::findSimVtx(edm::Event& iEvent){
             
         }
 
-		if(fabs(id) == 23 && nMothers == 2) std::cout<<"ID "<<id<<" Status "<<status<<std::endl;
+		//if(fabs(id) == 23 && nMothers == 2) std::cout<<"ID "<<id<<" Status "<<status<<std::endl;
 
 		else if(abs(id) == 13 && status == 1 && nMothers == 0){//For muon gun samples
 
