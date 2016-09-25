@@ -55,8 +55,17 @@ std::vector<double> MuonTrackProducer::findSimVtx(edm::Event& iEvent){
 			vtxCoord[6] = (double)(itg->vz());
 
 		}
+        else if((abs(id) == 23 || abs(id) == 22) && nMothers == 2){//For ZMM samples
+            
+            vtxCoord[0] = 1;
+            
+            vtxCoord[4] = (double)(itg->vx());
+            vtxCoord[5] = (double)(itg->vy());
+            vtxCoord[6] = (double)(itg->vz());
+            
+        }
 
-		//if(fabs(id) == 13) std::cout<<"ID "<<id<<" Status "<<status<<std::endl;
+		if(fabs(id) == 23 && nMothers == 2) std::cout<<"ID "<<id<<" Status "<<status<<std::endl;
 
 		else if(abs(id) == 13 && status == 1 && nMothers == 0){//For muon gun samples
 
