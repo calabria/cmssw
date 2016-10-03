@@ -689,9 +689,10 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
         else continue;
       }
       else if (trackType == "gemmuon") {
+        //std::cout<<"gemmuon: "<<muon->innerTrack().isNonnull()<<" "<<muon->isGEMMuon()<<std::endl;
         if (muon->innerTrack().isNonnull() && muon->isGEMMuon()){
             trackref = muon->innerTrack();
-            //std::cout<<"gemmuon: "<<trackref->pt()<<std::endl;
+           //std::cout<<"gemmuon: "<<trackref->pt()<<std::endl;
         }
         else continue;
       }

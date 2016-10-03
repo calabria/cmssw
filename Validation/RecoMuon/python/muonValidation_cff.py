@@ -825,8 +825,8 @@ muonValidation_seq = cms.Sequence(
     #+ tightModMuonTrackVSelUncMuonAssoc
 # 	+ tightModMuonTrackVSel05MuonAssoc
 #   + tightModMuonTrackVSel05SimMuonAssoc
-#   +gemMuonTrackVMuonAssoc
-#   +me0MuonTightTrackVMuonAssoc
+    +gemMuonTrackVMuonAssoc
+#    +me0MuonTightTrackVMuonAssoc
 #
 #	+ recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt
 	#+ bestMuonLooseTrackVTrackAssoc #+ bestMuonLooseTrackVTrackAssoc5
