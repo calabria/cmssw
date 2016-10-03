@@ -979,7 +979,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
       //
       //fill reconstructed track histograms
       //
-      cout << "\n# of reco::Tracks with "
+      edm::LogVerbatim("MuonTrackValidator") << "\n# of reco::Tracks with "
 					     << label[www].process()<<":"
 					     << label[www].label()<<":"
 					     << label[www].instance()
@@ -987,7 +987,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
       int at = 0;
       int rT = 0;
       for(edm::View<Track>::size_type i=0; i<trackCollectionSize; ++i){
-          
+                    
         bool Track_is_matched = false;
         bool Track_is_matched_SignalMuon = false;
         bool Track_is_matched_SignalBkg = false;
@@ -1000,7 +1000,6 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
         bool Track_is_matched_075 = false;
         bool Track_is_matched_050 = false;
 	RefToBase<Track> track(trackCollection, i);
-          
     //if(track->hitPattern().muonStationsWithValidHits() <= 1) continue;
     //if((track->numberOfValidHits()) == 0) continue;
 	rT++;
