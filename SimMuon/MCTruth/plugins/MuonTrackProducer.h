@@ -28,6 +28,8 @@ class MuonTrackProducer : public edm::stream::EDProducer<> {
     bool isIsolatedMuon(const reco::MuonCollection::const_iterator muonRef);
     bool isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
     bool isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
+    bool isLooseMod(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
+    bool isTightMod(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
     virtual ~MuonTrackProducer();
 
   private:

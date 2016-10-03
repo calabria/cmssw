@@ -557,8 +557,12 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
   if (UseAssociators) {
     edm::Handle<reco::TrackToTrackingParticleAssociator> theAssociator;
     for (unsigned int w=0;w<associators.size();w++) {
+        cout<<"ngul a sord "<<associators[w].c_str()<<endl;
       event.getByLabel(associators[w],theAssociator);
+        cout<<"ngul a sord "<<theAssociator.isValid()<<endl;
       associator.push_back( theAssociator.product() );
+        cout<<"ngul a sord"<<endl;
+
     }
   }
     
@@ -1166,7 +1170,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
           
     h_recoetaphi[w]->Fill(track->momentum().eta(), track->momentum().phi());
     if(Track_is_matched_SignalMuon) h_assoc2etaphi[w]->Fill(track->momentum().eta(), track->momentum().phi());
-	
+
 	//Compute fake rate vs eta
 	for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
 	  if (getEta(track->momentum().eta())>etaintervals[w][f]&&
