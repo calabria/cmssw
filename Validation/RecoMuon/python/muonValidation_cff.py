@@ -881,7 +881,8 @@ muonValidationCosmic_seq = cms.Sequence(
 # The full offline muon validation sequence
 recoMuonValidation = cms.Sequence(
     muonAssociation_seq * muonValidation_seq
-    #+ muonValidationTEV_seq + muonValidationRefit_seq + muonValidationDisplaced_seq
+    #+ muonValidationTEV_seq + muonValidationRefit_seq
+    + muonValidationDisplaced_seq
 )
 
 from Configuration.StandardSequences.Eras import eras

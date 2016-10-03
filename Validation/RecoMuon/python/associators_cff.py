@@ -941,13 +941,6 @@ tpToGlbCosmic1LegSelMuonAssociation.includeZeroHitMuons = False
 #
 
 muonAssociation_seq = cms.Sequence(
-    probeTracks_seq+tpToTkMuonAssociation
-    +trackAssociatorByHits+tpToTkmuTrackAssociation
-    +seedsOfSTAmuons_seq+tpToStaSeedAssociation+tpToStaMuonAssociation+tpToStaUpdMuonAssociation
-    +extractedMuonTracks_seq+tpToGlbMuonAssociation
-)
-
-muonAssociation_seq = cms.Sequence(
     selectedVertices
     + muonColl_seq
     + extractedMuonTracks_seq
