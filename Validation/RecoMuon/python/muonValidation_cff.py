@@ -783,18 +783,6 @@ recoMuonVMuAssoc_tgt.beamSpot = 'offlineBeamSpot'
 recoMuonVMuAssoc_tgt.primaryVertex = 'offlinePrimaryVertices'
 
 # Muon validation sequences
-#muonValidation_seq = cms.Sequence(
-#    probeTracks_seq + tpToTkMuonAssociation + trkProbeTrackVMuonAssoc
-#    +trackAssociatorByHits + tpToTkmuTrackAssociation + trkMuonTrackVTrackAssoc
-#    +seedsOfSTAmuons_seq + tpToStaSeedAssociation + staSeedTrackVMuonAssoc
-#    +tpToStaMuonAssociation + staMuonTrackVMuonAssoc
-#    +tpToStaUpdMuonAssociation + staUpdMuonTrackVMuonAssoc
-#    +extractedMuonTracks_seq + tpToGlbMuonAssociation + glbMuonTrackVMuonAssoc
-#    +muonAssociatorByHitsNoSimHitsHelperTrk +recoMuonVMuAssoc_trk
-#    +muonAssociatorByHitsNoSimHitsHelperStandalone +recoMuonVMuAssoc_sta
-#    +muonAssociatorByHitsNoSimHitsHelperGlobal +recoMuonVMuAssoc_glb
-#    +muonAssociatorByHitsNoSimHitsHelperTight +recoMuonVMuAssoc_tgt
-#)
 
 muonValidation_seq = cms.Sequence(
 #   trkProbeTrackVMuonAssoc+trkMuonTrackVTrackAssoc
