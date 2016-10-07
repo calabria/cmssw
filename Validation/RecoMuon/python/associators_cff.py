@@ -119,7 +119,6 @@ bestMuonLooseMod5 = cms.EDProducer("MuonTrackProducer",
    trackType = cms.string('globalTrackLooseMod')
 )
 
-
 bestMuonTightMod = cms.EDProducer("MuonTrackProducer",
    muonsTag = cms.InputTag("muons"),
    inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
@@ -158,6 +157,11 @@ me0Muon = cms.EDProducer("MuonTrackProducer",
    trackType = cms.string('me0muon')
 )
 
+me0MuonInd = cms.EDProducer("ME0MuonTrackCollProducer",
+    me0MuonTag = cms.InputTag("me0SegmentMatching"),
+    selectionTags = cms.vstring('All'),
+)
+
 muonColl_seq = cms.Sequence(
     #staMuonsPt5 *
     muon2StatTiming *
@@ -169,7 +173,7 @@ bestMuon_seq = cms.Sequence(
     *bestMuonTight * bestMuonTight5
     *bestMuonLooseMod * bestMuonLooseMod5
     *bestMuonTightMod * bestMuonTightMod5
-    *gemMuon #* me0Muon
+    *gemMuon *me0MuonInd #* me0Muon
 )
 
 import SimMuon.MCTruth.MuonTrackProducer_cfi
@@ -399,7 +403,8 @@ tpToGlbMuonAssociation.UseMuon = True
 #######################################################################
 
 tpToME0MuonTightMuonAssociation.tpTag = 'mix:MergedTrackTruth'
-tpToME0MuonTightMuonAssociation.tracksTag = 'me0Muon'
+#tpToME0MuonTightMuonAssociation.tracksTag = 'me0Muon'
+tpToME0MuonTightMuonAssociation.tracksTag = 'me0MuonInd'
 tpToME0MuonTightMuonAssociation.UseTracker = True
 tpToME0MuonTightMuonAssociation.UseMuon = False
 
@@ -951,7 +956,7 @@ muonAssociation_seq = cms.Sequence(
 #    +(tpToStaSeedAssociation+tpToStaMuonAssociation
     +tpToStaUpdMuonAssociation
     +tpToGlbMuonAssociation
-#    +tpToME0MuonTightMuonAssociation
+    +tpToME0MuonTightMuonAssociation
     +tpToGEMMuonMuonAssociation
     #)
     #+(
