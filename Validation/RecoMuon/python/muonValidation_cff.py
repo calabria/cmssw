@@ -45,10 +45,25 @@ bestMuonTightTrackVTrackAssoc5.usemuon = True
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+gemMuonPt5TrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+gemMuonPt5TrackVMuonAssoc.associatormap = 'tpToGEMMuonMuonAssociation'
+gemMuonPt5TrackVMuonAssoc.associators = ('MuonAssociationByHits',)
+gemMuonPt5TrackVMuonAssoc.label = ('gemMuon',)
+gemMuonPt5TrackVMuonAssoc.minRapidityTP = 1.6
+gemMuonPt5TrackVMuonAssoc.maxRapidityTP = 2.4
+gemMuonPt5TrackVMuonAssoc.useAbsEta = True
+gemMuonPt5TrackVMuonAssoc.ptMinTP = 5.0
+gemMuonPt5TrackVMuonAssoc.usetracker = True
+gemMuonPt5TrackVMuonAssoc.usemuon = False
+gemMuonPt5TrackVMuonAssoc.dirName = 'Muons/RecoMuonV/MultiTrack/Cut5/'
+
 gemMuonTrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 gemMuonTrackVMuonAssoc.associatormap = 'tpToGEMMuonMuonAssociation'
 gemMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
 gemMuonTrackVMuonAssoc.label = ('gemMuon',)
+gemMuonTrackVMuonAssoc.minRapidityTP = 1.6
+gemMuonTrackVMuonAssoc.maxRapidityTP = 2.4
+gemMuonTrackVMuonAssoc.useAbsEta = True
 gemMuonTrackVMuonAssoc.usetracker = True
 gemMuonTrackVMuonAssoc.usemuon = False
 
@@ -57,10 +72,24 @@ me0MuonTightTrackVMuonAssoc.associatormap = 'tpToME0MuonTightMuonAssociation'
 me0MuonTightTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
 #me0MuonTightTrackVMuonAssoc.label = ('me0Muon',)
 me0MuonTightTrackVMuonAssoc.label = ('me0MuonInd',)
-me0MuonTightTrackVMuonAssoc.minRapidityTP = -2.8
+me0MuonTightTrackVMuonAssoc.minRapidityTP = 2.0
 me0MuonTightTrackVMuonAssoc.maxRapidityTP = 2.8
+me0MuonTightTrackVMuonAssoc.useAbsEta = True
 me0MuonTightTrackVMuonAssoc.usetracker = True
 me0MuonTightTrackVMuonAssoc.usemuon = False
+
+me0MuonTightPt5TrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+me0MuonTightPt5TrackVMuonAssoc.associatormap = 'tpToME0MuonTightMuonAssociation'
+me0MuonTightPt5TrackVMuonAssoc.associators = ('MuonAssociationByHits',)
+#me0MuonTightPt5TrackVMuonAssoc = ('me0Muon',)
+me0MuonTightPt5TrackVMuonAssoc.label = ('me0MuonInd',)
+me0MuonTightPt5TrackVMuonAssoc.minRapidityTP = 2.0
+me0MuonTightPt5TrackVMuonAssoc.maxRapidityTP = 2.8
+me0MuonTightPt5TrackVMuonAssoc.useAbsEta = True
+me0MuonTightPt5TrackVMuonAssoc.ptMinTP = 5.0
+me0MuonTightPt5TrackVMuonAssoc.usetracker = True
+me0MuonTightPt5TrackVMuonAssoc.usemuon = False
+me0MuonTightPt5TrackVMuonAssoc.dirName = 'Muons/RecoMuonV/MultiTrack/Cut5/'
 
 #-------------------------------------------------------------------------------------------------------------------
 
@@ -829,7 +858,9 @@ muonValidation_seq = cms.Sequence(
 # 	+ tightModMuonTrackVSel05MuonAssoc
 #   + tightModMuonTrackVSel05SimMuonAssoc
     +gemMuonTrackVMuonAssoc
+    +gemMuonPt5TrackVMuonAssoc
     +me0MuonTightTrackVMuonAssoc
+    +me0MuonTightPt5TrackVMuonAssoc
 #
 #	+ recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt
 	#+ bestMuonLooseTrackVTrackAssoc #+ bestMuonLooseTrackVTrackAssoc5
