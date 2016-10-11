@@ -62,12 +62,12 @@ muonTrackValidator = cms.EDAnalyzer("MuonTrackValidator",
     # Parameters for plots                                    
     useFabsEta = cms.bool(True),
     min = cms.double(0),
-    max = cms.double(2.8),
-    nint = cms.int32(28),
+    max = cms.double(2.4),
+    nint = cms.int32(24),
     #
     minRes = cms.double(0),
-    maxRes = cms.double(2.8),
-    nintRes = cms.int32(14),
+    maxRes = cms.double(2.4),
+    nintRes = cms.int32(12),
     #
     ptRes_nbin = cms.int32(100),                                   
     ptRes_rangeMin = cms.double(-0.3),

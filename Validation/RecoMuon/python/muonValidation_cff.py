@@ -77,6 +77,10 @@ me0MuonTightTrackVMuonAssoc.maxRapidityTP = 2.8
 me0MuonTightTrackVMuonAssoc.useAbsEta = True
 me0MuonTightTrackVMuonAssoc.usetracker = True
 me0MuonTightTrackVMuonAssoc.usemuon = False
+me0MuonTightTrackVMuonAssoc.max = 2.8
+me0MuonTightTrackVMuonAssoc.nint = 28
+me0MuonTightTrackVMuonAssoc.maxRes = 2.8
+me0MuonTightTrackVMuonAssoc.nintRes = 14
 
 me0MuonTightPt5TrackVMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 me0MuonTightPt5TrackVMuonAssoc.associatormap = 'tpToME0MuonTightMuonAssociation'
@@ -90,6 +94,10 @@ me0MuonTightPt5TrackVMuonAssoc.ptMinTP = 5.0
 me0MuonTightPt5TrackVMuonAssoc.usetracker = True
 me0MuonTightPt5TrackVMuonAssoc.usemuon = False
 me0MuonTightPt5TrackVMuonAssoc.dirName = 'Muons/RecoMuonV/MultiTrack/Cut5/'
+me0MuonTightPt5TrackVMuonAssoc.max = 2.8
+me0MuonTightPt5TrackVMuonAssoc.nint = 28
+me0MuonTightPt5TrackVMuonAssoc.maxRes = 2.8
+me0MuonTightPt5TrackVMuonAssoc.nintRes = 14
 
 #-------------------------------------------------------------------------------------------------------------------
 
