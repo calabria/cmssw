@@ -42,6 +42,7 @@ namespace {
                     param.getParameter<double>("ptMinTP"),
                     param.getParameter<double>("minRapidityTP"),
                     param.getParameter<double>("maxRapidityTP"),
+                    param.getParameter<double>("useAbsEta"),
                     param.getParameter<double>("tipTP"),
                     param.getParameter<double>("lipTP"),
                     param.getParameter<int>("minHitTP"),
