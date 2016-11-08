@@ -396,6 +396,19 @@ muonValidation_seq = cms.Sequence(
     +muonAssociatorByHitsNoSimHitsHelperTight +recoMuonVMuAssoc_tgt
 )
 
+muonValidation_reduced_seq = cms.Sequence(
+    probeTracks_seq + tpToTkMuonAssociation + trkProbeTrackVMuonAssoc
+#    +trackAssociatorByHits + tpToTkmuTrackAssociation + trkMuonTrackVTrackAssoc
+#    +seedsOfSTAmuons_seq + tpToStaSeedAssociation + staSeedTrackVMuonAssoc
+#    +tpToStaMuonAssociation + staMuonTrackVMuonAssoc
+    +tpToStaUpdMuonAssociation + staUpdMuonTrackVMuonAssoc
+    +extractedMuonTracks_seq + tpToGlbMuonAssociation + glbMuonTrackVMuonAssoc
+#    +muonAssociatorByHitsNoSimHitsHelperTrk +recoMuonVMuAssoc_trk
+#    +muonAssociatorByHitsNoSimHitsHelperStandalone +recoMuonVMuAssoc_sta
+#    +muonAssociatorByHitsNoSimHitsHelperGlobal +recoMuonVMuAssoc_glb
+#    +muonAssociatorByHitsNoSimHitsHelperTight +recoMuonVMuAssoc_tgt
+)
+
 muonValidationTEV_seq = cms.Sequence(
     tpToTevFirstMuonAssociation + tevMuonFirstTrackVMuonAssoc
     +tpToTevPickyMuonAssociation + tevMuonPickyTrackVMuonAssoc
@@ -441,13 +454,15 @@ recoCosmicMuonValidation = cms.Sequence(
 gemMuonValidation = cms.Sequence(extractGemMuonsTracks_seq + tpToGEMMuonMuonAssociation + gemMuonTrackVMuonAssoc)
 me0MuonValidation = cms.Sequence(extractMe0MuonsTracks_seq + tpToME0MuonMuonAssociation + me0MuonTrackVMuonAssoc)
 
-_run3_muonValidation = muonValidation_seq.copy()
+_run3_muonValidation = muonValidation_reduced_seq.copy()
 _run3_muonValidation += gemMuonValidation
 
 _phase2_muonValidation = _run3_muonValidation.copy()
 _phase2_muonValidation += me0MuonValidation
 
 from Configuration.Eras.Modifier_run3_GEM_cff import run3_GEM
-run3_GEM.toReplaceWith( muonValidation_seq, _run3_muonValidation )
+#run3_GEM.toReplaceWith( muonValidation_seq, _run3_muonValidation )
+run3_GEM.toReplaceWith( recoMuonValidation, _run3_muonValidation )
 from Configuration.Eras.Modifier_phase2_muon_cff import phase2_muon
-phase2_muon.toReplaceWith( muonValidation_seq, _phase2_muonValidation )
+#phase2_muon.toReplaceWith( muonValidation_seq, _phase2_muonValidation )
+phase2_muon.toReplaceWith( recoMuonValidation, _phase2_muonValidation )
