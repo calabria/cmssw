@@ -1,7 +1,7 @@
 <lcgdict>
 
-<class name="ME0DigiSimLink" ClassVersion="1">
-   <version ClassVersion="1" checksum="665696725"/>
+<class name="ME0DigiSimLink" ClassVersion="0">
+   <version ClassVersion="0" checksum="2583882460"/>
  </class>
  <class name="edm::DetSet<ME0DigiSimLink>"/>
  <class name="std::vector<ME0DigiSimLink>"/>
