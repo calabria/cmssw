@@ -50,6 +50,11 @@ ME0PreRecoGaussianModel::~ME0PreRecoGaussianModel()
 
 void ME0PreRecoGaussianModel::simulateSignal(const ME0EtaPartition* roll, const edm::PSimHitContainer& simHits, CLHEP::HepRandomEngine* engine)
 {
+
+  detectorHitMap_.clear();
+  theMe0DigiSimLinks_.clear();
+  theMe0DigiSimLinks_ = ME0DigiSimLinks(roll->id().rawId());
+    
 for (const auto & hit: simHits)
 {
   // Digitize only Muons?
