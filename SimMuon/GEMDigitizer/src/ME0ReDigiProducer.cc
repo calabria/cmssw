@@ -72,7 +72,7 @@ void ME0ReDigiProducer::beginRun(const edm::Run&, const edm::EventSetup& eventSe
     const GlobalPoint centralGP(roll->toGlobal(centralLP));
     const float centralTOF(centralGP.mag() / 29.98); //speed of light
     centralTOF_.push_back(centralTOF);
-    LogDebug("ME0ReDigiProducer")
+      std::cout
       << "ME0DetId " << detId << " central TOF " << centralTOF << std::endl;
   }
   nPartitions_ = centralTOF_.size()/6;
@@ -129,23 +129,28 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
       // selection
       if (reDigitizeOnlyMuons_ and fabs(me0Digi.pdgid()) != 13) continue;
       if (!reDigitizeNeutronBkg_ and !me0Digi.prompt()) continue;
+        
+        std::cout<<"pdgid "<<me0Digi.pdgid()<<" prompt "<<me0Digi.prompt()<<std::endl;
 
       // scale for luminosity
-      if (CLHEP::RandFlat::shoot(engine) > instLumi_*1.0/10) continue;
+      if (CLHEP::RandFlat::shoot(engine) > instLumi_*1.0) continue;
 
       edm::LogVerbatim("ME0ReDigiProducer")
         << "\tPassed selection" << std::endl;
 
       // time resolution
-      float newTof(me0Digi.tof());
-      if (smearTiming_) newTof += CLHEP::RandGaussQ::shoot(engine, 0, timeResolution_);
+        float newTof(me0Digi.tof());
+        if (smearTiming_) newTof += CLHEP::RandGaussQ::shoot(engine, 0, timeResolution_);
 
       // arrival time in ns
-      const float t0(centralTOF_[ nPartitions_ * (detId.layer() -1) + detId.roll() - 1 ]);
+      int index = nPartitions_ * (detId.layer() -1) + detId.roll() - 1;
+      if(detId.roll() == 0) index = nPartitions_ * (detId.layer() -1) + detId.roll();
+      std::cout<<"size "<<centralTOF_.size()<<" nPartitions "<<nPartitions_<<" layer "<<detId.layer()<<" roll "<<detId.roll()<<" index "<<index<<std::endl;
+      const float t0(centralTOF_[ index ]);
       const float correctedNewTof(newTof - t0);
 
-      edm::LogVerbatim("ME0ReDigiProducer")
-        << "\tnew TOF " << newTof << " corrected new TOF " << correctedNewTof << std::endl;
+        std::cout
+        <<" t0 "<< t0 << " originalTOF " << me0Digi.tof() << "\tnew TOF " << newTof << " corrected new TOF " << correctedNewTof << std::endl;
 
       // calculate the new time in ns
       int newTime = correctedNewTof;
@@ -193,17 +198,18 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
       if (deltaY > height)  --newRoll;
       if (deltaY < -height) ++newRoll;
 
-      // get new detId and ME0EtaPartition
-      ME0DetId out_detId(detId.region(), detId.layer(), detId.chamber(), newRoll);      
-      const ME0EtaPartition* newPart = geometry_->etaPartition(out_detId);
-      // sanity-check, also compatable with old geo with only 1 etaPartition
+      // check if new roll is possible
+      if (newRoll < ME0DetId::minRollId || newRoll > ME0DetId::maxRollId)
+        newRoll = detId.roll();
+
+      // get new detId and ME0EtaPartition      
+      const ME0EtaPartition* newPart = geometry_->etaPartition(ME0DetId(detId.region(), detId.layer(), detId.chamber(), newRoll));      
+      // check if new roll is in geometry
       if (!newPart) newPart = roll;
-      edm::LogVerbatim("ME0ReDigiProducer")
-        << "\tnew roll " << newRoll << std::endl;
+      edm::LogVerbatim("ME0ReDigiProducer") << "\tnew roll " << newPart << std::endl;
 
       // new local Point after all smearing
       const LocalPoint lp = newPart->toLocal(newGP);
-
 
       float newY(lp.y());
       // new hit has y coordinate in the center of the roll when using discretizeY
@@ -227,7 +233,7 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
       // make a new ME0DetId
       ME0DigiPreReco out_digi(newX, newY, targetXResolution, targetYResolution, me0Digi.corr(), newTime, me0Digi.pdgid(), me0Digi.prompt());
 
-      output_digis.insertDigi(out_detId, out_digi);
+      output_digis.insertDigi(newPart->id(), out_digi);
     }
   }
 }
