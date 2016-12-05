@@ -1676,6 +1676,8 @@ from  Configuration.PyReleaseValidation.upgradeWorkflowComponents import *
 defaultDataSets={}
 defaultDataSets['2017']='CMSSW_8_1_0_pre16-81X_upgrade2017_realistic_v22-v'
 defaultDataSets['2017Design']='CMSSW_8_1_0_pre16-81X_upgrade2017_design_IdealBS_v6-v'
+defaultDataSets['2017Muon']=''
+defaultDataSets['2017MuonDesign']=''
 defaultDataSets['2023D1']=''
 defaultDataSets['2023D2']=''
 defaultDataSets['2023D3']=''
