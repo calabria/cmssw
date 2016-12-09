@@ -7,15 +7,15 @@ ME0DigiPreRecoModel::fillDigis(int rollDetId, ME0DigiPreRecoCollection& digis)
   for (auto d: digi_)
   {
     digis.insertDigi(ME0DetId(rollDetId), d);
-    addLinksWithPartId(d.x(), d.y(), d.ex(), d.ey(), d.corr(), d.tof(), d.pdgid());
+    addLinksWithPartId(d.x(), d.y(), d.ex(), d.ey(), d.corr(), d.tof(), d.pdgid(), d.prompt());
   }
   digi_.clear();
 }
 
-void ME0DigiPreRecoModel::addLinksWithPartId(float x, float y, float ex, float ey, float corr, float tof, int pdgid)
+void ME0DigiPreRecoModel::addLinksWithPartId(float x, float y, float ex, float ey, float corr, float tof, int pdgid, int prompt)
 {
     
-    ME0DigiPreReco digi(x, y, ex, ey, corr, tof, pdgid);
+    ME0DigiPreReco digi(x, y, ex, ey, corr, tof, pdgid, prompt);
     std::pair<DetectorHitMap::iterator, DetectorHitMap::iterator> channelHitItr
     = detectorHitMap_.equal_range(digi);
     

@@ -55,7 +55,7 @@ public:
 protected:
   std::set< ME0DigiPreReco > digi_;
     
-  void addLinksWithPartId(float x, float y, float ex, float ey, float corr, float tof, int pdgid);
+  void addLinksWithPartId(float x, float y, float ex, float ey, float corr, float tof, int pdgid, int prompt);
 
   ME0DigiPreRecoModel(const edm::ParameterSet&) {}
 

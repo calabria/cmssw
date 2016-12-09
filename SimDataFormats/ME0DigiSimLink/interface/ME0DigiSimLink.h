@@ -37,7 +37,8 @@ public:
   float getErrY()                   const{return _digi.ey();}
   float getCorr()                   const{return _digi.corr();}
   float getTof()                    const{return _digi.tof();}
-  float getPdgid()                  const{return _digi.pdgid();}
+  int getPdgid()                    const{return _digi.pdgid();}
+  int getPrompt()                   const{return _digi.prompt();}
 
   Local3DPoint getEntryPoint()      const{return _entryPoint;}
   LocalVector getMomentumAtEntry()  const{return _momentumAtEntry;}
