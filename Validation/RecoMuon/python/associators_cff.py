@@ -943,8 +943,6 @@ muonAssociation_seq = cms.Sequence(
 #    +(tpToStaSeedAssociation+tpToStaMuonAssociation
     +tpToStaUpdMuonAssociation
     +tpToGlbMuonAssociation
-    +tpToME0MuonMuonAssociation
-    +tpToGEMMuonMuonAssociation
     #)
     #+(
 	#tpToStaMuonAssociation+
