@@ -81,7 +81,6 @@ void ME0ReDigiProducer::beginRun(const edm::Run&, const edm::EventSetup& eventSe
       << "ME0DetId " << detId << " central TOF " << centralTOF;
   }
   nPartitions_ = centralTOF_.size()/6;
-    std::cout<<"#partitions: "<<nPartitions_<<std::endl;
 }
 
 
