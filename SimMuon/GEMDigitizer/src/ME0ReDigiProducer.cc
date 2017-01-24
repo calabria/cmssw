@@ -66,7 +66,8 @@ void ME0ReDigiProducer::beginRun(const edm::Run&, const edm::EventSetup& eventSe
   geometry_= &*hGeom;
 
   LogDebug("ME0ReDigiProducer")
-    << "Extracting central TOFs:" << std::endl;
+    << "Extracting central TOFs:";
+
   // get the central TOFs for the eta partitions
   for(auto &roll: geometry_->etaPartitions()){
     const ME0DetId detId(roll->id());
@@ -75,8 +76,9 @@ void ME0ReDigiProducer::beginRun(const edm::Run&, const edm::EventSetup& eventSe
     const GlobalPoint centralGP(roll->toGlobal(centralLP));
     const float centralTOF(centralGP.mag() / 29.98); //speed of light
     centralTOF_.push_back(centralTOF);
+      
     LogDebug("ME0ReDigiProducer")
-      << "ME0DetId " << detId << " central TOF " << centralTOF << std::endl;
+      << "ME0DetId " << detId << " central TOF " << centralTOF;
   }
   nPartitions_ = centralTOF_.size()/6;
     std::cout<<"#partitions: "<<nPartitions_<<std::endl;
@@ -128,7 +130,7 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
     for (auto d = digis.first; d != digis.second; ++d) {
       const ME0DigiPreReco me0Digi = *d;
       edm::LogVerbatim("ME0ReDigiProducer")
-        << "Check detId " << detId << " digi " << me0Digi << std::endl;
+        << "Check detId " << detId << " digi " << me0Digi;
 
       // selection
       if (reDigitizeOnlyMuons_ and std::abs(me0Digi.pdgid()) != 13) continue;
@@ -139,7 +141,7 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
 	  if (CLHEP::RandFlat::shoot(engine) > instLumi_*1.0/(instLumiDefault_*rateFact_)) continue;
       
       edm::LogVerbatim("ME0ReDigiProducer")
-        << "\tPassed selection" << std::endl;
+        << "\tPassed selection";
 
       // time resolution
       float newTof(me0Digi.tof());
@@ -148,14 +150,16 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
       // arrival time in ns
       //const float t0(centralTOF_[ nPartitions_ * (detId.layer() -1) + detId.roll() - 1 ]);
       int index = nPartitions_ * (detId.layer() -1) + detId.roll() - 1;
+        
       edm::LogVerbatim("ME0ReDigiProducer")
-	<<"size "<<centralTOF_.size()<<" nPartitions "<<nPartitions_<<" layer "<<detId.layer()<<" roll "<<detId.roll()<<" index "<<index<<std::endl;
+	    <<"size "<<centralTOF_.size()<<" nPartitions "<<nPartitions_
+        <<" layer "<<detId.layer()<<" roll "<<detId.roll()<<" index "<<index;
       
       const float t0(centralTOF_[ index ]);      
       const float correctedNewTof(newTof - t0);
 
       edm::LogVerbatim("ME0ReDigiProducer")
-        <<" t0 "<< t0 << " originalTOF " << me0Digi.tof() << "\tnew TOF " << newTof << " corrected new TOF " << correctedNewTof << std::endl;
+        <<" t0 "<< t0 << " originalTOF " << me0Digi.tof() << "\tnew TOF " << newTof << " corrected new TOF " << correctedNewTof;
 
       // calculate the new time in ns
       float newTime = correctedNewTof;
@@ -169,7 +173,7 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
       }
 
       edm::LogVerbatim("ME0ReDigiProducer")
-        << "\tBX " << newTime << std::endl;
+        << "\tBX " << newTime;
 
       // calculate the position in global coordinates
       const LocalPoint oldLP(me0Digi.x(), me0Digi.y(), 0);
@@ -205,26 +209,26 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
       if (newLP.y() < -height) ++newRoll;
 
       if (newRoll != detId.roll()){
-	// check if new roll is possible
-	if (newRoll < ME0DetId::minRollId || newRoll > ME0DetId::maxRollId){
-	  newRoll = detId.roll();
-	}
-	else {	 
-	  // roll changed, get new ME0EtaPartition
-	  newPart = geometry_->etaPartition(ME0DetId(detId.region(), detId.layer(), detId.chamber(), newRoll));
-	}
+          // check if new roll is possible
+          if (newRoll < ME0DetId::minRollId || newRoll > ME0DetId::maxRollId){
+              newRoll = detId.roll();
+          }
+          else {
+              // roll changed, get new ME0EtaPartition
+              newPart = geometry_->etaPartition(ME0DetId(detId.region(), detId.layer(), detId.chamber(), newRoll));
+          }
 
-	// if new ME0EtaPartition fails or roll not changed
-	if (!newPart or newRoll == detId.roll()){
-	  newPart = roll;
-	  // set local y to edge of etaPartition
-	  if (newLP.y() > height)  newLP = LocalPoint(newLP.x(), height, newLP.z());
-	  if (newLP.y() < -height) newLP = LocalPoint(newLP.x(), -height, newLP.z());	
-	}
-	else {// new partiton, get new local point
-	  newLP = newPart->toLocal(newGP);
-	}
-      }	
+          // if new ME0EtaPartition fails or roll not changed
+          if (!newPart or newRoll == detId.roll()){
+              newPart = roll;
+              // set local y to edge of etaPartition
+              if (newLP.y() > height)  newLP = LocalPoint(newLP.x(), height, newLP.z());
+              if (newLP.y() < -height) newLP = LocalPoint(newLP.x(), -height, newLP.z());
+          }
+          else {// new partiton, get new local point
+              newLP = newPart->toLocal(newGP);
+          }
+      }
 
       // smearing in X
       double newXResolutionCor = correctSigmaU(roll, newLP.y());
@@ -233,7 +237,7 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
       const float targetXResolution(sqrt(newXResolutionCor*newXResolutionCor - oldXResolution_ * oldXResolution_));
       float newLPx = newLP.x();
       if (me0Digi.prompt())
-	newLPx = CLHEP::RandGaussQ::shoot(engine, newLP.x(), targetXResolution);
+          newLPx = CLHEP::RandGaussQ::shoot(engine, newLP.x(), targetXResolution);
 
       // update local point after x smearing
       newLP = LocalPoint(newLPx, newLP.y(), newLP.z());
@@ -242,11 +246,12 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
       // new hit has y coordinate in the center of the roll when using discretizeY
       if (discretizeY_ and nPartitions_ > 0) newY = 0;
       edm::LogVerbatim("ME0ReDigiProducer")
-	<< "\tnew Y " << newY << std::endl;
+	    << "\tnew Y " << newY;
 
       float newX(newLP.x());
       edm::LogVerbatim("ME0ReDigiProducer")
-        << "\tnew X " << newX << std::endl;      
+        << "\tnew X " << newX;
+        
       // discretize the new X
       if (discretizeX_){
         int strip(newPart->strip(newLP));
@@ -254,7 +259,7 @@ void ME0ReDigiProducer::buildDigis(const ME0DigiPreRecoCollection & input_digis,
         const LocalPoint newLP(newPart->centreOfStrip(stripF));
         newX = newLP.x();
         edm::LogVerbatim("ME0ReDigiProducer")
-          << "\t\tdiscretized X " << newX << std::endl;
+          << "\t\tdiscretized X " << newX;
       }
 
       // make a new ME0DetId
