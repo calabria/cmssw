@@ -230,6 +230,83 @@ looseModMuonTrackVSel05MuonAssoc.useMCTruth = False
 
 #-------------------------------------------------------------------------------------------------------------------
 
+looseModExtMuonTrackVSel0MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+looseModExtMuonTrackVSel0MuonAssoc.associatormap = 'tpToLooseModExtSel0MuonAssociation'
+looseModExtMuonTrackVSel0MuonAssoc.associators = ('MuonAssociationByHits',)
+looseModExtMuonTrackVSel0MuonAssoc.label = ('bestMuonLooseModExt',)
+looseModExtMuonTrackVSel0MuonAssoc.usetracker = True
+looseModExtMuonTrackVSel0MuonAssoc.usemuon = True
+looseModExtMuonTrackVSel0MuonAssoc.useMCTruth = False
+looseModExtMuonTrackVSel0MuonAssoc.minRapidityTP = 0.0
+looseModExtMuonTrackVSel0MuonAssoc.maxRapidityTP = 2.8
+looseModExtMuonTrackVSel0MuonAssoc.min = 0.0
+looseModExtMuonTrackVSel0MuonAssoc.max = 2.8
+looseModExtMuonTrackVSel0MuonAssoc.nint = 28
+looseModExtMuonTrackVSel0MuonAssoc.minRes = 0.0
+looseModExtMuonTrackVSel0MuonAssoc.maxRes = 2.8
+looseModExtMuonTrackVSel0MuonAssoc.nintRes = 28
+looseModExtMuonTrackVSel0MuonAssoc.useFabsEta = True
+looseModExtMuonTrackVSel0MuonAssoc.useAbsEta = True
+
+looseModExtMuonTrackVSelUncMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+looseModExtMuonTrackVSelUncMuonAssoc.associatormap = 'tpToLooseModExtSelUncMuonAssociation'
+looseModExtMuonTrackVSelUncMuonAssoc.associators = ('MuonAssociationByHits',)
+looseModExtMuonTrackVSelUncMuonAssoc.label = ('bestMuonLooseModExt',)
+looseModExtMuonTrackVSelUncMuonAssoc.usetracker = False
+looseModExtMuonTrackVSelUncMuonAssoc.usemuon = True
+looseModExtMuonTrackVSelUncMuonAssoc.useMCTruth = False
+looseModExtMuonTrackVSelUncMuonAssoc.minRapidityTP = 0.0
+looseModExtMuonTrackVSelUncMuonAssoc.maxRapidityTP = 2.8
+looseModExtMuonTrackVSelUncMuonAssoc.min = 0.0
+looseModExtMuonTrackVSelUncMuonAssoc.max = 2.8
+looseModExtMuonTrackVSelUncMuonAssoc.nint = 28
+looseModExtMuonTrackVSelUncMuonAssoc.minRes = 0.0
+looseModExtMuonTrackVSelUncMuonAssoc.maxRes = 2.8
+looseModExtMuonTrackVSelUncMuonAssoc.nintRes = 28
+looseModExtMuonTrackVSelUncMuonAssoc.useFabsEta = True
+looseModExtMuonTrackVSelUncMuonAssoc.useAbsEta = True
+
+looseModExtMuonTrackVSel05SimMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+looseModExtMuonTrackVSel05SimMuonAssoc.associatormap = 'tpToLooseModExtSel0MuonAssociation'
+looseModExtMuonTrackVSel05SimMuonAssoc.associators = ('MuonAssociationByHits',)
+looseModExtMuonTrackVSel05SimMuonAssoc.label = ('bestMuonLooseModExt',)
+looseModExtMuonTrackVSel05SimMuonAssoc.ptMinTP = 5.0
+looseModExtMuonTrackVSel05SimMuonAssoc.usetracker = True
+looseModExtMuonTrackVSel05SimMuonAssoc.usemuon = True
+looseModExtMuonTrackVSel05SimMuonAssoc.useMCTruth = False
+looseModExtMuonTrackVSel05SimMuonAssoc.dirName = 'Muons/RecoMuonV/MultiTrack/Cut5/'
+looseModExtMuonTrackVSel05SimMuonAssoc.minRapidityTP = 0.0
+looseModExtMuonTrackVSel05SimMuonAssoc.maxRapidityTP = 2.8
+looseModExtMuonTrackVSel05SimMuonAssoc.min = 0.0
+looseModExtMuonTrackVSel05SimMuonAssoc.max = 2.8
+looseModExtMuonTrackVSel05SimMuonAssoc.nint = 28
+looseModExtMuonTrackVSel05SimMuonAssoc.minRes = 0.0
+looseModExtMuonTrackVSel05SimMuonAssoc.maxRes = 2.8
+looseModExtMuonTrackVSel05SimMuonAssoc.nintRes = 28
+looseModExtMuonTrackVSel05SimMuonAssoc.useFabsEta = True
+looseModExtMuonTrackVSel05SimMuonAssoc.useAbsEta = True
+
+looseModExtMuonTrackVSel05MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+looseModExtMuonTrackVSel05MuonAssoc.associatormap = 'tpToLooseModExtSel05MuonAssociation'
+looseModExtMuonTrackVSel05MuonAssoc.associators = ('MuonAssociationByHits',)
+looseModExtMuonTrackVSel05MuonAssoc.label = ('bestMuonLooseModExt5',)
+looseModExtMuonTrackVSel05MuonAssoc.ptMinTP = 5.0
+looseModExtMuonTrackVSel05MuonAssoc.usetracker = True
+looseModExtMuonTrackVSel05MuonAssoc.usemuon = True
+looseModExtMuonTrackVSel05MuonAssoc.useMCTruth = False
+looseModExtMuonTrackVSel05MuonAssoc.minRapidityTP = 0.0
+looseModExtMuonTrackVSel05MuonAssoc.maxRapidityTP = 2.8
+looseModExtMuonTrackVSel05MuonAssoc.min = 0.0
+looseModExtMuonTrackVSel05MuonAssoc.max = 2.8
+looseModExtMuonTrackVSel05MuonAssoc.nint = 28
+looseModExtMuonTrackVSel05MuonAssoc.minRes = 0.0
+looseModExtMuonTrackVSel05MuonAssoc.maxRes = 2.8
+looseModExtMuonTrackVSel05MuonAssoc.nintRes = 28
+looseModExtMuonTrackVSel05MuonAssoc.useFabsEta = True
+looseModExtMuonTrackVSel05MuonAssoc.useAbsEta = True
+
+#-------------------------------------------------------------------------------------------------------------------
+
 looseMuonTrackVChi2MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 looseMuonTrackVChi2MuonAssoc.associatormap = ''
 looseMuonTrackVChi2MuonAssoc.associators =  ['trackAssociatorByPull']
@@ -379,6 +456,83 @@ tightModMuonTrackVSel05MuonAssoc.ptMinTP = 5.0
 tightModMuonTrackVSel05MuonAssoc.usetracker = True
 tightModMuonTrackVSel05MuonAssoc.usemuon = True
 tightModMuonTrackVSel05MuonAssoc.useMCTruth = False
+
+#-------------------------------------------------------------------------------------------------------------------
+
+tightModExtMuonTrackVSel0MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+tightModExtMuonTrackVSel0MuonAssoc.associatormap = 'tpToTightModExtSel0MuonAssociation'
+tightModExtMuonTrackVSel0MuonAssoc.associators = ('MuonAssociationByHits',)
+tightModExtMuonTrackVSel0MuonAssoc.label = ('bestMuonTightModExt',)
+tightModExtMuonTrackVSel0MuonAssoc.usetracker = True
+tightModExtMuonTrackVSel0MuonAssoc.usemuon = True
+tightModExtMuonTrackVSel0MuonAssoc.useMCTruth = False
+tightModExtMuonTrackVSel0MuonAssoc.minRapidityTP = 0.0
+tightModExtMuonTrackVSel0MuonAssoc.maxRapidityTP = 2.8
+tightModExtMuonTrackVSel0MuonAssoc.min = 0.0
+tightModExtMuonTrackVSel0MuonAssoc.max = 2.8
+tightModExtMuonTrackVSel0MuonAssoc.nint = 28
+tightModExtMuonTrackVSel0MuonAssoc.minRes = 0.0
+tightModExtMuonTrackVSel0MuonAssoc.maxRes = 2.8
+tightModExtMuonTrackVSel0MuonAssoc.nintRes = 28
+tightModExtMuonTrackVSel0MuonAssoc.useFabsEta = True
+tightModExtMuonTrackVSel0MuonAssoc.useAbsEta = True
+
+tightModExtMuonTrackVSelUncMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+tightModExtMuonTrackVSelUncMuonAssoc.associatormap = 'tpToTightModExtSelUncMuonAssociation'
+tightModExtMuonTrackVSelUncMuonAssoc.associators = ('MuonAssociationByHits',)
+tightModExtMuonTrackVSelUncMuonAssoc.label = ('bestMuonTightModExt',)
+tightModExtMuonTrackVSelUncMuonAssoc.usetracker = False
+tightModExtMuonTrackVSelUncMuonAssoc.usemuon = True
+tightModExtMuonTrackVSelUncMuonAssoc.useMCTruth = False
+tightModExtMuonTrackVSelUncMuonAssoc.minRapidityTP = 0.0
+tightModExtMuonTrackVSelUncMuonAssoc.maxRapidityTP = 2.8
+tightModExtMuonTrackVSelUncMuonAssoc.min = 0.0
+tightModExtMuonTrackVSelUncMuonAssoc.max = 2.8
+tightModExtMuonTrackVSelUncMuonAssoc.nint = 28
+tightModExtMuonTrackVSelUncMuonAssoc.minRes = 0.0
+tightModExtMuonTrackVSelUncMuonAssoc.maxRes = 2.8
+tightModExtMuonTrackVSelUncMuonAssoc.nintRes = 28
+tightModExtMuonTrackVSelUncMuonAssoc.useFabsEta = True
+tightModExtMuonTrackVSelUncMuonAssoc.useAbsEta = True
+
+tightModExtMuonTrackVSel05SimMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+tightModExtMuonTrackVSel05SimMuonAssoc.associatormap = 'tpToTightModExtSel0MuonAssociation'
+tightModExtMuonTrackVSel05SimMuonAssoc.associators = ('MuonAssociationByHits',)
+tightModExtMuonTrackVSel05SimMuonAssoc.label = ('bestMuonTightModExt',)
+tightModExtMuonTrackVSel05SimMuonAssoc.ptMinTP = 5.0
+tightModExtMuonTrackVSel05SimMuonAssoc.usetracker = True
+tightModExtMuonTrackVSel05SimMuonAssoc.usemuon = True
+tightModExtMuonTrackVSel05SimMuonAssoc.useMCTruth = False
+tightModExtMuonTrackVSel05SimMuonAssoc.dirName = 'Muons/RecoMuonV/MultiTrack/Cut5/'
+tightModExtMuonTrackVSel05SimMuonAssoc.minRapidityTP = 0.0
+tightModExtMuonTrackVSel05SimMuonAssoc.maxRapidityTP = 2.8
+tightModExtMuonTrackVSel05SimMuonAssoc.min = 0.0
+tightModExtMuonTrackVSel05SimMuonAssoc.max = 2.8
+tightModExtMuonTrackVSel05SimMuonAssoc.nint = 28
+tightModExtMuonTrackVSel05SimMuonAssoc.minRes = 0.0
+tightModExtMuonTrackVSel05SimMuonAssoc.maxRes = 2.8
+tightModExtMuonTrackVSel05SimMuonAssoc.nintRes = 28
+tightModExtMuonTrackVSel05SimMuonAssoc.useFabsEta = True
+tightModExtMuonTrackVSel05SimMuonAssoc.useAbsEta = True
+
+tightModExtMuonTrackVSel05MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+tightModExtMuonTrackVSel05MuonAssoc.associatormap = 'tpToTightModExtSel05MuonAssociation'
+tightModExtMuonTrackVSel05MuonAssoc.associators = ('MuonAssociationByHits',)
+tightModExtMuonTrackVSel05MuonAssoc.label = ('bestMuonTightModExt5',)
+tightModExtMuonTrackVSel05MuonAssoc.ptMinTP = 5.0
+tightModExtMuonTrackVSel05MuonAssoc.usetracker = True
+tightModExtMuonTrackVSel05MuonAssoc.usemuon = True
+tightModExtMuonTrackVSel05MuonAssoc.useMCTruth = False
+tightModExtMuonTrackVSel05MuonAssoc.minRapidityTP = 0.0
+tightModExtMuonTrackVSel05MuonAssoc.maxRapidityTP = 2.8
+tightModExtMuonTrackVSel05MuonAssoc.min = 0.0
+tightModExtMuonTrackVSel05MuonAssoc.max = 2.8
+tightModExtMuonTrackVSel05MuonAssoc.nint = 28
+tightModExtMuonTrackVSel05MuonAssoc.minRes = 0.0
+tightModExtMuonTrackVSel05MuonAssoc.maxRes = 2.8
+tightModExtMuonTrackVSel05MuonAssoc.nintRes = 28
+tightModExtMuonTrackVSel05MuonAssoc.useFabsEta = True
+tightModExtMuonTrackVSel05MuonAssoc.useAbsEta = True
 
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -786,53 +940,38 @@ recoMuonVMuAssoc_tgt.primaryVertex = 'offlinePrimaryVertices'
 # Muon validation sequences
 
 muonValidation_seq = cms.Sequence(
-#   trkProbeTrackVMuonAssoc+trkMuonTrackVTrackAssoc
-#   + staSeedTrackVMuonAssoc
-#	+ staMuonTrackVMuonAssoc + 
+    #STAMuon updated at the vtx
 	staUpdMuonTrackVMuonAssoc
-#	+staUpdMuonTrackVMuonAssoc2St+
-#   +staUpdMuonTrackVMuonAssoc2StTime
+    #GLB muon
 	+ glbMuonTrackVMuonAssoc
-	#+ trkProbeTrackVSelMuonAssoc
-	#+ staUpdMuonTrackVSelMuonAssoc+staUpdMuonTrackVSel2MuonAssoc
-	#+ staUpdMuonTrackVSelMuonAssoc2StTime
+    #STA muon update at the vtx + timing
  	+staUpdMuonTrackVSel2MuonAssoc2StTime
+    #STA muon update at the vtx + timing with sim pT > 5 GeV
     +staUpdMuonTrackVSel2MuonAssoc2StTime05
-	#+ glbMuonTrackVSelMuonAssoc+glbMuonTrackVSel2MuonAssoc+glbMuonTrackVSel3MuonAssoc+glbMuonTrackVSel4MuonAssoc
-	#+ looseMuonTrackVSelMuonAssoc+looseMuonTrackVSel2MuonAssoc
-	#+ looseMuonTrackVSel3MuonAssoc 
+    #Loose ID
 	+ looseMuonTrackVSel0MuonAssoc
-    #+ looseMuonTrackVSelUncMuonAssoc
-	#+looseMuonTrackVSel4MuonAssoc
-	#+ looseMuonTrackVSel35MuonAssoc
-# 	+ looseMuonTrackVSel05MuonAssoc
-	#+ looseMuonTrackVSel35SimMuonAssoc
+    #Loose ID with sim pT > 5 GeV
 	+ looseMuonTrackVSel05SimMuonAssoc
-	#+ tightMuonTrackVSelMuonAssoc+tightMuonTrackVSel2MuonAssoc
-	#+ tightMuonTrackVSel3MuonAssoc 
+    #Tight ID
 	+ tightMuonTrackVSel0MuonAssoc
-    #+ tightMuonTrackVSelUncMuonAssoc
-	#+tightMuonTrackVSel4MuonAssoc
-	#+ tightMuonTrackVSel35MuonAssoc 
-#	+ tightMuonTrackVSel05MuonAssoc
-	#+ tightMuonTrackVSel35SimMuonAssoc
+    #Tight ID with sim pT > 5 GeV
 	+ tightMuonTrackVSel05SimMuonAssoc
+    #Loose ID with PFMuon selections by hand
 	+ looseModMuonTrackVSel0MuonAssoc
-    #+ looseModMuonTrackVSelUncMuonAssoc
-# 	+ looseModMuonTrackVSel05MuonAssoc
+    #Loose ID with PFMuon selections by hand with ME0Muon
+    + looseModExtMuonTrackVSel0MuonAssoc
+    #Loose ID with PFMuon selections by hand and with pT > 5 GeV
 	+ looseModMuonTrackVSel05SimMuonAssoc
+    #Loose ID with PFMuon selections by hand and with pT > 5 GeV with ME0Muon
+    + looseModExtMuonTrackVSel05SimMuonAssoc
+    #Tight ID with PFMuon selections by hand
 	+ tightModMuonTrackVSel0MuonAssoc
-    #+ tightModMuonTrackVSelUncMuonAssoc
-# 	+ tightModMuonTrackVSel05MuonAssoc
-   + tightModMuonTrackVSel05SimMuonAssoc
-#	+ recoMuonVMuAssoc_trk+recoMuonVMuAssoc_sta+recoMuonVMuAssoc_glb+recoMuonVMuAssoc_tgt
-	#+ bestMuonLooseTrackVTrackAssoc #+ bestMuonLooseTrackVTrackAssoc5
-#	+ bestMuonLoose2TrackVTrackAssoc + bestMuonLoose2TrackVTrackAssoc5
-	#+ bestMuonTightTrackVTrackAssoc #+ bestMuonTightTrackVTrackAssoc5
-#    +looseMuonTrackVChi2MuonAssoc
-#    +looseMuonTrackVChi25SimMuonAssoc
-#    +tightMuonTrackVChi2MuonAssoc
-#    +looseMuonTrackVChi25SimMuonAssoc
+    #Tight ID with PFMuon selections by hand with ME0Muon
+    + tightModExtMuonTrackVSel0MuonAssoc
+    #Tight ID with PFMuon selections by hand and with sim pT > 5 GeV
+    + tightModMuonTrackVSel05SimMuonAssoc
+    #Tight ID with PFMuon selections by hand and with sim pT > 5 GeV and with ME0Muon
+    + tightModExtMuonTrackVSel05SimMuonAssoc
 )
 
 muonValidation_reduced_seq = cms.Sequence(
