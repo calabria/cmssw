@@ -891,7 +891,7 @@ tpToLooseModExtSel05MuonAssociation.acceptOneStubMatchings = False
 #####################################################################################################
 
 tpToTightModSel0MuonAssociation.tpTag = 'mix:MergedTrackTruth'
-tpToTightModSel0MuonAssociation.tracksTag = 'bestMuonTightModExt'
+tpToTightModSel0MuonAssociation.tracksTag = 'bestMuonTightMod'
 tpToTightModSel0MuonAssociation.UseTracker = True
 tpToTightModSel0MuonAssociation.UseMuon = True
 #tpToTightModSel0MuonAssociation.EfficiencyCut_track = cms.double(0.5)
@@ -902,7 +902,7 @@ tpToTightModSel0MuonAssociation.acceptOneStubMatchings = False
 #tpToTightModSel0MuonAssociation.includeZeroHitMuons = False
 
 tpToTightModSelUncMuonAssociation.tpTag = 'mix:MergedTrackTruth'
-tpToTightModSelUncMuonAssociation.tracksTag = 'bestMuonTightModExt'
+tpToTightModSelUncMuonAssociation.tracksTag = 'bestMuonTightMod'
 tpToTightModSelUncMuonAssociation.UseTracker = False
 tpToTightModSelUncMuonAssociation.UseMuon = True
 #tpToTightModSelUncMuonAssociation.EfficiencyCut_track = cms.double(0.5)
@@ -913,7 +913,7 @@ tpToTightModSelUncMuonAssociation.acceptOneStubMatchings = False
 #tpToTightModSelUncMuonAssociation.includeZeroHitMuons = False
 
 tpToTightModSel05MuonAssociation.tpTag = 'mix:MergedTrackTruth'
-tpToTightModSel05MuonAssociation.tracksTag = 'bestMuonTightModExt5'
+tpToTightModSel05MuonAssociation.tracksTag = 'bestMuonTightMod5'
 tpToTightModSel05MuonAssociation.UseTracker = True
 tpToTightModSel05MuonAssociation.UseMuon = True
 #tpToTightModSel05MuonAssociation.EfficiencyCut_track = cms.double(0.5)
@@ -926,7 +926,7 @@ tpToTightModSel05MuonAssociation.acceptOneStubMatchings = False
 #####################################################################################################
 
 tpToTightModExtSel0MuonAssociation.tpTag = 'mix:MergedTrackTruth'
-tpToTightModExtSel0MuonAssociation.tracksTag = 'bestMuonTightMod'
+tpToTightModExtSel0MuonAssociation.tracksTag = 'bestMuonTightModExt'
 tpToTightModExtSel0MuonAssociation.UseTracker = True
 tpToTightModExtSel0MuonAssociation.UseMuon = True
 #tpToTightModExtSel0MuonAssociation.EfficiencyCut_track = cms.double(0.5)
@@ -937,7 +937,7 @@ tpToTightModExtSel0MuonAssociation.acceptOneStubMatchings = False
 #tpToTightModExtSel0MuonAssociation.includeZeroHitMuons = False
 
 tpToTightModExtSelUncMuonAssociation.tpTag = 'mix:MergedTrackTruth'
-tpToTightModExtSelUncMuonAssociation.tracksTag = 'bestMuonTightMod'
+tpToTightModExtSelUncMuonAssociation.tracksTag = 'bestMuonTightModExt'
 tpToTightModExtSelUncMuonAssociation.UseTracker = False
 tpToTightModExtSelUncMuonAssociation.UseMuon = True
 #tpToTightModExtSelUncMuonAssociationn.EfficiencyCut_track = cms.double(0.5)
@@ -948,7 +948,7 @@ tpToTightModExtSelUncMuonAssociation.acceptOneStubMatchings = False
 #tpToTightModExtSelUncMuonAssociation.includeZeroHitMuons = False
 
 tpToTightModExtSel05MuonAssociation.tpTag = 'mix:MergedTrackTruth'
-tpToTightModExtSel05MuonAssociation.tracksTag = 'bestMuonTightMod5'
+tpToTightModExtSel05MuonAssociation.tracksTag = 'bestMuonTightModExt5'
 tpToTightModExtSel05MuonAssociation.UseTracker = True
 tpToTightModExtSel05MuonAssociation.UseMuon = True
 #tpToTightModExtSel05MuonAssociation.EfficiencyCut_track = cms.double(0.5)
