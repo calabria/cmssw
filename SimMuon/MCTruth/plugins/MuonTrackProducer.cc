@@ -226,7 +226,7 @@ bool MuonTrackProducer::isIsolatedMuon( const reco::MuonCollection::const_iterat
   else return false;
 }
 
-bool MuonTrackProducer::isME0MuonSel(reco::MuonCollection::const_iterator muon, double pullXCut, double dXCut, double pullYCut, double dYCut, double dPhi)
+bool MuonTrackProducer::isME0MuonSel(reco::MuonCollection::const_iterator muon, double pullXCut, double dXCut, double pullYCut, double dYCut, double dPhiCut)
 {
     
   bool result = false;
@@ -261,7 +261,7 @@ bool MuonTrackProducer::isME0MuonSel(reco::MuonCollection::const_iterator muon, 
     
       if ( (pullX < pullXCut) || (deltaX < dXCut) ) X_MatchFound = true;
       if ( (pullY < pullYCut) || (deltaY < dYCut) ) Y_MatchFound = true;
-      if ( deltaPhi < dPhi ) Dir_MatchFound = true;
+      if ( deltaPhi < dPhiCut ) Dir_MatchFound = true;
     
       result = X_MatchFound && Y_MatchFound && Dir_MatchFound;
       

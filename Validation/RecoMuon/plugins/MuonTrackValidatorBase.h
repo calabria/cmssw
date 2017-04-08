@@ -242,7 +242,8 @@ h->setBinContent(j+1, 0);
     std::vector<int>    totSIMvvtxOverlap,totASSvvtxOverlap,totASS2vvtxOverlap,totRECvvtxOverlap;
       
     std::vector<int> totSIMveta,totASSveta,totASS2veta,totRECveta;
-    std::vector<int> totSIMvpT,totASSvpT,totASS2vpT,totRECvpT;
+    std::vector<int> totSIMvpT,totSIMvpT_24,totSIMvpT_28,totASSvpT,totASSvpT_24,totASSvpT_28,totASS2vpT,totASS2vpT_24,totASS2vpT_28,totRECvpT,totRECvpT_24,totRECvpT_28;
+    std::vector<int> totSIMvp,totSIMvp_24,totSIMvp_28,totASSvp,totASSvp_24,totASSvp_28,totASS2vp,totASS2vp_24,totASS2vp_28,totRECvp,totRECvp_24,totRECvp_28;
     std::vector<int> totSIMv_hit,totASSv_hit,totASS2v_hit,totRECv_hit;
     std::vector<int> totSIMv_phi,totASSv_phi,totASS2v_phi,totRECv_phi;
     std::vector<int> totSIMv_dxy,totASSv_dxy,totASS2v_dxy,totRECv_dxy;
@@ -382,17 +383,36 @@ h->setBinContent(j+1, 0);
       totASSvpT_Quality075.push_back(0);
     }
     pTintervals.push_back(pTintervalsv);
+      
     totSIMpT.push_back(totSIMvpT);
+    totSIMpT_24.push_back(totSIMvpT);
+    totSIMpT_28.push_back(totSIMvpT);
+    totSIMp.push_back(totSIMvpT);
+    totSIMp_24.push_back(totSIMvpT);
+    totSIMp_28.push_back(totSIMvpT);
+      
     totSIMpTBin1.push_back(totSIMvpT);
     totSIMpTBin2.push_back(totSIMvpT);
     totSIMpTBin3.push_back(totSIMvpT);
       
     totASSpT.push_back(totASSvpT);
+    totASSpT_24.push_back(totASSvpT);
+    totASSpT_28.push_back(totASSvpT);
+    totASSp.push_back(totASSvpT);
+    totASSp_24.push_back(totASSvpT);
+    totASSp_28.push_back(totASSvpT);
+      
     totASSpTBin1.push_back(totASSvpT);
     totASSpTBin2.push_back(totASSvpT);
     totASSpTBin3.push_back(totASSvpT);
       
     totASS2pT.push_back(totASS2vpT);
+    totASS2pT_24.push_back(totASS2vpT);
+    totASS2pT_28.push_back(totASS2vpT);
+    totASS2p.push_back(totASS2vpT);
+    totASS2p_24.push_back(totASS2vpT);
+    totASS2p_28.push_back(totASS2vpT);
+    
     totASS2pT_050.push_back(totASS2vpT);
     totASS2pT_075.push_back(totASS2vpT);
     totASS2pTBin1.push_back(totASS2vpT);
@@ -400,16 +420,27 @@ h->setBinContent(j+1, 0);
     totASS2pTBin3.push_back(totASS2vpT);
 
     totASS2pT_SgnMu.push_back(totASS2vpT);
+    totASS2pT_SgnMu_24.push_back(totASS2vpT);
+    totASS2pT_SgnMu_28.push_back(totASS2vpT);
+    totASS2p_SgnMu.push_back(totASS2vpT);
+    totASS2p_SgnMu_24.push_back(totASS2vpT);
+    totASS2p_SgnMu_28.push_back(totASS2vpT);
+      
     totASS2pT_SgnBkg.push_back(totASS2vpT);
     totASS2pT_Pu.push_back(totASS2vpT);
     totASS2pT_PuIT.push_back(totASS2vpT);
     totASS2pT_PuOOT.push_back(totASS2vpT);
     totASS2pT_PuMu.push_back(totASS2vpT);
     totASS2pT_PuITMu.push_back(totASS2vpT);
-    totASS2pT_PuOOTMu.push_back(totASS2vpT); 
-  
+    totASS2pT_PuOOTMu.push_back(totASS2vpT);
       
     totRECpT.push_back(totRECvpT);
+    totRECpT_24.push_back(totRECvpT);
+    totRECpT_28.push_back(totRECvpT);
+    totRECp.push_back(totRECvpT);
+    totRECp_24.push_back(totRECvpT);
+    totRECp_28.push_back(totRECvpT);
+      
     totRECpTBin1.push_back(totRECvpT);
     totRECpTBin2.push_back(totRECvpT);
     totRECpTBin3.push_back(totRECvpT);
@@ -625,9 +656,11 @@ h->setBinContent(j+1, 0);
   std::vector<MonitorElement*> h_recovtxBarrel, h_assocvtxBarrel, h_assoc2vtxBarrel, h_simulvtxBarrel;
   std::vector<MonitorElement*> h_recovtxEndcap, h_assocvtxEndcap, h_assoc2vtxEndcap, h_simulvtxEndcap;
   std::vector<MonitorElement*> h_recovtxOverlap, h_assocvtxOverlap, h_assoc2vtxOverlap, h_simulvtxOverlap;
-  std::vector<MonitorElement*> h_recopT, h_assocpT, h_assoc2pT, h_assoc2pTBin1, h_assoc2pTBin2, h_assoc2pTBin3, h_simulpT, h_assoc2pT_050, h_assoc2pT_075;
+  std::vector<MonitorElement*> h_recopT, h_recopT_24, h_recopT_28, h_assocpT, h_assocpT_24, h_assocpT_28, h_assoc2pT, h_assoc2pT_24, h_assoc2pT_28, h_assoc2pTBin1, h_assoc2pTBin2, h_assoc2pTBin3, h_simulpT, h_simulpT_24, h_simulpT_28, h_assoc2pT_050, h_assoc2pT_075;
 
-  std::vector<MonitorElement*> h_assoc2pT_SgnMu,h_assoc2pT_SgnBkg,h_assoc2pT_Pu,h_assoc2pT_PuIT,h_assoc2pT_PuOOT,h_assoc2pT_PuMu,h_assoc2pT_PuITMu,h_assoc2pT_PuOOTMu;
+  std::vector<MonitorElement*> h_assoc2pT_SgnMu, h_assoc2pT_SgnMu_24, h_assoc2pT_SgnMu_28, h_assoc2pT_SgnBkg, h_assoc2pT_Pu, h_assoc2pT_PuIT, h_assoc2pT_PuOOT, h_assoc2pT_PuMu, h_assoc2pT_PuITMu, h_assoc2pT_PuOOTMu;
+    
+  std::vector<MonitorElement*> h_recop, h_recop_24, h_recop_28, h_assocp, h_assocp_24, h_assocp_28, h_assoc2p, h_assoc2p_24, h_assoc2p_28, h_simulp, h_simulp_24, h_simulp_28, h_assoc2p_SgnMu, h_assoc2p_SgnMu_24, h_assoc2p_SgnMu_28;
 
   std::vector<MonitorElement*> h_recopTBin1, h_recopTBin2, h_recopTBin3;
   std::vector<MonitorElement*> h_assocpTBin1, h_assocpTBin2, h_assocpTBin3, h_simulpTBin1, h_simulpTBin2, h_simulpTBin3;
@@ -684,9 +717,10 @@ h->setBinContent(j+1, 0);
   std::vector< std::vector<int> > totSIMvtxEndcap,totRECvtxEndcap,totASSvtxEndcap,totASS2vtxEndcap;
   std::vector< std::vector<int> > totSIMvtxOverlap,totRECvtxOverlap,totASSvtxOverlap,totASS2vtxOverlap;
   std::vector< std::vector<int> > totSIMvtx,totRECvtx,totASSvtx,totASS2vtx;
-  std::vector< std::vector<int> > totSIMpT,totRECpT,totASSpT,totASS2pT,totASS2pTBin1,totASS2pTBin2,totASS2pTBin3, totASS2pT_050, totASS2pT_075;
-
-  std::vector< std::vector<int> > totASS2pT_SgnMu, totASS2pT_SgnBkg, totASS2pT_Pu, totASS2pT_PuIT, totASS2pT_PuOOT, totASS2pT_PuMu, totASS2pT_PuITMu, totASS2pT_PuOOTMu; 
+    
+  std::vector< std::vector<int> > totSIMpT,totSIMpT_24,totSIMpT_28,totRECpT,totRECpT_24,totRECpT_28,totASSpT,totASSpT_24,totASSpT_28,totASS2pT,totASS2pT_24,totASS2pT_28,totASS2pTBin1,totASS2pTBin2,totASS2pTBin3, totASS2pT_050, totASS2pT_075;
+  std::vector< std::vector<int> > totASS2pT_SgnMu,totASS2pT_SgnMu_24,totASS2pT_SgnMu_28,totASS2pT_SgnBkg, totASS2pT_Pu, totASS2pT_PuIT, totASS2pT_PuOOT, totASS2pT_PuMu, totASS2pT_PuITMu, totASS2pT_PuOOTMu;
+  std::vector< std::vector<int> > totSIMp,totSIMp_24,totSIMp_28,totRECp,totRECp_24,totRECp_28,totASSp,totASSp_24,totASSp_28,totASS2p,totASS2p_24,totASS2p_28,totASS2p_SgnMu,totASS2p_SgnMu_24,totASS2p_SgnMu_28;
 
   std::vector< std::vector<int> > totRECpTBin1,totRECpTBin2,totRECpTBin3;
   std::vector< std::vector<int> > totSIMpTBin1,totSIMpTBin2,totSIMpTBin3,totASSpTBin1,totASSpTBin2,totASSpTBin3;

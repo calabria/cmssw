@@ -146,10 +146,39 @@ void MuonTrackValidator::bookHistograms(DQMStore::IBooker& ibooker, edm::Run con
       h_assoceta.push_back( ibooker.book1D("num_assoc(simToReco)_eta","N of associated tracks (simToReco) vs eta",nint,min,max) );
       h_assoc2eta.push_back( ibooker.book1D("num_assoc(recoToSim)_eta","N of associated (recoToSim) tracks vs eta",nint,min,max) );
       h_simuleta.push_back( ibooker.book1D("num_simul_eta","N of simulated tracks vs eta",nint,min,max) );
+        
       h_recopT.push_back( ibooker.book1D("num_reco_pT","N of reco track vs pT",nintpT,minpT,maxpT) );
+      h_recopT_24.push_back( ibooker.book1D("num_reco_pT_24","N of reco track vs pT",nintpT,minpT,maxpT) );
+      h_recopT_28.push_back( ibooker.book1D("num_reco_pT_28","N of reco track vs pT",nintpT,minpT,maxpT) );
+        
+      h_recop.push_back( ibooker.book1D("num_reco_p","N of reco track vs p",nintpT,minpT,maxpT) );
+      h_recop_24.push_back( ibooker.book1D("num_reco_p_24","N of reco track vs p",nintpT,minpT,maxpT) );
+      h_recop_28.push_back( ibooker.book1D("num_reco_p_28","N of reco track vs p",nintpT,minpT,maxpT) );
+        
       h_assocpT.push_back( ibooker.book1D("num_assoc(simToReco)_pT","N of associated tracks (simToReco) vs pT",nintpT,minpT,maxpT) );
+      h_assocpT_24.push_back( ibooker.book1D("num_assoc(simToReco)_pT_24","N of associated tracks (simToReco) vs pT",nintpT,minpT,maxpT) );
+      h_assocpT_28.push_back( ibooker.book1D("num_assoc(simToReco)_pT_28","N of associated tracks (simToReco) vs pT",nintpT,minpT,maxpT) );
+        
+      h_assocp.push_back( ibooker.book1D("num_assoc(simToReco)_p","N of associated tracks (simToReco) vs p",nintpT,minpT,maxpT) );
+      h_assocp_24.push_back( ibooker.book1D("num_assoc(simToReco)_p_24","N of associated tracks (simToReco) vs p",nintpT,minpT,maxpT) );
+      h_assocp_28.push_back( ibooker.book1D("num_assoc(simToReco)_p_28","N of associated tracks (simToReco) vs p",nintpT,minpT,maxpT) );
+        
       h_assoc2pT.push_back( ibooker.book1D("num_assoc(recoToSim)_pT","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_24.push_back( ibooker.book1D("num_assoc(recoToSim)_pT_24","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_28.push_back( ibooker.book1D("num_assoc(recoToSim)_pT_28","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+
+      h_assoc2p.push_back( ibooker.book1D("num_assoc(recoToSim)_p","N of associated (recoToSim) tracks vs p",nintpT,minpT,maxpT) );
+      h_assoc2p_24.push_back( ibooker.book1D("num_assoc(recoToSim)_p_24","N of associated (recoToSim) tracks vs p",nintpT,minpT,maxpT) );
+      h_assoc2p_28.push_back( ibooker.book1D("num_assoc(recoToSim)_p_28","N of associated (recoToSim) tracks vs p",nintpT,minpT,maxpT) );
+        
       h_simulpT.push_back( ibooker.book1D("num_simul_pT","N of simulated tracks vs pT",nintpT,minpT,maxpT) );
+      h_simulpT_24.push_back( ibooker.book1D("num_simul_pT_24","N of simulated tracks vs pT",nintpT,minpT,maxpT) );
+      h_simulpT_28.push_back( ibooker.book1D("num_simul_pT_28","N of simulated tracks vs pT",nintpT,minpT,maxpT) );
+        
+      h_simulp.push_back( ibooker.book1D("num_simul_p","N of simulated tracks vs p",nintpT,minpT,maxpT) );
+      h_simulp_24.push_back( ibooker.book1D("num_simul_p_24","N of simulated tracks vs p",nintpT,minpT,maxpT) );
+      h_simulp_28.push_back( ibooker.book1D("num_simul_p_28","N of simulated tracks vs p",nintpT,minpT,maxpT) );
+        
       //
       h_recohit.push_back( ibooker.book1D("num_reco_hit","N of reco track vs hit",nintHit,minHit,maxHit) );
       h_assochit.push_back( ibooker.book1D("num_assoc(simToReco)_hit","N of associated tracks (simToReco) vs hit",nintHit,minHit,maxHit) );
@@ -328,6 +357,13 @@ void MuonTrackValidator::bookHistograms(DQMStore::IBooker& ibooker, edm::Run con
       h_assocpTBin3.push_back( ibooker.book1D("num_assoc(simToReco)_pT_endcap","N of associated tracks (simToReco) vs pT endcap",nintpT,minpT,maxpT) );
         
       h_assoc2pT_SgnMu.push_back( ibooker.book1D("num_assoc(recoToSim)_pT_SgnMu","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_SgnMu_24.push_back( ibooker.book1D("num_assoc(recoToSim)_pT_SgnMu_24","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+      h_assoc2pT_SgnMu_28.push_back( ibooker.book1D("num_assoc(recoToSim)_pT_SgnMu_28","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
+        
+      h_assoc2p_SgnMu.push_back( ibooker.book1D("num_assoc(recoToSim)_p_SgnMu","N of associated (recoToSim) tracks vs p",nintpT,minpT,maxpT) );
+      h_assoc2p_SgnMu_24.push_back( ibooker.book1D("num_assoc(recoToSim)_p_SgnMu_24","N of associated (recoToSim) tracks vs p",nintpT,minpT,maxpT) );
+      h_assoc2p_SgnMu_28.push_back( ibooker.book1D("num_assoc(recoToSim)_p_SgnMu_28","N of associated (recoToSim) tracks vs p",nintpT,minpT,maxpT) );
+        
       h_assoc2pT_SgnBkg.push_back( ibooker.book1D("num_assoc(recoToSim)_pT_SgnBkg","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
       h_assoc2pT_Pu.push_back( ibooker.book1D("num_assoc(recoToSim)_pT_Pu","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
       h_assoc2pT_PuIT.push_back( ibooker.book1D("num_assoc(recoToSim)_pT_PuIT","N of associated (recoToSim) tracks vs pT",nintpT,minpT,maxpT) );
@@ -469,10 +505,36 @@ void MuonTrackValidator::bookHistograms(DQMStore::IBooker& ibooker, edm::Run con
 	BinLogX(phires_vs_pt[j]->getTH2F());
 	BinLogX(cotThetares_vs_pt[j]->getTH2F());
 	BinLogX(ptres_vs_pt[j]->getTH2F());
+          
 	BinLogX(h_recopT[j]->getTH1F());
+    BinLogX(h_recopT_24[j]->getTH1F());
+    BinLogX(h_recopT_28[j]->getTH1F());
+    BinLogX(h_recop[j]->getTH1F());
+    BinLogX(h_recop_24[j]->getTH1F());
+    BinLogX(h_recop_28[j]->getTH1F());
+          
 	BinLogX(h_assocpT[j]->getTH1F());
+    BinLogX(h_assocpT_24[j]->getTH1F());
+    BinLogX(h_assocpT_28[j]->getTH1F());
+          
+    BinLogX(h_assocp[j]->getTH1F());
+    BinLogX(h_assocp_24[j]->getTH1F());
+    BinLogX(h_assocp_28[j]->getTH1F());
+          
 	BinLogX(h_assoc2pT[j]->getTH1F());
+    BinLogX(h_assoc2pT_24[j]->getTH1F());
+    BinLogX(h_assoc2pT_28[j]->getTH1F());
+    BinLogX(h_assoc2p[j]->getTH1F());
+    BinLogX(h_assoc2p_24[j]->getTH1F());
+    BinLogX(h_assoc2p_28[j]->getTH1F());
+          
 	BinLogX(h_simulpT[j]->getTH1F());
+    BinLogX(h_simulpT_24[j]->getTH1F());
+    BinLogX(h_simulpT_28[j]->getTH1F());
+          
+    BinLogX(h_simulp[j]->getTH1F());
+    BinLogX(h_simulp_24[j]->getTH1F());
+    BinLogX(h_simulp_28[j]->getTH1F());
           
 	BinLogX(h_recopTBin1[j]->getTH1F());
 	BinLogX(h_recopTBin2[j]->getTH1F());
@@ -489,6 +551,12 @@ void MuonTrackValidator::bookHistograms(DQMStore::IBooker& ibooker, edm::Run con
 	BinLogX(h_assoc2pTBin3[j]->getTH1F());
 
 	BinLogX(h_assoc2pT_SgnMu[j]->getTH1F());
+    BinLogX(h_assoc2pT_SgnMu_24[j]->getTH1F());
+    BinLogX(h_assoc2pT_SgnMu_28[j]->getTH1F());
+    BinLogX(h_assoc2p_SgnMu[j]->getTH1F());
+    BinLogX(h_assoc2p_SgnMu_24[j]->getTH1F());
+    BinLogX(h_assoc2p_SgnMu_28[j]->getTH1F());
+          
 	BinLogX(h_assoc2pT_SgnBkg[j]->getTH1F());
 	BinLogX(h_assoc2pT_Pu[j]->getTH1F());
 	BinLogX(h_assoc2pT_PuIT[j]->getTH1F());
@@ -864,11 +932,17 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
             if(fabs(momentumTP.eta()) < 0.9) totSIMpTBin1[w][f]++;
             if(fabs(momentumTP.eta()) > 0.9 && fabs(momentumTP.eta()) < 1.2) totSIMpTBin2[w][f]++;
             if(fabs(momentumTP.eta()) > 1.2) totSIMpTBin3[w][f]++;
+              
+            if(fabs(momentumTP.eta()) < 2.4) totSIMpT_24[w][f]++;
+            if(fabs(momentumTP.eta()) > 2.4 && fabs(momentumTP.eta()) < 2.8) totSIMpT_28[w][f]++;
 	    if (TP_is_matched) {
 	      totASSpT[w][f]++;
           if(fabs(momentumTP.eta()) < 0.9) totASSpTBin1[w][f]++;
           if(fabs(momentumTP.eta()) > 0.9 && fabs(momentumTP.eta()) < 1.2) totASSpTBin2[w][f]++;
           if(fabs(momentumTP.eta()) > 1.2) totASSpTBin3[w][f]++;
+            
+          if(fabs(momentumTP.eta()) < 2.4) totASSpT_24[w][f]++;
+          if(fabs(momentumTP.eta()) > 2.4 && fabs(momentumTP.eta()) < 2.8) totASSpT_28[w][f]++;
 	      
 	      if (MABH) {
 		if (Quality075) {
@@ -880,6 +954,24 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 		}
 	      }
 	    }
+	  }
+	} // END for (unsigned int f=0; f<pTintervals[w].size()-1; f++){
+          
+	for (unsigned int f=0; f<pTintervals[w].size()-1; f++){//
+          if (getPt(sqrt(momentumTP.mag2()))>pTintervals[w][f]&&
+              getPt(sqrt(momentumTP.mag2()))<pTintervals[w][f+1]) {
+            totSIMp[w][f]++;
+              
+            if(fabs(momentumTP.eta()) < 2.4) totSIMp_24[w][f]++;
+            if(fabs(momentumTP.eta()) > 2.4 && fabs(momentumTP.eta()) < 2.8) totSIMp_28[w][f]++;
+              
+	    if (TP_is_matched) {
+	      totASSp[w][f]++;
+            
+          if(fabs(momentumTP.eta()) < 2.4) totASSp_24[w][f]++;
+          if(fabs(momentumTP.eta()) > 2.4 && fabs(momentumTP.eta()) < 2.8) totASSp_28[w][f]++;
+
+        }
 	  }
 	} // END for (unsigned int f=0; f<pTintervals[w].size()-1; f++){
 	
@@ -1223,14 +1315,28 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
         if(fabs(track->momentum().eta()) < 0.9) totRECpTBin1[w][f]++;
         if(fabs(track->momentum().eta()) > 0.9 && fabs(track->momentum().eta()) < 1.2) totRECpTBin2[w][f]++;
         if(fabs(track->momentum().eta()) > 1.2) totRECpTBin3[w][f]++;
+          
+        if(fabs(track->momentum().eta()) < 2.4) totRECpT_24[w][f]++;
+        if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totRECpT_28[w][f]++;
+          
 	    if (Track_is_matched) {
 	      totASS2pT[w][f]++;
           if(fabs(track->momentum().eta()) < 0.9) totASS2pTBin1[w][f]++;
           if(fabs(track->momentum().eta()) > 0.9 && fabs(track->momentum().eta()) < 1.2) totASS2pTBin2[w][f]++;
           if(fabs(track->momentum().eta()) > 1.2) totASS2pTBin3[w][f]++;
+            
+          if(fabs(track->momentum().eta()) < 2.4) totASS2pT_24[w][f]++;
+          if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totASS2pT_28[w][f]++;
 	    }
           
-        if(Track_is_matched_SignalMuon) totASS2pT_SgnMu[w][f]++;
+        if(Track_is_matched_SignalMuon){
+            
+          totASS2pT_SgnMu[w][f]++;
+          if(fabs(track->momentum().eta()) < 2.4) totASS2pT_SgnMu_24[w][f]++;
+          if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totASS2pT_SgnMu_28[w][f]++;
+          
+        }
+          
         if(Track_is_matched_SignalBkg) totASS2pT_SgnBkg[w][f]++;
         if(Track_is_matched_Pu) totASS2pT_Pu[w][f]++;
         if(Track_is_matched_PuIT) totASS2pT_PuIT[w][f]++;
@@ -1241,6 +1347,32 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
           
         if (MABH && Track_is_matched_075) totASS2pT_075[w][f]++;
         if (MABH && Track_is_matched_050) totASS2pT_050[w][f]++;
+          
+	  }
+	} // End for (unsigned int f=0; f<pTintervals[w].size()-1; f++){
+          
+	for (unsigned int f=0; f<pTintervals[w].size()-1; f++){//vs p
+	  if (getPt(sqrt(track->momentum().mag2()))>pTintervals[w][f]&&
+	      getPt(sqrt(track->momentum().mag2()))<pTintervals[w][f+1]) {
+	    totRECp[w][f]++;
+
+        if(fabs(track->momentum().eta()) < 2.4) totRECp_24[w][f]++;
+        if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totRECp_28[w][f]++;
+          
+	    if (Track_is_matched) {
+	      totASS2p[w][f]++;
+
+          if(fabs(track->momentum().eta()) < 2.4) totASS2p_24[w][f]++;
+          if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totASS2p_28[w][f]++;
+	    }
+          
+        if(Track_is_matched_SignalMuon){
+            
+          totASS2p_SgnMu[w][f]++;
+          if(fabs(track->momentum().eta()) < 2.4) totASS2p_SgnMu_24[w][f]++;
+          if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totASS2p_SgnMu_28[w][f]++;
+          
+        }
           
 	  }
 	} // End for (unsigned int f=0; f<pTintervals[w].size()-1; f++){
@@ -1667,23 +1799,55 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&) {
       fillPlotFromVector(h_assoc2eta_PuOOTMu[w],totASS2eta_PuOOTMu[w]);
 
       fillPlotFromVector(h_recopT[w],totRECpT[w]);
+      fillPlotFromVector(h_recopT_24[w],totRECpT_24[w]);
+      fillPlotFromVector(h_recopT_28[w],totRECpT_28[w]);
+        
+      fillPlotFromVector(h_recop[w],totRECp[w]);
+      fillPlotFromVector(h_recop_24[w],totRECp_24[w]);
+      fillPlotFromVector(h_recop_28[w],totRECp_28[w]);
+        
       fillPlotFromVector(h_recopTBin1[w],totRECpTBin1[w]);
       fillPlotFromVector(h_recopTBin2[w],totRECpTBin2[w]);
       fillPlotFromVector(h_recopTBin3[w],totRECpTBin3[w]);
         
       fillPlotFromVector(h_simulpT[w],totSIMpT[w]);
+      fillPlotFromVector(h_simulpT_24[w],totSIMpT_24[w]);
+      fillPlotFromVector(h_simulpT_28[w],totSIMpT_28[w]);
+
+      fillPlotFromVector(h_simulp[w],totSIMp[w]);
+      fillPlotFromVector(h_simulp_24[w],totSIMp_24[w]);
+      fillPlotFromVector(h_simulp_28[w],totSIMp_28[w]);
+        
       fillPlotFromVector(h_simulpTBin1[w],totSIMpTBin1[w]);
       fillPlotFromVector(h_simulpTBin2[w],totSIMpTBin2[w]);
       fillPlotFromVector(h_simulpTBin3[w],totSIMpTBin3[w]);
         
       fillPlotFromVector(h_assocpT[w],totASSpT[w]);
+      fillPlotFromVector(h_assocpT_24[w],totASSpT_24[w]);
+      fillPlotFromVector(h_assocpT_28[w],totASSpT_28[w]);
+        
+      fillPlotFromVector(h_assocp[w],totASSp[w]);
+      fillPlotFromVector(h_assocp_24[w],totASSp_24[w]);
+      fillPlotFromVector(h_assocp_28[w],totASSp_28[w]);
+        
       fillPlotFromVector(h_assocpTBin1[w],totASSpTBin1[w]);
       fillPlotFromVector(h_assocpTBin2[w],totASSpTBin2[w]);
       fillPlotFromVector(h_assocpTBin3[w],totASSpTBin3[w]);
         
       fillPlotFromVector(h_assoc2pT[w],totASS2pT[w]);
+      fillPlotFromVector(h_assoc2pT_24[w],totASS2pT_24[w]);
+      fillPlotFromVector(h_assoc2pT_28[w],totASS2pT_28[w]);
+      fillPlotFromVector(h_assoc2p[w],totASS2p[w]);
+      fillPlotFromVector(h_assoc2p_24[w],totASS2p_24[w]);
+      fillPlotFromVector(h_assoc2p_28[w],totASS2p_28[w]);
         
       fillPlotFromVector(h_assoc2pT_SgnMu[w],totASS2pT_SgnMu[w]);
+      fillPlotFromVector(h_assoc2pT_SgnMu_24[w],totASS2pT_SgnMu_24[w]);
+      fillPlotFromVector(h_assoc2pT_SgnMu_28[w],totASS2pT_SgnMu_28[w]);
+      fillPlotFromVector(h_assoc2p_SgnMu[w],totASS2p_SgnMu[w]);
+      fillPlotFromVector(h_assoc2p_SgnMu_24[w],totASS2p_SgnMu_24[w]);
+      fillPlotFromVector(h_assoc2p_SgnMu_28[w],totASS2p_SgnMu_28[w]);
+        
       fillPlotFromVector(h_assoc2pT_SgnBkg[w],totASS2pT_SgnBkg[w]);
       fillPlotFromVector(h_assoc2pT_Pu[w],totASS2pT_Pu[w]);
       fillPlotFromVector(h_assoc2pT_PuIT[w],totASS2pT_PuIT[w]);
