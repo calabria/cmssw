@@ -589,7 +589,7 @@ void setEverything(std::vector<TH1F*> genericVector, double min, double max, boo
 		//else if(name3 == "Muon100") header = "Muon p_{T} = 100 GeV/c";
 		else if(name3 == "Muon100") header = "Standalone Muon reconstruction";
 		else if (name3 == "DY") header = "Z/#gamma* #rightarrow #mu#mu";
-		header += ptRange;
+		if(!(ptRange == "24" || ptRange == "28" || ptRange == "full")) header += ptRange;
 
 		std::string addString2 = "";
 		/*if(type.find("MuonLoose") != std::string::npos) addString2 = ", Loose Muon ID";
@@ -634,8 +634,8 @@ void setEverything(std::vector<TH1F*> genericVector, double min, double max, boo
 		else if(maxScale == 2.8 || maxScale == 2.9){
 
 			genericVector[1]->GetXaxis()->SetTitle("Muon |#eta|");
-			if(genericVector[1]->GetSize() == 27) genericVector[1]->GetXaxis()->SetRange(20,28);
-			else if(genericVector[1]->GetSize() == 15) genericVector[1]->GetXaxis()->SetRangeUser(2.0,2.8);
+			if(genericVector[1]->GetSize() == 27) genericVector[1]->GetXaxis()->SetRange(0,28);
+			else if(genericVector[1]->GetSize() == 15) genericVector[1]->GetXaxis()->SetRangeUser(0.0,2.8);
             //TF1 *myfit = new TF1("myfit","pol0", 1.5, 2.1);
 			//genericVector[1]->Fit("myfit","R");
 
@@ -645,6 +645,9 @@ void setEverything(std::vector<TH1F*> genericVector, double min, double max, boo
 			genericVector[1]->GetXaxis()->SetTitle("Muon p_{T} (GeV)");
 			genericVector[1]->GetXaxis()->SetRangeUser(0,99);
 			if(ptRange == "") addString3 = ", |#eta| < 2.4";
+            else if(ptRange == "full") addString3 = ", |#eta| < 2.8";
+            else if(ptRange == "24") addString3 = ", |#eta| < 2.4";
+            else if(ptRange == "28") addString3 = ", 2.4 < |#eta| < 2.8";
   			setLeg(leg2, header+addString2+addString3);
 
 		}
@@ -728,7 +731,7 @@ void setEverything(std::vector<TH1F*> genericVector, double min, double max, boo
 
 		genericVector[1]->GetYaxis()->SetTitle(title.c_str());
 		genericVector[1]->SetTitle("");
-		setMarkerStyle(genericVector[1], 0, markers[4]);
+		setMarkerStyle(genericVector[1], 1, markers[4]);
 		changeAxis(genericVector[1]->GetXaxis(), 1.0, 0.005, 0.045);
 		changeAxis(genericVector[1]->GetYaxis(), 1.5, 0.005, 0.045);
 		genericVector[1]->Draw("E1P");
@@ -739,10 +742,10 @@ void setEverything(std::vector<TH1F*> genericVector, double min, double max, boo
 		genericVector[2]->Draw("E1PSAME");
 
 		setMarkerStyle2(genericVector[3], kGreen+3, markers[2]);
-		genericVector[3]->Draw("E1PSAME");
+		//genericVector[3]->Draw("E1PSAME");
 
 		setMarkerStyle(genericVector[5], 2, markers[7]);
-		genericVector[5]->Draw("E1PSAME");
+		//genericVector[5]->Draw("E1PSAME");
 
 		setMarkerStyle2(genericVector[0], kBlue+2, markers[0]);
 		genericVector[0]->Draw("E1PSAME");
@@ -757,12 +760,12 @@ void setEverything(std::vector<TH1F*> genericVector, double min, double max, boo
 //  	leg2->AddEntry(genericVector[4], "PhaseII 2023D4 PU140", "p");
 //  	leg2->AddEntry(genericVector[5], "PhaseII 2023D4 PU200", "p");
     
-        leg2->AddEntry(genericVector[0], "PhaseII 2023D4Timing PU0, pre2", "p");
-//  	leg2->AddEntry(genericVector[1], "PhaseII 2023D4Timing PU140, pre2", "p");
-  	    leg2->AddEntry(genericVector[2], "PhaseII 2023D4Timing PU200, pre2", "p");
-		leg2->AddEntry(genericVector[3], "PhaseII 2023D4 PU0, pre1", "p");
-//  	leg2->AddEntry(genericVector[4], "PhaseII 2023D4 PU140, pre1", "p");
-  		leg2->AddEntry(genericVector[5], "PhaseII 2023D4 PU200, pre1", "p");
+        leg2->AddEntry(genericVector[0], "PhaseII 2023D4Timing PU0, pre4", "p");
+    	leg2->AddEntry(genericVector[1], "PhaseII 2023D4Timing PU140, pre4", "p");
+  	    leg2->AddEntry(genericVector[2], "PhaseII 2023D4Timing PU200, pre4", "p");
+//		leg2->AddEntry(genericVector[3], "PhaseII 2023D4Timing PU0, pre2", "p");
+//     	leg2->AddEntry(genericVector[4], "PhaseII 2023D4 PU140, pre1", "p");
+//  	leg2->AddEntry(genericVector[5], "PhaseII 2023D4Timing PU200, pre2", "p");
 		leg2->Draw();
 
 		/*canvas2->cd(2);
@@ -823,7 +826,7 @@ void setEverything(std::vector<TProfile*> genericVector, double min, double max,
 		//else if(name3 == "Muon100") header = "Muon p_{T} = 100 GeV/c";
 		else if(name3 == "Muon100") header = "Standalone Muon reconstruction";
 		else if (name3 == "DY") header = "Z/#gamma* #rightarrow #mu#mu";
-		header += ptRange;
+		if(!(ptRange == "24" || ptRange == "28" || ptRange == "full")) header += ptRange;
 
 		std::string addString2 = "";
 		/*if(type.find("MuonLoose") != std::string::npos) addString2 = ", Loose Muon ID";
@@ -868,8 +871,8 @@ void setEverything(std::vector<TProfile*> genericVector, double min, double max,
         else if(maxScale == 2.8 || maxScale == 2.9){
 
 			genericVector[1]->GetXaxis()->SetTitle("Muon |#eta|");
-			if(genericVector[1]->GetSize() == 27) genericVector[1]->GetXaxis()->SetRange(20,28);
-			else if(genericVector[1]->GetSize() == 15) genericVector[1]->GetXaxis()->SetRangeUser(2.0,2.8);
+			if(genericVector[1]->GetSize() == 27) genericVector[1]->GetXaxis()->SetRange(0,28);
+			else if(genericVector[1]->GetSize() == 15) genericVector[1]->GetXaxis()->SetRangeUser(0.0,2.8);
             //TF1 *myfit = new TF1("myfit","pol0", 1.5, 2.1);
 			//genericVector[1]->Fit("myfit","R");
 
@@ -879,7 +882,10 @@ void setEverything(std::vector<TProfile*> genericVector, double min, double max,
 			genericVector[1]->GetXaxis()->SetTitle("Muon p_{T} (GeV)");
 			genericVector[1]->GetXaxis()->SetRangeUser(0,99);
 			if(ptRange == "") addString3 = ", |#eta| < 2.4";
-  			setLeg(leg2, header+addString2+addString3);
+            else if(ptRange == "full") addString3 = ", |#eta| < 2.8";
+            else if(ptRange == "24") addString3 = ", |#eta| < 2.4";
+            else if(ptRange == "28") addString3 = ", 2.4 < |#eta| < 2.8";
+            setLeg(leg2, header+addString2+addString3);
 
 		}
 		else if(maxScale == 250){
@@ -962,7 +968,7 @@ void setEverything(std::vector<TProfile*> genericVector, double min, double max,
 
 		genericVector[1]->GetYaxis()->SetTitle(title.c_str());
 		genericVector[1]->SetTitle("");
-		setMarkerStyle(genericVector[1], 0, markers[4]);
+		setMarkerStyle(genericVector[1], 1, markers[4]);
 		changeAxis(genericVector[1]->GetXaxis(), 1.0, 0.005, 0.045);
 		changeAxis(genericVector[1]->GetYaxis(), 1.5, 0.005, 0.045);
 		genericVector[1]->Draw("E1P");
@@ -973,10 +979,10 @@ void setEverything(std::vector<TProfile*> genericVector, double min, double max,
 		genericVector[2]->Draw("E1PSAME");
 
 		setMarkerStyle2(genericVector[3], kGreen+3, markers[2]);
-		genericVector[3]->Draw("E1PSAME");
+		//genericVector[3]->Draw("E1PSAME");
 
 		setMarkerStyle(genericVector[5], 2, markers[7]);
-		genericVector[5]->Draw("E1PSAME");
+		//genericVector[5]->Draw("E1PSAME");
 
 		setMarkerStyle2(genericVector[0], kBlue+2, markers[0]);
 		genericVector[0]->Draw("E1PSAME");
@@ -991,12 +997,12 @@ void setEverything(std::vector<TProfile*> genericVector, double min, double max,
 //  	leg2->AddEntry(genericVector[4], "PhaseII 2023D4 PU140", "p");
 //  	leg2->AddEntry(genericVector[5], "PhaseII 2023D4 PU200", "p");
     
-        leg2->AddEntry(genericVector[0], "PhaseII 2023D4Timing PU0, pre2", "p");
-//  	leg2->AddEntry(genericVector[1], "PhaseII 2023D4Timing PU140, pre2", "p");
-  	    leg2->AddEntry(genericVector[2], "PhaseII 2023D4Timing PU200, pre2", "p");
-		leg2->AddEntry(genericVector[3], "PhaseII 2023D4 PU0, pre1", "p");
-//  	leg2->AddEntry(genericVector[4], "PhaseII 2023D4 PU140, pre1", "p");
-  		leg2->AddEntry(genericVector[5], "PhaseII 2023D4 PU200, pre1", "p");
+        leg2->AddEntry(genericVector[0], "PhaseII 2023D4Timing PU0, pre4", "p");
+    	leg2->AddEntry(genericVector[1], "PhaseII 2023D4Timing PU140, pre4", "p");
+  	    leg2->AddEntry(genericVector[2], "PhaseII 2023D4Timing PU200, pre4", "p");
+//		leg2->AddEntry(genericVector[3], "PhaseII 2023D4Timing PU0, pre2", "p");
+//     	leg2->AddEntry(genericVector[4], "PhaseII 2023D4 PU140, pre1", "p");
+//  	leg2->AddEntry(genericVector[5], "PhaseII 2023D4Timing PU200, pre2", "p");
 		leg2->Draw();
 
 		/*canvas2->cd(2);
@@ -1011,7 +1017,7 @@ void setEverything(std::vector<TProfile*> genericVector, double min, double max,
 }
 
 
-void setEverything2(std::vector<TEfficiency*> genericVector, double min, double max, bool log, double x1, double y1, double x2, double y2, std::string name3, std::string type, std::string title, std::string save, bool logx = false, std::string ptRange = ""){
+void setEverything2(std::vector<TEfficiency*> genericVector, double min, double max, bool log, double x1, double y1, double x2, double y2, std::string name3, std::string type, std::string title, std::string save, bool logx = false, std::string ptRange = "", std::string plotType = ""){
 
 		std::vector<int> markers;
 		markers.push_back(20);
@@ -1057,7 +1063,7 @@ void setEverything2(std::vector<TEfficiency*> genericVector, double min, double 
 		if(name3 == "Muon10") header = "Muon p_{T} = 10 GeV";
 		else if(name3 == "Muon100") header = "Muon p_{T} = 100 GeV";
 		else if (name3 == "DY") header = "Z/#gamma* #rightarrow #mu#mu";
-		header += ptRange;
+        if(!(ptRange == "24" || ptRange == "28" || ptRange == "full")) header += ptRange;
 
 		std::string addString2 = "";
 		/*if(type.find("MuonLoose") != std::string::npos) addString2 = ", Loose Muon ID";
@@ -1093,32 +1099,50 @@ void setEverything2(std::vector<TEfficiency*> genericVector, double min, double 
 		double maxScale = genericVector[1]->GetPaintedGraph()->GetXaxis()->GetXmax();
 		cout<<maxScale<<endl;
 
-		if(maxScale > 2.3 && maxScale < 2.7){
+		if(plotType == "eff_vs_eta_24"){
             
 			genericVector[1]->SetTitle((" ;Muon |#eta|;"+title).c_str());
 			genericVector[1]->GetPaintedGraph()->GetXaxis()->SetLimits(0,2.4);
 
 		}
-		else if(maxScale > 2.8 && maxScale < 3.0){
+		else if(plotType == "eff_vs_eta_28"){
             
 			genericVector[1]->SetTitle((" ;Muon |#eta|;"+title).c_str());
-			genericVector[1]->GetPaintedGraph()->GetXaxis()->SetLimits(2.0,2.8);
+			genericVector[1]->GetPaintedGraph()->GetXaxis()->SetLimits(0.0,2.8);
 
 		}
-		else if(maxScale > 700 && maxScale < 2800){
+		else if(plotType == "eff_vs_pt"){
             
 			genericVector[1]->SetTitle((" ;Muon p_{T} (GeV);"+title).c_str());
 			genericVector[1]->GetPaintedGraph()->GetXaxis()->SetLimits(0,100);
 			if(ptRange == "") addString3 = ", |#eta| < 2.4";
-  			setLeg(leg2, header+addString2+addString3);
+            else if(ptRange == "full") addString3 = ", |#eta| < 2.8";
+            else if(ptRange == "24") addString3 = ", |#eta| < 2.4";
+            else if(ptRange == "28") addString3 = ", 2.4 < |#eta| < 2.8";
+            setLeg(leg2, header+addString2+addString3);
 
         }
-		else if(maxScale > 170 && maxScale < 270){
+        else if(plotType == "eff_vs_p"){
+            
+            genericVector[1]->SetTitle((" ;Muon p (GeV);"+title).c_str());
+            genericVector[1]->GetPaintedGraph()->GetXaxis()->SetLimits(0,100);
+            if(ptRange == "") addString3 = ", |#eta| < 2.4";
+            else if(ptRange == "full") addString3 = ", |#eta| < 2.8";
+            else if(ptRange == "24") addString3 = ", |#eta| < 2.4";
+            else if(ptRange == "28") addString3 = ", 2.4 < |#eta| < 2.8";
+            setLeg(leg2, header+addString2+addString3);
+            
+        }
+		else if(plotType == "eff_vs_vtx"){
 
 			genericVector[1]->SetTitle((" ;Number of pile-up collisions;"+title).c_str());
 			genericVector[1]->GetPaintedGraph()->GetXaxis()->SetLimits(0,250);
-			if(ptRange == "") std::string addString4 = ", |#eta| < 2.4";
-  			setLeg(leg2, header+addString2+addString3+addString4);
+            std::string addString4 = "";
+            if(ptRange == "") std::string addString4 = ", |#eta| < 2.4";
+            else if(ptRange == "full") addString4 = ", |#eta| < 2.8";
+            else if(ptRange == "24") addString4 = ", |#eta| < 2.4";
+            else if(ptRange == "28") addString4 = ", 2.4 < |#eta| < 2.8";
+            setLeg(leg2, header+addString2+addString3+addString4);
 
 		}
 		else if(maxScale == 20){
@@ -1141,7 +1165,7 @@ void setEverything2(std::vector<TEfficiency*> genericVector, double min, double 
 
 		//genericVector[1]->GetPaintedGraph()->GetYaxis()->SetTitle(title.c_str());
 		genericVector[1]->GetPaintedGraph()->SetTitle("");
-		setMarkerStyle(genericVector[1], 0, markers[4]);
+		setMarkerStyle(genericVector[1], 1, markers[4]);
 
   		cmsPreliminaryLabel->Draw();
 		//label->Draw();
@@ -1150,10 +1174,10 @@ void setEverything2(std::vector<TEfficiency*> genericVector, double min, double 
 		genericVector[2]->Draw("SAME");
 
 		setMarkerStyle2(genericVector[3], kGreen+3, markers[2]);
-		genericVector[3]->Draw("SAME");
+		//genericVector[3]->Draw("SAME");
 
 		setMarkerStyle(genericVector[5], 2, markers[7]);
-		genericVector[5]->Draw("E1PSAME");
+		//genericVector[5]->Draw("E1PSAME");
     
 		setMarkerStyle(genericVector[4], 12, markers[1]);
 		//genericVector[4]->Draw("E1PSAME");
@@ -1168,12 +1192,12 @@ void setEverything2(std::vector<TEfficiency*> genericVector, double min, double 
 //  	leg2->AddEntry(genericVector[4], "PhaseII 2023D4 PU140", "p");
 //  	leg2->AddEntry(genericVector[5], "PhaseII 2023D4 PU200", "p");
     
-        leg2->AddEntry(genericVector[0], "PhaseII 2023D4Timing PU0, pre2", "p");
-//  	leg2->AddEntry(genericVector[1], "PhaseII 2023D4Timing PU140, pre2", "p");
-  	    leg2->AddEntry(genericVector[2], "PhaseII 2023D4Timing PU200, pre2", "p");
-		leg2->AddEntry(genericVector[3], "PhaseII 2023D4 PU0, pre1", "p");
-//  	leg2->AddEntry(genericVector[4], "PhaseII 2023D4 PU140, pre1", "p");
-  		leg2->AddEntry(genericVector[5], "PhaseII 2023D4 PU200, pre1", "p");
+        leg2->AddEntry(genericVector[0], "PhaseII 2023D4Timing PU0, pre4", "p");
+    	leg2->AddEntry(genericVector[1], "PhaseII 2023D4Timing PU140, pre4", "p");
+  	    leg2->AddEntry(genericVector[2], "PhaseII 2023D4Timing PU200, pre4", "p");
+//		leg2->AddEntry(genericVector[3], "PhaseII 2023D4Timing PU0, pre2", "p");
+//     	leg2->AddEntry(genericVector[4], "PhaseII 2023D4 PU140, pre1", "p");
+//  	leg2->AddEntry(genericVector[5], "PhaseII 2023D4Timing PU200, pre2", "p");
 		leg2->Draw();
 
 		/*canvas3->cd(2);
@@ -1238,8 +1262,21 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
   std::vector<TH1F*> qOverPtResRMS_vs_pt;
   std::vector<TH1F*> numRecoPt_vs_pt;
   std::vector<TH1F*> numRecoPtAsso_vs_pt;
+    
   std::vector<TH1F*> yield_vs_pt;
   std::vector<TH1F*> yield_vs_pt_sgn;
+  std::vector<TH1F*> yield_vs_p;
+  std::vector<TH1F*> yield_vs_p_sgn;
+    
+  std::vector<TH1F*> yield_vs_pt_24;
+  std::vector<TH1F*> yield_vs_pt_sgn_24;
+  std::vector<TH1F*> yield_vs_p_24;
+  std::vector<TH1F*> yield_vs_p_sgn_24;
+    
+  std::vector<TH1F*> yield_vs_pt_28;
+  std::vector<TH1F*> yield_vs_pt_sgn_28;
+  std::vector<TH1F*> yield_vs_p_28;
+  std::vector<TH1F*> yield_vs_p_sgn_28;
 
   std::vector<TH1F*> effic_vs_eta1;
   std::vector<TH1F*> effic_vs_eta2;
@@ -1273,14 +1310,36 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
 
   std::vector<TEfficiency*> effErr_vs_eta;
   std::vector<TEfficiency*> effErr_vs_eta_050;
+    
   std::vector<TEfficiency*> effErr_vs_pt;
+  std::vector<TEfficiency*> effErr_vs_p;
+    
+  std::vector<TEfficiency*> effErr_vs_pt_24;
+  std::vector<TEfficiency*> effErr_vs_p_24;
+    
+  std::vector<TEfficiency*> effErr_vs_pt_28;
+  std::vector<TEfficiency*> effErr_vs_p_28;
+    
   std::vector<TEfficiency*> effErr_vs_vtx;
 
   std::vector<TEfficiency*> fr_vs_eta;
   std::vector<TEfficiency*> fr_vs_eta_50;
   std::vector<TEfficiency*> fr_vs_eta_sgn;
+    
   std::vector<TEfficiency*> fr_vs_pt;
   std::vector<TEfficiency*> fr_vs_pt_sgn;
+  std::vector<TEfficiency*> fr_vs_p;
+  std::vector<TEfficiency*> fr_vs_p_sgn;
+    
+  std::vector<TEfficiency*> fr_vs_pt_24;
+  std::vector<TEfficiency*> fr_vs_pt_sgn_24;
+  std::vector<TEfficiency*> fr_vs_p_24;
+  std::vector<TEfficiency*> fr_vs_p_sgn_24;
+    
+  std::vector<TEfficiency*> fr_vs_pt_28;
+  std::vector<TEfficiency*> fr_vs_pt_sgn_28;
+  std::vector<TEfficiency*> fr_vs_p_28;
+  std::vector<TEfficiency*> fr_vs_p_sgn_28;
     
   std::vector<TProfile*> cscHits_vs_eta;
   std::vector<TProfile*> dtHits_vs_eta;
@@ -1344,6 +1403,7 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
 	qOverPtResRMS_vs_eta.push_back((TH1F*)gDirectory->Get("qOverPtres_vs_eta_sim_RMS"));
 	numRecoPt_vs_eta.push_back((TH1F*)gDirectory->Get("num_reco_eta"));
 	numRecoPtAsso_vs_eta.push_back((TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta"));
+      
 	yield_vs_eta.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta"), numEvt, false, false));
 	yield_vs_eta_sgn.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_SgnMu"), numEvt ,false, false));
 	yield_vs_eta_050.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_050"), numEvt, false, false));
@@ -1357,8 +1417,21 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
 	qOverPtResRMS_vs_pt.push_back((TH1F*)gDirectory->Get("qOverPtres_vs_pt_sim_RMS"));
 	numRecoPt_vs_pt.push_back((TH1F*)gDirectory->Get("num_reco_pT"));
 	numRecoPtAsso_vs_pt.push_back((TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT"));
+      
 	yield_vs_pt.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_pT"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT"), numEvt, true));
 	yield_vs_pt_sgn.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_pT"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT_SgnMu"), numEvt, true));
+    yield_vs_p.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_p"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p"), numEvt, true));
+    yield_vs_p_sgn.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_p"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p_SgnMu"), numEvt, true));
+      
+    yield_vs_pt_24.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_pT_24"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT_24"), numEvt, true));
+    yield_vs_pt_sgn_24.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_pT_24"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT_SgnMu_24"), numEvt, true));
+    yield_vs_p_24.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_p_24"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p_24"), numEvt, true));
+    yield_vs_p_sgn_24.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_p_24"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p_SgnMu_24"), numEvt, true));
+      
+    yield_vs_pt_28.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_pT_28"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT_28"), numEvt, true));
+    yield_vs_pt_sgn_28.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_pT_28"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT_SgnMu_28"), numEvt, true));
+    yield_vs_p_28.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_p_28"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p_28"), numEvt, true));
+    yield_vs_p_sgn_28.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_p_28"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p_SgnMu_28"), numEvt, true));
 
 	effic_vs_eta1.push_back((TH1F*)gDirectory->Get("efficBin1"));
 	effic_vs_eta2.push_back((TH1F*)gDirectory->Get("efficBin2"));
@@ -1372,10 +1445,10 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
 	numRecoPtAsso3_vs_eta.push_back((TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_bin3"));
 	numRecoPt4_vs_eta.push_back((TH1F*)gDirectory->Get("num_reco_eta_bin4"));
 	numRecoPtAsso4_vs_eta.push_back((TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_bin4"));
-	yield1_vs_eta.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta_bin1"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_bin1"), numEvt, false, true));
-	yield2_vs_eta.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta_bin2"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_bin2"), numEvt, false, true));
-	yield3_vs_eta.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta_bin3"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_bin3"), numEvt, false, true));
-	yield4_vs_eta.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta_bin4"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_bin4"), numEvt, false, true));
+	yield1_vs_eta.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta_bin1"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_bin1"), numEvt, false, false));
+	yield2_vs_eta.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta_bin2"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_bin2"), numEvt, false, false));
+	yield3_vs_eta.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta_bin3"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_bin3"), numEvt, false, false));
+	yield4_vs_eta.push_back(produceYield((TH1F*)gDirectory->Get("num_reco_eta_bin4"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_bin4"), numEvt, false, false));
 
 	efficB_vs_pt.push_back((TH1F*)gDirectory->Get("efficPtBarrel"));
 	efficO_vs_pt.push_back((TH1F*)gDirectory->Get("efficPtOverlap"));
@@ -1394,16 +1467,42 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
 	effErr_vs_eta.push_back(effEta);
 	TEfficiency * effEta050 = calcEff((TH1F*)gDirectory->Get("num_assoc(simToReco)_eta_Q05"), (TH1F*)gDirectory->Get("num_simul_eta"), false, false, false, i);
 	effErr_vs_eta_050.push_back(effEta050);
+      
 	TEfficiency * effPt = calcEff((TH1F*)gDirectory->Get("num_assoc(simToReco)_pT"), (TH1F*)gDirectory->Get("num_simul_pT"), false, false, false, i);
 	effErr_vs_pt.push_back(effPt);
-	TEfficiency * effVtx = calcEff((TH1F*)gDirectory->Get("num_assoc(simToReco)_vtx"), (TH1F*)gDirectory->Get("num_simul_vtx"), true, false, false, i);
+    TEfficiency * effP = calcEff((TH1F*)gDirectory->Get("num_assoc(simToReco)_p"), (TH1F*)gDirectory->Get("num_simul_p"), false, false, false, i);
+    effErr_vs_p.push_back(effP);
+
+ 	TEfficiency * effPt24 = calcEff((TH1F*)gDirectory->Get("num_assoc(simToReco)_pT_24"), (TH1F*)gDirectory->Get("num_simul_pT_24"), false, false, false, i);
+	effErr_vs_pt_24.push_back(effPt24);
+    TEfficiency * effP24 = calcEff((TH1F*)gDirectory->Get("num_assoc(simToReco)_p_24"), (TH1F*)gDirectory->Get("num_simul_p_24"), false, false, false, i);
+    effErr_vs_p_24.push_back(effP24);
       
+    TEfficiency * effPt28 = calcEff((TH1F*)gDirectory->Get("num_assoc(simToReco)_pT_28"), (TH1F*)gDirectory->Get("num_simul_pT_28"), false, false, false, i);
+	effErr_vs_pt_28.push_back(effPt28);
+    TEfficiency * effP28 = calcEff((TH1F*)gDirectory->Get("num_assoc(simToReco)_p_28"), (TH1F*)gDirectory->Get("num_simul_p_28"), false, false, false, i);
+    effErr_vs_p_28.push_back(effP28);
+
+	TEfficiency * effVtx = calcEff((TH1F*)gDirectory->Get("num_assoc(simToReco)_vtx"), (TH1F*)gDirectory->Get("num_simul_vtx"), true, false, false, i);
 	effErr_vs_vtx.push_back(effVtx);
 
 	fr_vs_eta.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_eta"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta"), (TH1F*)gDirectory->Get("num_reco_eta"), false, false));
 	fr_vs_eta_sgn.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_eta"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_SgnMu"), (TH1F*)gDirectory->Get("num_reco_eta") ,false, false));
+      
 	fr_vs_pt.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_pT"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT"), (TH1F*)gDirectory->Get("num_reco_pT"), false));
 	fr_vs_pt_sgn.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_pT"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT_SgnMu"), (TH1F*)gDirectory->Get("num_reco_pT"), false));
+    fr_vs_p.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_p"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p"), (TH1F*)gDirectory->Get("num_reco_p"), false));
+    fr_vs_p_sgn.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_p"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p_SgnMu"), (TH1F*)gDirectory->Get("num_reco_p"), false));
+      
+    fr_vs_pt_24.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_pT_24"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT_24"), (TH1F*)gDirectory->Get("num_reco_pT_24"), false));
+    fr_vs_pt_sgn_24.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_pT_24"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT_SgnMu_24"), (TH1F*)gDirectory->Get("num_reco_pT_24"), false));
+    fr_vs_p_24.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_p_24"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p_24"), (TH1F*)gDirectory->Get("num_reco_p_24"), false));
+    fr_vs_p_sgn_24.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_p_24"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p_SgnMu_24"), (TH1F*)gDirectory->Get("num_reco_p_24"), false));
+      
+    fr_vs_pt_28.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_pT_28"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT_28"), (TH1F*)gDirectory->Get("num_reco_pT_28"), false));
+    fr_vs_pt_sgn_28.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_pT_28"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_pT_SgnMu_28"), (TH1F*)gDirectory->Get("num_reco_pT_28"), false));
+    fr_vs_p_28.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_p_28"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p_28"), (TH1F*)gDirectory->Get("num_reco_p_28"), false));
+    fr_vs_p_sgn_28.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_p_28"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_p_SgnMu_28"), (TH1F*)gDirectory->Get("num_reco_p_28"), false));
       
     fr_vs_eta_50.push_back(produceFR((TH1F*)gDirectory->Get("num_reco_eta"), (TH1F*)gDirectory->Get("num_assoc(recoToSim)_eta_050"), (TH1F*)gDirectory->Get("num_reco_eta"), false, false));
 
@@ -1438,15 +1537,15 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
     else if(allNames[6].find("Me0Muons") != std::string::npos) addString = "ME0Muon ";
     else if(allNames[6].find("GemMuons") != std::string::npos) addString = "GEMMuon ";
     else if(allNames[6].find("standAloneMuons") != std::string::npos) addString = "STAMuon ";
-    else if(allNames[6].find("extractedGlobalMuons") != std::string::npos) addString = "GLBMuons ";
+    else if(allNames[6].find("extractedGlobalMuons") != std::string::npos) addString = "GLBMuon ";
 	else addString = "Muon ";
 
 	double minEff = 0.3;
 	if( allNames[6].find("LooseSel3") != std::string::npos || allNames[6].find("TightSel3") != std::string::npos ) minEff = 0.0;
     if( allNames[6].find("Me0Muons") != std::string::npos ) minEff = 0.1;
 	double maxYield = 0.2;
-    if( allNames[6].find("TightSel0") != std::string::npos ) { maxYield = 0.004, minEff = 0.0; };
-    if( allNames[6].find("LooseSel0") != std::string::npos ) { minEff = 0.0; };
+    if( allNames[6].find("TightSel0") != std::string::npos ) { maxYield = 0.004; minEff = 0.0; };
+    if( allNames[6].find("LooseSel0") != std::string::npos ) { maxYield = 5.0; minEff = 0.0; };
 	if( allNames[6].find("LooseSel3") != std::string::npos || allNames[6].find("TightSel3") != std::string::npos ) maxYield = 0.05;
     if( allNames[6].find("extractedSTA") != std::string::npos ){ maxYield = 0.4; minEff = 0.0; }
     if( allNames[6].find("GemMuons") != std::string::npos ){ maxYield = 500.0; }
@@ -1454,11 +1553,20 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
     if( allNames[6].find("bestMuonLoose") != std::string::npos ){ maxYield = 50.0; }
     if( allNames[6].find("standAloneMuons") != std::string::npos ){ maxYield = 50.0; }
     if( allNames[6].find("extractedGlobalMuons") != std::string::npos ){ maxYield = 50.0; }
+    if( allNames[6].find("TightModExt") != std::string::npos ) { maxYield = 100.0; minEff = 0.0; };
+    if( allNames[6].find("LooseModExt") != std::string::npos ) { maxYield = 5000.0; minEff = 0.0; };
 
-	setEverything2(effErr_vs_eta, minEff, 1.3, false, 0.25, 0.72, 0.50, 0.92, name3, allNames[6], (addString + "Efficiency"), "efficErr_");
-	setEverything2(effErr_vs_eta_050, minEff, 1.1, false, 0.5, 0.30, 0.8, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficErr050_");
-	setEverything2(effErr_vs_pt, 0.0, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficPtErr_");
-	setEverything2(effErr_vs_vtx, 0.5, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficVtxErr_");
+	setEverything2(effErr_vs_eta, minEff, 1.3, false, 0.25, 0.72, 0.50, 0.92, name3, allNames[6], (addString + "Efficiency"), "efficErr_", false, "", "eff_vs_eta_28");
+	setEverything2(effErr_vs_eta_050, minEff, 1.1, false, 0.5, 0.30, 0.8, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficErr050_", false, "", "eff_vs_eta_28");
+    
+	setEverything2(effErr_vs_pt, 0.0, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficPtErr_", false, "full", "eff_vs_pt");
+    setEverything2(effErr_vs_p, 0.0, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficPErr_", false, "full", "eff_vs_p");
+    setEverything2(effErr_vs_pt_24, 0.0, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficPtErr24_", false, "24", "eff_vs_pt");
+    setEverything2(effErr_vs_p_24, 0.0, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficPErr24_", false, "24", "eff_vs_p");
+    setEverything2(effErr_vs_pt_28, 0.0, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficPtErr28_", false, "28", "eff_vs_pt");
+    setEverything2(effErr_vs_p_28, 0.0, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficPErr28_", false, "28", "eff_vs_p");
+    
+	setEverything2(effErr_vs_vtx, 0.5, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "efficVtxErr_", false, "full", "eff_vs_vtx");
     
     setEverything(cscHits_vs_eta, 0.0, 40, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average number of CSC tracking recHits", "cscHits_");
     setEverything(dtHits_vs_eta, 0.0, 60, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average number of DT tracking recHits", "dtHits_");
@@ -1508,8 +1616,8 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
 	//double maxForEta = 0.05;
 	//if(allNames[6].find("MuonLoose") || allNames[6].find("MuonTight") || allNames[6].find("extracted")) max = 0.02;
 
-	setEverything(yield_vs_eta, 0.0, maxYield, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / 0.2", "yield_");
-	setEverything(yield_vs_eta_sgn, 0.0, maxYield, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / 0.2", "yieldSgn_");
+	setEverything(yield_vs_eta, 0.000001, maxYield, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / 0.2", "yield_");
+	setEverything(yield_vs_eta_sgn, 0.000001, maxYield, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / 0.2", "yieldSgn_");
 	setEverything(yield_vs_eta_050, 0.0, maxYield, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / 0.2", "yield050_", false, ", Quality > 50%");
 
 	/*std::vector<std::string> nomi;
@@ -1546,8 +1654,20 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
 	setEverything(qOverPtRes_vs_pt, 0.003, 0.1, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "#sigma(p_{T})/p_{T}", "invResPt_");
 	setEverything(qOverPtResRMS_vs_pt, 0.005, 0.1, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "q/p_{T} RMS", "invResRMSPt_");
 
-	setEverything(yield_vs_pt, 0.000001, 50.0, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity", "yieldPt_");
-	setEverything(yield_vs_pt_sgn, 0.000001, maxYield, true, 0.25, 0.6, 0.75, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / GeV", "yieldPtSgn_");
+	setEverything(yield_vs_pt, 0.000001, 50.0, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity", "yieldPt_", false, "full");
+	setEverything(yield_vs_pt_sgn, 0.000001, maxYield, true, 0.25, 0.6, 0.75, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / GeV", "yieldPtSgn_", false, "full");
+    setEverything(yield_vs_p, 0.000001, 50.0, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity", "yieldP_", false, "full");
+    setEverything(yield_vs_p_sgn, 0.000001, maxYield, true, 0.25, 0.6, 0.75, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / GeV", "yieldPSgn_", false, "full");
+    
+    setEverything(yield_vs_pt_24, 0.000001, 50.0, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity", "yieldPt24_", false, "24");
+    setEverything(yield_vs_pt_sgn_24, 0.000001, maxYield, true, 0.25, 0.6, 0.75, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / GeV", "yieldPtSgn24_", false, "24");
+    setEverything(yield_vs_p_24, 0.000001, 50.0, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity", "yieldP24_", false, "24");
+    setEverything(yield_vs_p_sgn_24, 0.000001, maxYield, true, 0.25, 0.6, 0.75, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / GeV", "yieldPSgn24_", false, "24");
+    
+    setEverything(yield_vs_pt_28, 0.000001, 50.0, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity", "yieldPt28_", false, "28");
+    setEverything(yield_vs_pt_sgn_28, 0.000001, maxYield, true, 0.25, 0.6, 0.75, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / GeV", "yieldPtSgn28_", false, "28");
+    setEverything(yield_vs_p_28, 0.000001, 50.0, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity", "yieldP28_", false ,"28");
+    setEverything(yield_vs_p_sgn_28, 0.000001, maxYield, true, 0.25, 0.6, 0.75, 0.8, name3, allNames[6], "Average " + addString + "Bkg Multiplicity / GeV", "yieldPSgn28_", false, "28");
  
  	setEverything(effic_vs_eta1, minEff, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "effic1_", false, ", 5 < p_{T} < 10 GeV");
 	setEverything(effic_vs_eta2, minEff, 1.1, false, 0.25, 0.20, 0.75, 0.45, name3, allNames[6], (addString + "Efficiency"), "effic2_", false, ", 10 < p_{T} < 20 GeV/c");
@@ -1574,11 +1694,24 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
     if(allNames[6].find("MuonTight")) maxFR = 0.01;
     if(allNames[6].find("extractedSTA")) maxFR = 1.0;
 
-	setEverything2(fr_vs_eta, 0.0, 1, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average Bkg Muon Rate", "fr_");
-    setEverything2(fr_vs_eta_50, 0.0, 1, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average Bkg Muon Rate", "fr_50_");
-	setEverything2(fr_vs_eta_sgn, 0.0, maxFR, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average Bkg Muon Rate", "frSgn_");
-	setEverything2(fr_vs_pt, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPt_");
-	setEverything2(fr_vs_pt_sgn, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPtSgn_");
+	setEverything2(fr_vs_eta, 0.0, 1, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average Bkg Muon Rate", "fr_", false, "", "eff_vs_eta_28");
+    setEverything2(fr_vs_eta_50, 0.0, 1, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average Bkg Muon Rate", "fr_50_", false, "", "eff_vs_eta_28");
+	setEverything2(fr_vs_eta_sgn, 0.0, maxFR, false, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "Average Bkg Muon Rate", "frSgn_", false, "", "eff_vs_eta_28");
+    
+	setEverything2(fr_vs_pt, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPt_", false, "", "eff_vs_pt");
+	setEverything2(fr_vs_pt_sgn, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPtSgn_", false, "", "eff_vs_pt");
+    setEverything2(fr_vs_p, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frP_", false, "", "eff_vs_p");
+    setEverything2(fr_vs_p_sgn, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPSgn_", false, "", "eff_vs_p");
+    
+    setEverything2(fr_vs_pt_24, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPt24_", false, "", "eff_vs_pt");
+    setEverything2(fr_vs_pt_sgn_24, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPtSgn24_", false, "", "eff_vs_pt");
+    setEverything2(fr_vs_p_24, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frP24_", false, "", "eff_vs_p");
+    setEverything2(fr_vs_p_sgn_24, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPSgn24_", false, "", "eff_vs_p");
+    
+    setEverything2(fr_vs_pt_28, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPt28_", false, "", "eff_vs_pt");
+    setEverything2(fr_vs_pt_sgn_28, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPtSgn28_",  false, "", "eff_vs_pt");
+    setEverything2(fr_vs_p_28, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frP28_", false, "", "eff_vs_p");
+    setEverything2(fr_vs_p_sgn_28, 0.0001, 50, true, 0.30, 0.6, 0.80, 0.8, name3, allNames[6], "Average Bkg Muon Rate", "frPSgn28_", false, "", "eff_vs_p");
 
 }
 
@@ -1821,12 +1954,12 @@ void makeAll(std::string type = "bestMuonLoose_AssociatorByPull"){
 //    std::string nome_2023 =       "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre1__RECO_PU140_D4_ZMM.root";
 //    std::string nome_2023No =     "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre1__RECO_PU200_D4_ZMM.root";
     
-    std::string nome_2023_FS =    "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre2__RECO_PU0_D4Timing_ZMM.root";
-    std::string nome_2023_FSAge = "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre2__RECO_PU200_D4Timing_ZMM.root";
-    std::string nome_2023_235 =   "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre2__RECO_PU200_D4Timing_ZMM.root";
-    std::string nome_2023_200 =   "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre1__RECO_PU0_D4_ZMM.root";
-    std::string nome_2023 =       "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre1__RECO_PU140_D4_ZMM.root";
-    std::string nome_2023No =     "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre1__RECO_PU200_D4_ZMM.root";
+    std::string nome_2023_FS =    "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre4__RECO_PU0_D4Timing_ZMM_2.root";
+    std::string nome_2023_FSAge = "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre4__RECO_PU140_D4Timing_ZMM_2.root";
+    std::string nome_2023_235 =   "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre4__RECO_PU200_D4Timing_ZMM_2.root";
+    std::string nome_2023_200 =   "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre4__RECO_PU0_D4Timing_ZMM_2.root";
+    std::string nome_2023 =       "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre4__RECO_PU200_D4Timing_ZMM_2.root";
+    std::string nome_2023No =     "DQM_V0001_R000000001__Global__CMSSW_9_0_0_pre4__RECO_PU200_D4Timing_ZMM_2.root";
 
     //Order: 2019, 2019NoUpg, 2019Age, 2023, 2023NoUpg
     
@@ -1880,8 +2013,8 @@ void makeAll2(std::string type = "bestMuonLoose_AssociatorByPull", std::string t
 
 void makeAllAll(){
 
-	makeAll("extractedSTAMuons2StatTiming_tpToStaUpdSel2MuonAssociation2StTime"); //valid hit + muon purity
-    makeAll("Cut5/extractedSTAMuons2StatTiming_tpToStaUpdSel2MuonAssociation2StTime"); //valid hit + muon purity
+//	makeAll("extractedSTAMuons2StatTiming_tpToStaUpdSel2MuonAssociation2StTime"); //valid hit + muon purity
+//  makeAll("Cut5/extractedSTAMuons2StatTiming_tpToStaUpdSel2MuonAssociation2StTime"); //valid hit + muon purity
 
     makeAll("standAloneMuons_UpdatedAtVtx_tpToStaUpdMuonAssociation"); //default
 	makeAll("extractedGlobalMuons_tpToGlbMuonAssociation"); //default
@@ -1897,17 +2030,23 @@ void makeAllAll(){
     
 	////makeAll("Cut5/extractedSTAMuons2StatTiming_tpToStaUpdSel2MuonAssociation2StTime");
 
-	makeAll("Cut5/bestMuonLoose_tpToLooseSel0MuonAssociation");
-	makeAll("Cut5/bestMuonTight_tpToTightSel0MuonAssociation");
+//	makeAll("Cut5/bestMuonLoose_tpToLooseSel0MuonAssociation");
+//	makeAll("Cut5/bestMuonTight_tpToTightSel0MuonAssociation");
     
-    makeAll("Cut5/bestMuonLooseMod_tpToLooseModSel0MuonAssociation");
-    makeAll("Cut5/bestMuonTightMod_tpToTightModSel0MuonAssociation");
+//    makeAll("Cut5/bestMuonLooseMod_tpToLooseModSel0MuonAssociation");
+//    makeAll("Cut5/bestMuonTightMod_tpToTightModSel0MuonAssociation");
+    
+    makeAll("Cut5/bestMuonLooseModExt_tpToLooseModExtSel0MuonAssociation");
+    makeAll("Cut5/bestMuonTightModExt_tpToTightModExtSel0MuonAssociation");
 
-	makeAll("bestMuonLoose_tpToLooseSel0MuonAssociation");
-	makeAll("bestMuonTight_tpToTightSel0MuonAssociation");
+//	makeAll("bestMuonLoose_tpToLooseSel0MuonAssociation");
+//	makeAll("bestMuonTight_tpToTightSel0MuonAssociation");
     
-    makeAll("bestMuonLooseMod_tpToLooseModSel0MuonAssociation");
-    makeAll("bestMuonTightMod_tpToTightModSel0MuonAssociation");
+//    makeAll("bestMuonLooseMod_tpToLooseModSel0MuonAssociation");
+//    makeAll("bestMuonTightMod_tpToTightModSel0MuonAssociation");
+    
+    makeAll("bestMuonLooseModExt_tpToLooseModExtSel0MuonAssociation");
+    makeAll("bestMuonTightModExt_tpToTightModExtSel0MuonAssociation");
     
     makeAll("extractGemMuons_tpToGEMMuonMuonAssociation");
     makeAll("extractMe0Muons_tpToME0MuonMuonAssociation");
