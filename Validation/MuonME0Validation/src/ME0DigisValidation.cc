@@ -46,6 +46,27 @@ void ME0DigisValidation::bookHistograms(DQMStore::IBooker & ibooker, edm::Run co
   me0_strip_exp_bkg_rad_tot = ibooker.book1D( "me0_strip_exp_bkg_radius_tot", "Total expected neutron background; Radius; Entries", binnum, bins);
   me0_strip_exp_bkgElePos_rad = ibooker.book1D( "me0_strip_exp_bkgElePos_radius", "Expected neutron background: electrons+positrons; Radius; Entries", binnum, bins);
   me0_strip_exp_bkgNeutral_rad = ibooker.book1D( "me0_strip_exp_bkgNeutral_radius", "Expected neutron background: gammas+neutrons; Radius; Entries", binnum, bins);
+    
+  std::vector<double> neuBkg, eleBkg;
+  neuBkg.push_back(899644.0);     neuBkg.push_back(-30841.0);     neuBkg.push_back(441.28);
+  neuBkg.push_back(-3.3405);      neuBkg.push_back(0.0140588);    neuBkg.push_back(-3.11473e-05); neuBkg.push_back(2.83736e-08);
+  eleBkg.push_back(4.68590e+05);  eleBkg.push_back(-1.63834e+04); eleBkg.push_back(2.35700e+02);
+  eleBkg.push_back(-1.77706e+00); eleBkg.push_back(7.39960e-03);  eleBkg.push_back(-1.61448e-05); eleBkg.push_back(1.44368e-08);
+    
+  for(int i = 1; i < me0_strip_exp_bkgNeutral_rad->getTH1F()->GetSize(); i++){
+      
+    double pos = me0_strip_exp_bkgNeutral_rad->getTH1F()->GetBinCenter(i);
+    double neutral = 0;
+    double charged = 0;
+      
+    for(int j=0; j<7; ++j) neutral += neuBkg[j]*pos;
+    for(int j=0; j<7; ++j) charged += eleBkg[j]*pos;
+      
+    me0_strip_exp_bkgNeutral_rad->setBinContent(i, neutral);
+    me0_strip_exp_bkgElePos_rad->setBinContent(i, charged);
+    me0_strip_exp_bkg_rad_tot->setBinContent(i, neutral+charged);
+        
+  }
 
   for( unsigned int region_num = 0 ; region_num < nregion ; region_num++ ) {
       me0_strip_dg_zr_tot[region_num] = BookHistZR(ibooker,"me0_strip_dg_tot","Digi",region_num);
@@ -238,29 +259,4 @@ void ME0DigisValidation::analyze(const edm::Event& e,
     }//loop DG
   }
 
-}
-
-void ME0DigisValidation::endJob() {
-    
-  std::vector<double> neuBkg, eleBkg;
-  neuBkg.push_back(899644.0);     neuBkg.push_back(-30841.0);     neuBkg.push_back(441.28);
-  neuBkg.push_back(-3.3405);      neuBkg.push_back(0.0140588);    neuBkg.push_back(-3.11473e-05); neuBkg.push_back(2.83736e-08);
-  eleBkg.push_back(4.68590e+05);  eleBkg.push_back(-1.63834e+04); eleBkg.push_back(2.35700e+02);
-  eleBkg.push_back(-1.77706e+00); eleBkg.push_back(7.39960e-03);  eleBkg.push_back(-1.61448e-05); eleBkg.push_back(1.44368e-08);
-    
-  for(int i = 1; i < me0_strip_exp_bkgNeutral_rad->getTH1F()->GetSize(); i++){
-      
-      double pos = me0_strip_exp_bkgNeutral_rad->getTH1F()->GetBinCenter(i);
-      double neutral = 0;
-      double charged = 0;
-      
-      for(int j=0; j<7; ++j) neutral += neuBkg[j]*pos;
-      for(int j=0; j<7; ++j) charged += eleBkg[j]*pos;
-      
-      me0_strip_exp_bkgNeutral_rad->getBinContent(i, neutral);
-      me0_strip_exp_bkgElePos_rad->getBinContent(i, charged);
-      me0_strip_exp_bkg_rad_tot->getBinContent(i, neutral+charged);
-        
-  }
-    
 }
