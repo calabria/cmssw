@@ -14,6 +14,7 @@ public:
     ~ME0DigisValidation();
     void bookHistograms(DQMStore::IBooker &, edm::Run const &, edm::EventSetup const &) override;
     void analyze(const edm::Event& e, const edm::EventSetup&) override;
+    void endJob();
     bool isMatched(const int, const int, const int, const int, const int, const int);
 private:
     
@@ -46,6 +47,9 @@ private:
     MonitorElement* me0_strip_dg_bkg_rad_tot;
     MonitorElement* me0_strip_dg_bkgElePos_rad;
     MonitorElement* me0_strip_dg_bkgNeutral_rad;
+    MonitorElement* me0_strip_exp_bkg_rad_tot;
+    MonitorElement* me0_strip_exp_bkgElePos_rad;
+    MonitorElement* me0_strip_exp_bkgNeutral_rad;
     
     edm::EDGetToken InputTagToken_Digi;
     double sigma_x_, sigma_y_;
