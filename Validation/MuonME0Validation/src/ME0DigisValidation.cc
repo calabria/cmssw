@@ -59,8 +59,10 @@ void ME0DigisValidation::bookHistograms(DQMStore::IBooker & ibooker, edm::Run co
     double neutral = 0;
     double charged = 0;
       
-    for(int j=0; j<7; ++j) neutral += neuBkg[j]*pos;
-    for(int j=0; j<7; ++j) charged += eleBkg[j]*pos;
+    double pos_helper = 1.0;
+    for(int j=0; j<7; ++j) {neutral += 1.5*neuBkg[j]*pos_helper; pos_helper *= pos;}
+    pos_helper = 1.0;
+    for(int j=0; j<7; ++j) {charged += 1.5*eleBkg[j]*pos_helper; pos_helper *= pos;}
       
     me0_strip_exp_bkgNeutral_rad->setBinContent(i, neutral);
     me0_strip_exp_bkgElePos_rad->setBinContent(i, charged);
