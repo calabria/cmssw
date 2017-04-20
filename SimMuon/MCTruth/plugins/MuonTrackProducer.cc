@@ -304,6 +304,63 @@ bool MuonTrackProducer::isLooseModExt(edm::Event& iEvent, reco::MuonCollection::
     return result;
 }
 
+bool::MuonTrackProducer::isTightClassic(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz)
+{
+    
+    bool result = false;
+    edm::Handle<reco::VertexCollection> vertexHandle;
+    iEvent.getByToken(vtx_Token,vertexHandle);
+    
+    //result = muon::isTightMuon(*muon, (*vertexHandle)[0]);
+    
+    if (muon->muonBestTrack().isNonnull() && muon->innerTrack().isNonnull() && muon->globalTrack().isNonnull()){
+        
+        edm::Handle<reco::VertexCollection> vertexHandle;
+        iEvent.getByToken(vtx_Token,vertexHandle);
+        const reco::VertexCollection* vertices = vertexHandle.product();
+        
+        bool trkLayMeas = muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5;
+        bool isGlb = muon->isGlobalMuon();
+        bool isPF= isGlobalTightMuon(muon) || isTrackerTightMuon(muon) || isIsolatedMuon(muon); //Workaround!!!
+        bool chi2 = muon->globalTrack()->normalizedChi2() < 10.;
+        bool validHits = muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0;
+        bool matchedSt = muon->numberOfMatchedStations() > 1;
+        bool validPxlHit = muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0;
+        
+        bool ipxy = false;
+        bool ipz = false;
+        if(useIPxy == true){
+            
+            if(vertices->size() !=0){
+                
+                ipxy = fabs(muon->muonBestTrack()->dxy((*vertices)[0].position())) < 0.2;
+                //std::cout<<"vx: "<<pointDY.x()<<" vy: "<<pointDY.y()<<" vz: "<<pointDY.z()<<" |Dxy|: "<<ipxy<<std::endl;
+                
+            }
+            
+        }
+        else if(useIPxy == false) ipxy = true;
+        
+        if(useIPz == true){
+            
+            if(vertices->size() !=0){
+                
+                ipz = fabs(muon->muonBestTrack()->dz((*vertices)[0].position())) < 0.5;
+                //std::cout<<"vx: "<<pointDY.x()<<" vy: "<<pointDY.y()<<" vz: "<<pointDY.z()<<" |Dz|: "<<ipz<<std::endl;
+                
+            }
+            
+        }
+        else if(useIPz == false) ipz = true;
+        
+        if(trkLayMeas && isGlb && isPF && chi2 && validHits && matchedSt && ipxy && ipz && validPxlHit) result = true;
+        
+    }
+    
+    return result;
+    
+}
+
 bool MuonTrackProducer::isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz)
 {
   bool result = false;
@@ -796,6 +853,7 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
       reco::TrackRef trackref;
 
       bool loose = isLoose(iEvent, muon);
+      bool tightClassic = isTightClassic(iEvent, muon, useIPxy, useIPz);
       bool tight = isTight(iEvent, muon, useIPxy, useIPz);
       bool looseMod = isLooseMod(iEvent, muon);
       bool tightMod = isTightMod(iEvent, muon, useIPxy, useIPz);
@@ -887,6 +945,10 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
       }
       else if (trackType == "globalTrackTight") {
         if (muon->globalTrack().isNonnull() && tight) trackref = muon->globalTrack();
+        else continue;
+      }
+      else if (trackType == "globalTrackTightClassic") {
+        if (muon->globalTrack().isNonnull() && tightClassic) trackref = muon->globalTrack();
         else continue;
       }
       else if (trackType == "globalTrackTightMod") {

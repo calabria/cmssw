@@ -29,6 +29,7 @@ class MuonTrackProducer : public edm::stream::EDProducer<> {
     bool isME0MuonSel(reco::MuonCollection::const_iterator muon, double pullXCut, double dXCut, double pullYCut, double dYCut, double dPhiCut);
     bool isLoose(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
     bool isTight(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
+    bool isTightClassic(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
     bool isLooseMod(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
     bool isTightMod(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
     bool isLooseModExt(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);

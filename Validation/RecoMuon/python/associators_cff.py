@@ -175,6 +175,24 @@ bestMuonTightModExt5 = cms.EDProducer("MuonTrackProducer",
    trackType = cms.string('globalTrackTightModExt')
 )
 
+bestMuonTightClassic = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muons"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vtxTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('globalTrackTightClassic')
+)
+
+bestMuonTightClassic5 = cms.EDProducer("MuonTrackProducer",
+   muonsTag = cms.InputTag("muonPt5"),
+   inputDTRecSegment4DCollection = cms.InputTag("dt4DSegments"),
+   inputCSCSegmentCollection = cms.InputTag("cscSegments"),
+   vtxTag = cms.InputTag("selectedVertices"),
+   selectionTags = cms.vstring('All'),
+   trackType = cms.string('globalTrackTightClassic')
+)
+
 #-----------------------------------------------------------------------------------------------------------------------
 
 me0MuonInd = cms.EDProducer("ME0MuonTrackCollProducer",
@@ -195,6 +213,7 @@ bestMuon_seq = cms.Sequence(
     *bestMuonTightMod * bestMuonTightMod5
     *bestMuonLooseModExt * bestMuonLooseModExt5
     *bestMuonTightModExt * bestMuonTightModExt5
+    *bestMuonTightClassic * bestMuonTightClassic5
     #* me0MuonInd
 )
 
@@ -405,6 +424,10 @@ tpToLooseModExtSel05MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.m
 tpToTightModExtSel0MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToTightModExtSelUncMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 tpToTightModExtSel05MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+
+tpToTightClassicSel0MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToTightClassicSelUncMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
+tpToTightClassicSel05MuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 
 tpToStaRefitMuonAssociation = SimMuon.MCTruth.MuonAssociatorByHits_cfi.muonAssociatorByHits.clone()
 
@@ -960,6 +983,41 @@ tpToTightModExtSel05MuonAssociation.acceptOneStubMatchings = False
 
 #####################################################################################################
 
+tpToTightClassicSel0MuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToTightClassicSel0MuonAssociation.tracksTag = 'bestMuonTightClassic'
+tpToTightClassicSel0MuonAssociation.UseTracker = True
+tpToTightClassicSel0MuonAssociation.UseMuon = True
+#tpToTightClassicSel0MuonAssociation.EfficiencyCut_track = cms.double(0.5)
+#tpToTightClassicSel0MuonAssociation.PurityCut_track = cms.double(0.75)
+#tpToTightClassicSel0MuonAssociation.EfficiencyCut_muon = cms.double(0.5)
+#tpToTightClassicSel0MuonAssociation.PurityCut_muon = cms.double(0.75)
+tpToTightClassicSel0MuonAssociation.acceptOneStubMatchings = False
+#tpToTightClassicSel0MuonAssociation.includeZeroHitMuons = False
+
+tpToTightClassicSelUncMuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToTightClassicSelUncMuonAssociation.tracksTag = 'bestMuonTightClassic'
+tpToTightClassicSelUncMuonAssociation.UseTracker = False
+tpToTightClassicSelUncMuonAssociation.UseMuon = True
+#tpToTightClassicSelUncMuonAssociation.EfficiencyCut_track = cms.double(0.5)
+#tpToTightClassicSelUncMuonAssociation.PurityCut_track = cms.double(0.75)
+#tpToTightClassicSelUncMuonAssociation.EfficiencyCut_muon = cms.double(0.5)
+#tpToTightClassicSelUncMuonAssociation.PurityCut_muon = cms.double(0.75)
+tpToTightClassicSelUncMuonAssociation.acceptOneStubMatchings = False
+#tpToTightClassicSelUncMuonAssociation.includeZeroHitMuons = False
+
+tpToTightModExtSel05MuonAssociation.tpTag = 'mix:MergedTrackTruth'
+tpToTightModExtSel05MuonAssociation.tracksTag = 'bestMuonTightClassic5'
+tpToTightModExtSel05MuonAssociation.UseTracker = True
+tpToTightModExtSel05MuonAssociation.UseMuon = True
+#tpToTightModExtSel05MuonAssociation.EfficiencyCut_track = cms.double(0.5)
+#tpToTightModExtSel05MuonAssociation.PurityCut_track = cms.double(0.75)
+#tpToTightModExtSel05MuonAssociation.EfficiencyCut_muon = cms.double(0.5)
+#tpToTightModExtSel05MuonAssociation.PurityCut_muon = cms.double(0.75)
+tpToTightModExtSel05MuonAssociation.acceptOneStubMatchings = False
+#tpToTightModExtSel05MuonAssociation.includeZeroHitMuons = False
+
+#####################################################################################################
+
 #
 # Associators for cosmics:
 #
@@ -1062,13 +1120,12 @@ muonAssociation_seq = cms.Sequence(
     +tpToGEMMuonMuonAssociation
     +tpToStaUpdSel2MuonAssociation2StTime
     +tpToLooseSel0MuonAssociation
-    +tpToLooseSel05MuonAssociation
     +tpToLooseModSel0MuonAssociation
     +tpToLooseModExtSel0MuonAssociation
     +tpToTightSel0MuonAssociation
-    +tpToTightSel05MuonAssociation
     +tpToTightModSel0MuonAssociation
     +tpToTightModExtSel0MuonAssociation
+    +tpToTightClassicSel0MuonAssociation
 )
 
 muonAssociationTEV_seq = cms.Sequence(
