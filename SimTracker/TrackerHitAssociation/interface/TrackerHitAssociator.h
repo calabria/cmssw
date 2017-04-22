@@ -10,7 +10,7 @@
  *
  * \author Patrizia Azzi (INFN PD), Vincenzo Chiochia (Uni Zuerich)
  *
- * \version   1st version: April 2006. Add configurable switch: August 2006   
+ * \version   1st version: April 2006. Add configurable switch: August 2006
  *
  *
  ************************************************************/
@@ -41,6 +41,7 @@
 #include "DataFormats/TrackerRecHit2D/interface/SiStripRecHit2D.h"
 #include "DataFormats/TrackerRecHit2D/interface/SiStripRecHit1D.h"
 #include "DataFormats/TrackerRecHit2D/interface/SiStripMatchedRecHit2D.h"
+#include "DataFormats/TrackerRecHit2D/interface/Phase2TrackerRecHit1D.h"
 #include "DataFormats/TrackerRecHit2D/interface/ProjectedSiStripRecHit2D.h"
 #include "DataFormats/TrackerRecHit2D/interface/SiTrackerMultiRecHit.h"
 #include "DataFormats/TrackerRecHit2D/interface/FastTrackerRecHit.h"
@@ -52,64 +53,66 @@
 
 typedef std::pair<uint32_t, EncodedEventId> SimHitIdpr;
 class TrackerHitAssociator {
-  
- public:
-  struct Config {
-    Config(const edm::ParameterSet& conf, edm::ConsumesCollector && iC);
-    Config(edm::ConsumesCollector && iC);
-    bool doPixel_, doStrip_, doTrackAssoc_, assocHitbySimTrack_;
-    edm::EDGetTokenT<edm::DetSetVector<StripDigiSimLink> > stripToken_;
-    edm::EDGetTokenT<edm::DetSetVector<PixelDigiSimLink> > pixelToken_;
-    std::vector<edm::EDGetTokenT<CrossingFrame<PSimHit> > > cfTokens_;
-    std::vector<edm::EDGetTokenT<std::vector<PSimHit> > > simHitTokens_;
-  };
-
-  // The constructor supporting the consumes interface and tokens
-  TrackerHitAssociator(const edm::Event& e, const Config& config);
-
-  // Destructor
-  virtual ~TrackerHitAssociator(){}
-  
-  typedef std::pair<unsigned int, unsigned int> simhitAddr, subDetTofBin;
-  typedef unsigned int simHitCollectionID;
-
-  std::vector<PSimHit> associateHit(const TrackingRecHit & thit) const;
-  //for PU events
-  std::vector<SimHitIdpr> associateHitId(const TrackingRecHit & thit) const;
-  void associateHitId(const TrackingRecHit & thit,std::vector<SimHitIdpr> &simhitid, std::vector<simhitAddr>* simhitCFPos=0) const;
-  template<typename T>
+    
+public:
+    struct Config {
+        Config(const edm::ParameterSet& conf, edm::ConsumesCollector && iC);
+        Config(edm::ConsumesCollector && iC);
+        bool doPixel_, doStrip_, useOTph2_, doTrackAssoc_, assocHitbySimTrack_;
+        edm::EDGetTokenT<edm::DetSetVector<StripDigiSimLink> > stripToken_;
+        edm::EDGetTokenT<edm::DetSetVector<PixelDigiSimLink> > pixelToken_, ph2OTrToken_;
+        std::vector<edm::EDGetTokenT<CrossingFrame<PSimHit> > > cfTokens_;
+        std::vector<edm::EDGetTokenT<std::vector<PSimHit> > > simHitTokens_;
+    };
+    
+    // The constructor supporting the consumes interface and tokens
+    TrackerHitAssociator(const edm::Event& e, const Config& config);
+    
+    // Destructor
+    virtual ~TrackerHitAssociator(){}
+    
+    typedef std::pair<unsigned int, unsigned int> simhitAddr, subDetTofBin;
+    typedef unsigned int simHitCollectionID;
+    
+    std::vector<PSimHit> associateHit(const TrackingRecHit & thit) const;
+    //for PU events
+    std::vector<SimHitIdpr> associateHitId(const TrackingRecHit & thit) const;
+    void associateHitId(const TrackingRecHit & thit,std::vector<SimHitIdpr> &simhitid, std::vector<simhitAddr>* simhitCFPos=0) const;
+    template<typename T>
     void associateSiStripRecHit(const T *simplerechit, std::vector<SimHitIdpr>& simtrackid, std::vector<simhitAddr>* simhitCFPos=0) const;
-
-  // Method for obtaining simTracks and simHits from a cluster
-  void associateCluster(const SiStripCluster* clust,
-			const DetId& detid,
-			std::vector<SimHitIdpr>& simtrackid, std::vector<PSimHit>& simhit) const;
-
-  // Obtain simTracks, and optionally simHit addresses, from a cluster 
-  void associateSimpleRecHitCluster(const SiStripCluster* clust,
-				    const DetId& detid,
-				    std::vector<SimHitIdpr>& simtrackid, std::vector<simhitAddr>* simhitCFPos=0) const;
-
-  std::vector<SimHitIdpr> associateMatchedRecHit(const SiStripMatchedRecHit2D * matchedrechit, std::vector<simhitAddr>* simhitCFPos=0) const;
-  std::vector<SimHitIdpr> associateProjectedRecHit(const ProjectedSiStripRecHit2D * projectedrechit, std::vector<simhitAddr>* simhitCFPos=0) const;
-  void associatePixelRecHit(const SiPixelRecHit * pixelrechit, std::vector<SimHitIdpr> & simhitid, std::vector<simhitAddr>* simhitCFPos=0) const;
-  std::vector<SimHitIdpr> associateFastRecHit(const FastTrackerRecHit * rechit) const;
-  std::vector<SimHitIdpr> associateMultiRecHitId(const SiTrackerMultiRecHit * multirechit, std::vector<simhitAddr>* simhitCFPos=0) const;
-  std::vector<PSimHit>    associateMultiRecHit(const SiTrackerMultiRecHit * multirechit) const;
-  
-  
-  typedef std::map<unsigned int, std::vector<PSimHit> > simhit_map;
-  simhit_map SimHitMap;
-  typedef std::map<subDetTofBin, unsigned int> simhit_collectionMap;
-  simhit_collectionMap SimHitCollMap;
- 
- private:
-  typedef std::vector<std::string> vstring;
-
-  void makeMaps(const edm::Event& theEvent, const Config& config);
-  edm::Handle< edm::DetSetVector<StripDigiSimLink> >  stripdigisimlink;
-  edm::Handle< edm::DetSetVector<PixelDigiSimLink> >  pixeldigisimlink;
-  bool doPixel_, doStrip_, doTrackAssoc_, assocHitbySimTrack_;
+    
+    // Method for obtaining simTracks and simHits from a cluster
+    void associateCluster(const SiStripCluster* clust,
+                          const DetId& detid,
+                          std::vector<SimHitIdpr>& simtrackid, std::vector<PSimHit>& simhit) const;
+    
+    // Obtain simTracks, and optionally simHit addresses, from a cluster
+    void associateSimpleRecHitCluster(const SiStripCluster* clust,
+                                      const DetId& detid,
+                                      std::vector<SimHitIdpr>& simtrackid, std::vector<simhitAddr>* simhitCFPos=0) const;
+    
+    std::vector<SimHitIdpr> associateMatchedRecHit(const SiStripMatchedRecHit2D * matchedrechit, std::vector<simhitAddr>* simhitCFPos=0) const;
+    std::vector<SimHitIdpr> associateProjectedRecHit(const ProjectedSiStripRecHit2D * projectedrechit, std::vector<simhitAddr>* simhitCFPos=0) const;
+    void associatePhase2TrackerRecHit(const Phase2TrackerRecHit1D* rechit, std::vector<SimHitIdpr> & simtrackid, std::vector<simhitAddr>* simhitCFPos=0) const;
+    void associatePixelRecHit(const SiPixelRecHit * pixelrechit, std::vector<SimHitIdpr> & simtrackid, std::vector<simhitAddr>* simhitCFPos=0) const;
+    std::vector<SimHitIdpr> associateFastRecHit(const FastTrackerRecHit * rechit) const;
+    std::vector<SimHitIdpr> associateMultiRecHitId(const SiTrackerMultiRecHit * multirechit, std::vector<simhitAddr>* simhitCFPos=0) const;
+    std::vector<PSimHit>    associateMultiRecHit(const SiTrackerMultiRecHit * multirechit) const;
+    
+    
+    typedef std::map<unsigned int, std::vector<PSimHit> > simhit_map;
+    simhit_map SimHitMap;
+    typedef std::map<subDetTofBin, unsigned int> simhit_collectionMap;
+    simhit_collectionMap SimHitCollMap;
+    
+private:
+    typedef std::vector<std::string> vstring;
+    
+    void makeMaps(const edm::Event& theEvent, const Config& config);
+    edm::Handle< edm::DetSetVector<StripDigiSimLink> >  stripdigisimlink;
+    edm::Handle< edm::DetSetVector<PixelDigiSimLink> >  pixeldigisimlink;
+    edm::Handle< edm::DetSetVector<PixelDigiSimLink> >  ph2trackerdigisimlink;
+    bool doPixel_, doStrip_, useOTph2_, doTrackAssoc_, assocHitbySimTrack_;
 };
 
 #endif
