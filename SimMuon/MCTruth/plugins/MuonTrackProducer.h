@@ -34,6 +34,7 @@ class MuonTrackProducer : public edm::stream::EDProducer<> {
     bool isTightMod(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
     bool isLooseModExt(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
     bool isTightModExt(edm::Event& iEvent, reco::MuonCollection::const_iterator muon, bool useIPxy, bool useIPz);
+    bool isTightModExtSim(edm::Event& iEvent, reco::MuonCollection::const_iterator muon);
     virtual ~MuonTrackProducer();
 
   private:

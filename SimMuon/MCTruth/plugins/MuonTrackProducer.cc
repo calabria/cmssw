@@ -722,6 +722,62 @@ bool MuonTrackProducer::isTightModExt(edm::Event& iEvent, reco::MuonCollection::
     return result;
 }
 
+bool MuonTrackProducer::isTightModExtSim(edm::Event& iEvent, reco::MuonCollection::const_iterator muon)
+{
+    bool resultTight = false;
+    bool result = false;
+    
+    if (muon->muonBestTrack().isNonnull() && muon->innerTrack().isNonnull() && muon->globalTrack().isNonnull()){
+        
+        std::vector<double> vtxCoord = findSimVtx(iEvent);
+        GlobalPoint point(vtxCoord[1],vtxCoord[2],vtxCoord[3]);
+        GlobalPoint pointDY(vtxCoord[4],vtxCoord[5],vtxCoord[6]);
+        
+        double ipxySim = 999;
+        double ipzSim = 999;
+        
+        if(vtxCoord[0] > 1.5 && vtxCoord[0] < 3.5){//Mu and nu gun samples
+            
+            ipxySim = fabs(muon->muonBestTrack()->dxy(math::XYZPoint(point.x(),point.y(),point.z())));
+            ipzSim = fabs(muon->muonBestTrack()->dz(math::XYZPoint(point.x(),point.y(),point.z())));
+            
+        }
+        else if(vtxCoord[0] > 0.5 && vtxCoord[0] < 1.5){//DY samples
+            
+            ipxySim = fabs(muon->muonBestTrack()->dxy(math::XYZPoint(pointDY.x(),pointDY.y(),pointDY.z())));
+            ipzSim = fabs(muon->muonBestTrack()->dz(math::XYZPoint(pointDY.x(),pointDY.y(),pointDY.z())));
+            
+        }
+        bool ipxySimBool = ipxySim < 0.2;
+        bool ipzSimBool = ipzSim < 0.5;
+        //std::cout<<"vx: "<<point.x()<<" vy: "<<point.y()<<" vz: "<<point.z()<<" |Dxy|: "<<ipxySim<<" "<<ipxySimBool<<" |Dz|: "<<ipzSim<<" "<<ipzSimBool<<std::endl;
+        //std::cout<<"vx: "<<pointDY.x()<<" vy: "<<pointDY.y()<<" vz: "<<pointDY.z()<<" |Dxy|: "<<ipxySim<<" "<<ipxySimBool<<" |Dz|: "<<ipzSim<<" "<<ipzSimBool<<std::endl;
+        
+        bool trkLayMeas = muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5;
+        bool isGlb = muon->isGlobalMuon();
+        bool isPF= isGlobalTightMuon(muon) || isTrackerTightMuon(muon) || isIsolatedMuon(muon);
+        bool chi2 = muon->globalTrack()->normalizedChi2() < 10.;
+        bool validHits = muon->globalTrack()->hitPattern().numberOfValidMuonHits() > 0;
+        bool matchedSt = muon->numberOfMatchedStations() > 1;
+        bool validPxlHit = muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0;
+        //bool validPxlHit = muon->innerTrack()->hitPattern().pixelLayersWithMeasurement(3,2) > 0;
+        //bool validPxlHit = muon->innerTrack()->hitPattern().pixelLayersWithMeasurement(4,3) > 0;
+        
+        //std::cout<<trkLayMeas<<" "<<isGlb<<" "<<isPF<<" "<<chi2<<" "<<validHits<<" "<<matchedSt<<" "<<ipxy<<" "<<ipz<<" "<<validPxlHit<<std::endl;
+        
+        if(trkLayMeas && isGlb && isPF && chi2 && validHits && matchedSt && ipxySimBool && ipzSimBool && validPxlHit) resultTight = true;
+        
+    }
+    
+    bool isME0 = isME0MuonSel(muon, 3, 4, 3, 4, 0.1);
+    double eta = muon->eta();
+    
+    if(fabs(eta) > 0 && fabs(eta) < 2.4) result = resultTight;
+    else if(fabs(eta) > 2.4) result = isME0;
+    
+    return result;
+}
+
 
 MuonTrackProducer::MuonTrackProducer(const edm::ParameterSet& parset) :
   muonsToken(consumes<reco::MuonCollection>(parset.getParameter< edm::InputTag >("muonsTag"))),
@@ -859,6 +915,7 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
       bool tightMod = isTightMod(iEvent, muon, useIPxy, useIPz);
       bool looseModExt = isLooseModExt(iEvent, muon);
       bool tightModExt = isTightModExt(iEvent, muon, useIPxy, useIPz);
+      bool tightModExtSim = isTightModExtSim(iEvent, muon);
       bool usingInner = false;
         
       if (trackType == "innerTrack") {
@@ -958,6 +1015,11 @@ void MuonTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
       else if (trackType == "globalTrackTightModExt") {
           if (fabs(muon->eta()) < 2.4 && muon->globalTrack().isNonnull() && tightModExt) trackref = muon->globalTrack();
           else if(fabs(muon->eta()) > 2.4 && muon->innerTrack().isNonnull() && tightModExt) trackref = muon->innerTrack();
+          else continue;
+      }
+      else if (trackType == "globalTrackTightModExtSim") {
+          if (fabs(muon->eta()) < 2.4 && muon->globalTrack().isNonnull() && tightModExtSim) trackref = muon->globalTrack();
+          else if(fabs(muon->eta()) > 2.4 && muon->innerTrack().isNonnull() && tightModExtSim) trackref = muon->innerTrack();
           else continue;
       }
       else if (trackType == "innerTrackPlusSegments") {
