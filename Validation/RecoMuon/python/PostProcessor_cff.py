@@ -4,7 +4,7 @@ postProcessorMuonMultiTrack = cms.EDAnalyzer("DQMGenericClient",
     subDirs = cms.untracked.vstring("Muons/RecoMuonV/MultiTrack/*"),
     efficiency = cms.vstring(
     "efficVtx 'Efficiency vs # vtx' num_assoc(simToReco)_vtx num_simul_vtx",
-    "efficVtxDen 'Efficiency vs # PU density' num_assoc(simToReco)_vtx_den num_simul_vtx_den",
+    "efficVtxDen 'Efficiency vs # PU density' num_assoc(simToReco)_vtx_density num_simul_vtx_density",
     "efficVtx_barrel 'Efficiency vs # vtx barrel' num_assoc(simToReco)_vtx_barrel num_simul_vtx_barrel",
     "efficVtx_overlap 'Efficiency vs # vtx overlap' num_assoc(simToReco)_vtx_overlap num_simul_vtx_overlap",
     "efficVtx_endcap 'Efficiency vs # vtx endcap' num_assoc(simToReco)_vtx_endcap num_simul_vtx_endcap",
