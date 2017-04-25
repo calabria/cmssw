@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step31 --conditions auto:run2_mc -n -1 --era Run2_2016 --eventcontent DQM --runUnscheduled -s VALIDATION:recoMuonValidation --datatier DQMIO --python Val_Run2.py --no_exec --filein file:step3.root --fileout file:step31.root
+# with command line options: step31 --conditions auto:run2_mc -n -1 --era Run2_2016 --eventcontent DQM --runUnscheduled -s VALIDATION:@baseValidation+@muonOnlyValidation --datatier DQMIO --python Val_Run2.py --no_exec --filein file:step3.root --fileout file:step31.root
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -26,8 +26,16 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:step3.root'),
-    secondaryFileNames = cms.untracked.vstring()
+    fileNames = cms.untracked.vstring('/store/relval/CMSSW_9_0_0_pre4/RelValZMM_13/GEN-SIM-RECO/90X_mcRun2_asymptotic_v1-v1/10000/086CA402-DFEA-E611-898B-0025905B8562.root'),
+    secondaryFileNames = cms.untracked.vstring(
+                            
+'/store/relval/CMSSW_9_0_0_pre4/RelValZMM_13/GEN-SIM-DIGI-RAW-HLTDEBUG/90X_mcRun2_asymptotic_v1-v1/10000/40463417-D8EA-E611-9F7E-0025905A6066.root',
+'/store/relval/CMSSW_9_0_0_pre4/RelValZMM_13/GEN-SIM-DIGI-RAW-HLTDEBUG/90X_mcRun2_asymptotic_v1-v1/10000/36FF94E9-D7EA-E611-A9BC-0CC47A7C3572.root',
+'/store/relval/CMSSW_9_0_0_pre4/RelValZMM_13/GEN-SIM-DIGI-RAW-HLTDEBUG/90X_mcRun2_asymptotic_v1-v1/10000/7A525109-D8EA-E611-AB18-0CC47A4D762A.root',
+'/store/relval/CMSSW_9_0_0_pre4/RelValZMM_13/GEN-SIM-DIGI-RAW-HLTDEBUG/90X_mcRun2_asymptotic_v1-v1/10000/4A136A44-DAEA-E611-BD40-0CC47A7452D0.root',
+'/store/relval/CMSSW_9_0_0_pre4/RelValZMM_13/GEN-SIM-DIGI-RAW-HLTDEBUG/90X_mcRun2_asymptotic_v1-v1/10000/E893D348-DAEA-E611-AFDC-0025905A6082.root'
+                            
+                            )
 )
 
 process.options = cms.untracked.PSet(
@@ -64,11 +72,14 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 
 # Path and EndPath definitions
-process.validation_step = cms.EndPath(process.recoMuonValidation)
+process.prevalidation_step = cms.Path(process.baseCommonPreValidation)
+process.prevalidation_step1 = cms.Path(process.globalPrevalidationMuons)
+process.validation_step = cms.EndPath(process.baseCommonValidation)
+process.validation_step1 = cms.EndPath(process.globalValidationMuons)
 process.DQMoutput_step = cms.EndPath(process.DQMoutput)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.validation_step,process.DQMoutput_step)
+process.schedule = cms.Schedule(process.prevalidation_step,process.prevalidation_step1,process.validation_step,process.validation_step1,process.DQMoutput_step)
 
 # customisation of the process.
 
