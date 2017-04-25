@@ -306,7 +306,7 @@ void MuonTrackValidator::bookHistograms(DQMStore::IBooker& ibooker, edm::Run con
       h_assocetaPt10.push_back( ibooker.book1D("num_assoc(simToReco)_eta_pt10","N of associated tracks (simToReco) vs eta bin2",nint,min,max) );
 
       h_assocvtx.push_back( ibooker.book1D("num_assoc(simToReco)_vtx","N of associated tracks (simToReco) vs vtx",nintVtx,minVtx,maxVtx) );
-      //h_assocvtx_density.push_back( ibooker.book1D("num_assoc(simToReco)_vtx_density","N of associated tracks (simToReco) vs vtx density",100,0,4) );
+      h_assocvtx_density.push_back( ibooker.book1D("num_assoc(simToReco)_vtx_density","N of associated tracks (simToReco) vs vtx density",nintDen,minDen,maxDen) );
       h_assocvtxBarrel.push_back( ibooker.book1D("num_assoc(simToReco)_vtx_barrel","N of associated tracks (simToReco) vs vtx barrel",nintVtx,minVtx,maxVtx) );
       h_assocvtxEndcap.push_back( ibooker.book1D("num_assoc(simToReco)_vtx_endcap","N of associated tracks (simToReco) vs vtx endcap",nintVtx,minVtx,maxVtx) );
       h_assocvtxOverlap.push_back( ibooker.book1D("num_assoc(simToReco)_vtx_overlap","N of associated tracks (simToReco) vs vtx overlap",nintVtx,minVtx,maxVtx) );
@@ -343,7 +343,7 @@ void MuonTrackValidator::bookHistograms(DQMStore::IBooker& ibooker, edm::Run con
       h_simuletaPt10.push_back( ibooker.book1D("num_simul_eta_pt10","N of simulated tracks vs eta bin2",nint,min,max) );
 
       h_simulvtx.push_back( ibooker.book1D("num_simul_vtx","N of simulated tracks vs vtx",nintVtx,minVtx,maxVtx) );
-      //h_simulvtx_density.push_back( ibooker.book1D("num_simul_vtx_density","N of simulated tracks vs vtx density",100,0,4) );
+      h_simulvtx_density.push_back( ibooker.book1D("num_simul_vtx_density","N of simulated tracks vs vtx density",nintDen,minDen,maxDen) );
       h_simulvtxBarrel.push_back( ibooker.book1D("num_simul_vtx_barrel","N of simulated tracks vs vtx barrel",nintVtx,minVtx,maxVtx) );
       h_simulvtxEndcap.push_back( ibooker.book1D("num_simul_vtx_endcap","N of simulated tracks vs vtx endcap",nintVtx,minVtx,maxVtx) );
       h_simulvtxOverlap.push_back( ibooker.book1D("num_simul_vtx_overlap","N of simulated tracks vs vtx overlap",nintVtx,minVtx,maxVtx) );
@@ -677,6 +677,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
       if ( abs(puZpos[k] - genPVz) < 0.1 ) nPUhot++;
       
   }
+  double nPUden = nPUhot/0.1;
 
   int nVertices = -1;
   edm::Handle<reco::VertexCollection> primaryVertices;
@@ -902,6 +903,25 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	  }
     } // END for (unsigned int f=0; f<vtxintervals[w].size()-1; f++){
           
+    for (unsigned int f=0; f<denintervals[w].size()-1; f++){
+	  if (nPUden>=denintervals[w][f]&&
+	      nPUden<denintervals[w][f+1]) {
+	    totSIMvtxden[w][f]++;
+	    if (TP_is_matched) {
+	      totASSvtxden[w][f]++;
+
+	      /*if (MABH) {
+		if (Quality075) {
+		  totASSeta_Quality075[w][f]++;
+		  totASSeta_Quality05[w][f]++;
+		}
+		else if (Quality05) {
+		  totASSeta_Quality05[w][f]++;
+		}
+	      }*/
+	    }
+	  }
+    } // END for (unsigned int f=0; f<vtxintervals[w].size()-1; f++){
 	
 	for (unsigned int f=0; f<etaintervals[w].size()-1; f++){
 	  if (getEta(momentumTP.eta())>etaintervals[w][f]&&
@@ -1795,6 +1815,7 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&) {
       fillPlotFromVector(h_simuletaPt10[w],totSIMetaPt10[w]);
         
       fillPlotFromVector(h_simulvtx[w],totSIMvtx[w]);
+      fillPlotFromVector(h_simulvtx_density[w],totSIMvtxden[w]);
       fillPlotFromVector(h_simulvtxBarrel[w],totSIMvtxBarrel[w]);
       fillPlotFromVector(h_simulvtxEndcap[w],totSIMvtxEndcap[w]);
       fillPlotFromVector(h_simulvtxOverlap[w],totSIMvtxOverlap[w]);
@@ -1807,6 +1828,7 @@ void MuonTrackValidator::endRun(Run const&, EventSetup const&) {
       fillPlotFromVector(h_assocetaPt10[w],totASSetaPt10[w]);
         
       fillPlotFromVector(h_assocvtx[w],totASSvtx[w]);
+      fillPlotFromVector(h_assocvtx_density[w],totASSvtxden[w]);
       fillPlotFromVector(h_assocvtxBarrel[w],totASSvtxBarrel[w]);
       fillPlotFromVector(h_assocvtxEndcap[w],totASSvtxEndcap[w]);
       fillPlotFromVector(h_assocvtxOverlap[w],totASSvtxOverlap[w]);

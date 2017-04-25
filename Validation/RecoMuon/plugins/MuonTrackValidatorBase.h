@@ -78,6 +78,9 @@ class MuonTrackValidatorBase {
     minVtx(pset.getParameter<double>("minVtx")),
     maxVtx(pset.getParameter<double>("maxVtx")),
     nintVtx(pset.getParameter<int>("nintVtx")),
+    minDen(pset.getParameter<double>("minDen")),
+    maxDen(pset.getParameter<double>("maxDen")),
+    nintDen(pset.getParameter<int>("nintDen")),
     
     minpT(pset.getParameter<double>("minpT")),
     maxpT(pset.getParameter<double>("maxpT")),
@@ -228,6 +231,7 @@ h->setBinContent(j+1, 0);
   void setUpVectors() {
     std::vector<double> etaintervalsv;
     std::vector<double> vtxintervalsv;
+    std::vector<double> denintervalsv;
     std::vector<double> phiintervalsv;
     std::vector<double> pTintervalsv;
     std::vector<double> dxyintervalsv;
@@ -236,7 +240,7 @@ h->setBinContent(j+1, 0);
     std::vector<double> zposintervalsv;
       
     std::vector<double> lxyintervalsv, lzintervalsv, lrintervalsv;
-    std::vector<int>    totSIMvvtx,totASSvvtx,totASS2vvtx,totRECvvtx;
+    std::vector<int>    totSIMvvtx,totASSvvtx,totASS2vvtx,totRECvvtx,totSIMvvtxden,totASSvvtxden;
     std::vector<int>    totSIMvvtxBarrel,totASSvvtxBarrel,totASS2vvtxBarrel,totRECvvtxBarrel;
     std::vector<int>    totSIMvvtxEndcap,totASSvvtxEndcap,totASS2vvtxEndcap,totRECvvtxEndcap;
     std::vector<int>    totSIMvvtxOverlap,totASSvvtxOverlap,totASS2vvtxOverlap,totRECvvtxOverlap;
@@ -362,6 +366,18 @@ h->setBinContent(j+1, 0);
     totASSvtxOverlap.push_back(totASSvvtxOverlap);
     totASS2vtxOverlap.push_back(totASS2vvtxOverlap);
     totRECvtxOverlap.push_back(totRECvvtxOverlap);
+      
+    double stepVtxDen=(maxDen-minDen)/nintDen;
+    denintervalsv.push_back(minDen);
+    for (int k=1;k<nintDen+1;k++) {
+      double d=minDen+k*stepVtxDen;
+      denintervalsv.push_back(d);
+      totSIMvvtxden.push_back(0);
+      totASSvvtxden.push_back(0);
+    }
+    denintervals.push_back(denintervalsv);
+    totSIMvtxden.push_back(totSIMvvtxden);
+    totASSvtxden.push_back(totASSvvtxden);
       
     //
     totASSeta_Quality05.push_back(totASSveta_Quality05);
@@ -606,6 +622,8 @@ h->setBinContent(j+1, 0);
   int nintRes;
   double  minVtx, maxVtx;
   int nintVtx;
+  double  minDen, maxDen;
+  int nintDen;
   double minpT, maxpT;
   int nintpT;
   double minHit, maxHit;
@@ -652,7 +670,7 @@ h->setBinContent(j+1, 0);
   std::vector<MonitorElement*> h_recoetaBin1, h_recoetaBin2, h_recoetaBin3, h_recoetaBin4, h_recoetaPt10;
   std::vector<MonitorElement*> h_assoceta, h_assocetaBin1, h_assocetaBin2, h_assocetaBin3, h_assocetaBin4, h_assocetaPt10;
   std::vector<MonitorElement*> h_simuleta, h_simuletaBin1, h_simuletaBin2, h_simuletaBin3, h_simuletaBin4, h_simuletaPt10;
-  std::vector<MonitorElement*> h_recovtx, h_assocvtx, h_assoc2vtx, h_simulvtx, h_numSimVtx, h_numSimVtxBx, h_numRecVtx, h_numTrueInt;
+  std::vector<MonitorElement*> h_recovtx, h_assocvtx, h_assoc2vtx, h_simulvtx, h_numSimVtx, h_numSimVtxBx, h_numRecVtx, h_numTrueInt,h_assocvtx_density, h_simulvtx_density;
   std::vector<MonitorElement*> h_recovtxBarrel, h_assocvtxBarrel, h_assoc2vtxBarrel, h_simulvtxBarrel;
   std::vector<MonitorElement*> h_recovtxEndcap, h_assocvtxEndcap, h_assoc2vtxEndcap, h_simulvtxEndcap;
   std::vector<MonitorElement*> h_recovtxOverlap, h_assocvtxOverlap, h_assoc2vtxOverlap, h_simulvtxOverlap;
@@ -699,6 +717,7 @@ h->setBinContent(j+1, 0);
 
   std::vector< std::vector<double> > etaintervals;
   std::vector< std::vector<double> > vtxintervals;
+  std::vector< std::vector<double> > denintervals;
   std::vector< std::vector<double> > pTintervals;
   std::vector< std::vector<double> > phiintervals;
   std::vector< std::vector<double> > dxyintervals;
@@ -716,7 +735,7 @@ h->setBinContent(j+1, 0);
   std::vector< std::vector<int> > totSIMvtxBarrel,totRECvtxBarrel,totASSvtxBarrel,totASS2vtxBarrel;
   std::vector< std::vector<int> > totSIMvtxEndcap,totRECvtxEndcap,totASSvtxEndcap,totASS2vtxEndcap;
   std::vector< std::vector<int> > totSIMvtxOverlap,totRECvtxOverlap,totASSvtxOverlap,totASS2vtxOverlap;
-  std::vector< std::vector<int> > totSIMvtx,totRECvtx,totASSvtx,totASS2vtx;
+  std::vector< std::vector<int> > totSIMvtx,totRECvtx,totASSvtx,totASS2vtx,totSIMvtxden,totASSvtxden;
     
   std::vector< std::vector<int> > totSIMpT,totSIMpT_24,totSIMpT_28,totRECpT,totRECpT_24,totRECpT_28,totASSpT,totASSpT_24,totASSpT_28,totASS2pT,totASS2pT_24,totASS2pT_28,totASS2pTBin1,totASS2pTBin2,totASS2pTBin3, totASS2pT_050, totASS2pT_075;
   std::vector< std::vector<int> > totASS2pT_SgnMu,totASS2pT_SgnMu_24,totASS2pT_SgnMu_28,totASS2pT_SgnBkg, totASS2pT_Pu, totASS2pT_PuIT, totASS2pT_PuOOT, totASS2pT_PuMu, totASS2pT_PuITMu, totASS2pT_PuOOTMu;
