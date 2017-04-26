@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step4 --conditions auto:phase2_realistic -s HARVESTING:@phase2Validation+@phase2 --era Phase2C2_timing --filein file:step31_inDQM.root --scenario pp --filetype DQM --geometry Extended2023D4 --mc -n -1 --fileout file:step4.root --python HARVESTFullGlobal_2023D4Timing_PU0.py --no_exec
+# with command line options: step4 --conditions auto:phase2_realistic -s HARVESTING:@phase2Validation+@phase2 --era Phase2C2_timing --filein file:step31.root --scenario pp --filetype DQM --geometry Extended2023D4 --mc -n -1 --fileout file:step4.root --python HARVESTFullGlobal_2023D4Timing_PU0.py --no_exec
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -27,7 +27,23 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("DQMRootSource",
-    fileNames = cms.untracked.vstring('file:step31_inDQM.root')
+    fileNames = cms.untracked.vstring(
+                            
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_1.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_10.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_11.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_12.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_13.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_2.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_3.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_4.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_5.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_6.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_7.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_8.root',
+'/store/user/calabria/RelValZMM_14/crab_Val_910_pre2_PU0_D4_2/170425_133026/0000/step31_9.root'
+                                      
+                            )
 )
 
 process.options = cms.untracked.PSet(
@@ -50,7 +66,7 @@ process.configurationMetadata = cms.untracked.PSet(
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 
-process.dqmSaver.workflow = "/Global/CMSSW_9_0_0_pre4/RECO_PU0_D4Timing_ZMM"
+process.dqmSaver.workflow = "/Global/CMSSW_9_1_0_pre2/RECO_PU0_D4Timing_ZMM"
 
 # Path and EndPath definitions
 process.dqmHarvestingPOGMC = cms.Path(process.DQMOffline_SecondStep_PrePOGMC)
@@ -66,21 +82,11 @@ process.dqmHarvesting = cms.Path(process.DQMOffline_SecondStep+process.DQMOfflin
 process.validationHarvestingFS = cms.Path(process.postValidation+process.hltpostvalidation+process.postValidation_gen)
 process.validationpreprodHarvesting = cms.Path(process.postValidation_preprod+process.hltpostvalidation_preprod+process.postValidation_gen)
 process.postValidation_common_step = cms.Path(process.postValidation_common)
-process.postValidationTracking_step = cms.Path(process.postValidationTracking)
 process.postValidation_muons_step = cms.Path(process.postValidation_muons)
-process.postValidation_JetMET_step = cms.Path(process.postValidation_JetMET)
-process.bTagCollectorSequenceMCbcl_step = cms.Path(process.bTagCollectorSequenceMCbcl)
-process.postValidation_HCAL_step = cms.Path(process.postValidation_HCAL)
-process.DQMHarvestTracking_step = cms.Path(process.DQMHarvestTracking)
-process.DQMHarvestMuon_step = cms.Path(process.DQMHarvestMuon)
-process.DQMCertMuon_step = cms.Path(process.DQMCertMuon)
-process.DQMHarvestHcal_step = cms.Path(process.DQMHarvestHcal)
-process.HcalDQMOfflinePostProcessor_step = cms.Path(process.HcalDQMOfflinePostProcessor)
-process.DQMHarvestEGamma_step = cms.Path(process.DQMHarvestEGamma)
 process.dqmsave_step = cms.Path(process.DQMSaver)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.postValidation_common_step,process.postValidationTracking_step,process.postValidation_muons_step,process.postValidation_JetMET_step,process.bTagCollectorSequenceMCbcl_step,process.postValidation_HCAL_step,process.DQMHarvestTracking_step,process.DQMHarvestMuon_step,process.DQMCertMuon_step,process.DQMHarvestHcal_step,process.HcalDQMOfflinePostProcessor_step,process.DQMHarvestEGamma_step,process.dqmsave_step)
+process.schedule = cms.Schedule(process.postValidation_common_step,process.postValidation_muons_step,process.dqmsave_step)
 
 
 # Customisation from command line
