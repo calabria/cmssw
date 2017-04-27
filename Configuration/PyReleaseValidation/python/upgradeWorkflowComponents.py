@@ -30,10 +30,12 @@ upgradeKeys[2023] = [
     '2023D11PU',
     '2023D12',
     '2023D12PU',
+    '2023D12PUN',
     '2023D13',
     '2023D13PU',
     '2023D14',
     '2023D14PU',
+    '2023D14PUN',
 ]
 
 # pre-generation of WF numbers
@@ -62,10 +64,14 @@ for year in upgradeKeys:
 upgradeSteps=[
     'GenSimFull',
     'GenSimHLBeamSpotFull',
+    'GenSimHLBeamSpotFullNeutron',
     'GenSimHLBeamSpotFull14',
+    'GenSimHLBeamSpotFull14Neutron',
     'DigiFull',
     'DigiFullTrigger',
+    'DigiFullTriggerNeutron',
     'DigiFullTriggerPU',
+    'DigiFullTriggerPUNeutron',
     'RecoFullLocal',
     'RecoFullLocalPU',
     'RecoFull',
@@ -213,10 +219,14 @@ upgradeProperties[2023]['2023D11PU'] = deepcopy(upgradeProperties[2023]['2023D11
 upgradeProperties[2023]['2023D11PU']['ScenToRun'] = ['GenSimHLBeamSpotFull','DigiFullTriggerPU','RecoFullGlobalPU', 'HARVESTFullGlobalPU']
 upgradeProperties[2023]['2023D12PU'] = deepcopy(upgradeProperties[2023]['2023D12'])
 upgradeProperties[2023]['2023D12PU']['ScenToRun'] = ['GenSimHLBeamSpotFull','DigiFullTriggerPU','RecoFullGlobalPU', 'HARVESTFullGlobalPU']
+upgradeProperties[2023]['2023D12PUN'] = deepcopy(upgradeProperties[2023]['2023D12'])
+upgradeProperties[2023]['2023D12PUN']['ScenToRun'] = ['GenSimHLBeamSpotFullNeutron','DigiFullTriggerPUNeutron','RecoFullGlobalPU', 'HARVESTFullGlobalPU']
 upgradeProperties[2023]['2023D13PU'] = deepcopy(upgradeProperties[2023]['2023D13'])
 upgradeProperties[2023]['2023D13PU']['ScenToRun'] = ['GenSimHLBeamSpotFull','DigiFullTriggerPU','RecoFullGlobalPU', 'HARVESTFullGlobalPU']
 upgradeProperties[2023]['2023D14PU'] = deepcopy(upgradeProperties[2023]['2023D14'])
 upgradeProperties[2023]['2023D14PU']['ScenToRun'] = ['GenSimHLBeamSpotFull','DigiFullTriggerPU','RecoFullGlobalPU', 'HARVESTFullGlobalPU']
+upgradeProperties[2023]['2023D14PUN'] = deepcopy(upgradeProperties[2023]['2023D14'])
+upgradeProperties[2023]['2023D14PUN']['ScenToRun'] = ['GenSimHLBeamSpotFullNeutron','DigiFullTriggerPUNeutron','RecoFullGlobalPU', 'HARVESTFullGlobalPU']
 
 
 
@@ -308,6 +318,7 @@ upgradeFragments=['FourMuPt_1_200_pythia8_cfi',
                   'WprimeToENu_M-2000_TuneCUETP8M1_13TeV-pythia8_cff',
                   'DisplacedSUSY_stopToBottom_M_300_1000mm_TuneCUETP8M1_13TeV_pythia8_cff',
                   'TenE_E_0_200_pythia8_cfi',
+                  'FlatRandomPtAndDxyGunProducer_cfi',
 ]
 
 howMuches={'FourMuPt_1_200_pythia8_cfi':Kby(10,100),
@@ -396,6 +407,7 @@ howMuches={'FourMuPt_1_200_pythia8_cfi':Kby(10,100),
            'WprimeToENu_M-2000_TuneCUETP8M1_13TeV-pythia8_cff':Kby(9,50),
            'DisplacedSUSY_stopToBottom_M_300_1000mm_TuneCUETP8M1_13TeV_pythia8_cff':Kby(9,50),
            'TenE_E_0_200_pythia8_cfi':Kby(9,100),
+           'FlatRandomPtAndDxyGunProducer_cfi':Kby(9,100),
 }
 
 upgradeDatasetFromFragment={'FourMuPt_1_200_pythia8_cfi': 'FourMuPt1_200',
@@ -484,4 +496,5 @@ upgradeDatasetFromFragment={'FourMuPt_1_200_pythia8_cfi': 'FourMuPt1_200',
                             'WprimeToENu_M-2000_TuneCUETP8M1_13TeV-pythia8_cff': 'WpToENu_M-2000_13',
                             'DisplacedSUSY_stopToBottom_M_300_1000mm_TuneCUETP8M1_13TeV_pythia8_cff': 'DisplacedSUSY_stopToBottom_M_300_1000mm_13',
                             'TenE_E_0_200_pythia8_cfi': 'TenE_0_200',
+                            'FlatRandomPtAndDxyGunProducer_cfi': 'DisplacedMuonsDxy_0_500',
 }

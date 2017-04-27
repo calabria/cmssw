@@ -1796,6 +1796,18 @@ for year,k in [(year,k) for year in upgradeKeys for k in upgradeKeys[year]]:
     if cust!=None : upgradeStepDict['GenSimHLBeamSpotFull'][k]['--customise']=cust
     if era is not None: upgradeStepDict['GenSimHLBeamSpotFull'][k]['--era']=era
 
+    upgradeStepDict['GenSimHLBeamSpotFullNeutron'][k]= {'-s' : 'GEN,SIM',
+                                       '-n' : 10,
+                                       '--conditions' : gt,
+                                       '--beamspot' : 'HLLHC',
+                                       '--datatier' : 'GEN-SIM',
+                                       '--eventcontent': 'FEVTDEBUG',
+                                       '--geometry' : geom,
+                                       '-- customise' : 'SimG4Core/Application/NeutronBGforMuonsXS_cff.customise'
+                                       }
+    if cust!=None : upgradeStepDict['GenSimHLBeamSpotFullNeutron'][k]['--customise']=cust
+    if era is not None: upgradeStepDict['GenSimHLBeamSpotFullNeutron'][k]['--era']=era
+
     upgradeStepDict['GenSimHLBeamSpotFull14'][k]= {'-s' : 'GEN,SIM',
                                        '-n' : 10,
                                        '--conditions' : gt,
@@ -1807,6 +1819,19 @@ for year,k in [(year,k) for year in upgradeKeys for k in upgradeKeys[year]]:
     
     if cust!=None : upgradeStepDict['GenSimHLBeamSpotFull14'][k]['--customise']=cust
     if era is not None: upgradeStepDict['GenSimHLBeamSpotFull14'][k]['--era']=era
+
+    upgradeStepDict['GenSimHLBeamSpotFull14Neutron'][k]= {'-s' : 'GEN,SIM',
+                                       '-n' : 10,
+                                       '--conditions' : gt,
+                                       '--beamspot' : 'HLLHC14TeV',
+                                       '--datatier' : 'GEN-SIM',
+                                       '--eventcontent': 'FEVTDEBUG',
+                                       '--geometry' : geom,
+                                       '-- customise' : 'SimG4Core/Application/NeutronBGforMuonsXS_cff.customise'
+                                       }
+    
+    if cust!=None : upgradeStepDict['GenSimHLBeamSpotFull14Neutron'][k]['--customise']=cust
+    if era is not None: upgradeStepDict['GenSimHLBeamSpotFull14Neutron'][k]['--era']=era
     
     upgradeStepDict['DigiFull'][k] = {'-s':'DIGI:pdigi_valid,L1,DIGI2RAW,HLT:%s'%(hltversion),
                                       '--conditions':gt,
@@ -1837,6 +1862,23 @@ for year,k in [(year,k) for year in upgradeKeys for k in upgradeKeys[year]]:
  
     if k2 in PUDataSets:
         upgradeStepDict['DigiFullTriggerPU'][k]=merge([PUDataSets[k2],upgradeStepDict['DigiFullTrigger'][k]])
+
+    upgradeStepDict['DigiFullTriggerNeutron'][k] = {'-s':'DIGI:pdigi_valid,L1,L1TrackTrigger,DIGI2RAW,HLT:%s'%(hltversion),
+                                      '--conditions':gt,
+                                      '--datatier':'GEN-SIM-DIGI-RAW',
+                                      '-n':'10',
+                                      '--eventcontent':'FEVTDEBUGHLT',
+                                      '--geometry' : geom,
+                                      '--customise' : 'SLHCUpgradeSimulations/Configuration/customise_mixing.customise_Mix_LongLived_Neutrons'
+                                      }
+
+    if cust!=None : upgradeStepDict['DigiFullTriggerNeutron'][k]['--customise']=cust
+    if era is not None: upgradeStepDict['DigiFullTriggerNeutron'][k]['--era']=era
+ 
+ 
+    if k2 in PUDataSets:
+        upgradeStepDict['DigiFullTriggerPUNeutron'][k]=merge([PUDataSets[k2],upgradeStepDict['DigiFullTriggerNeutron'][k]])
+
 
     upgradeStepDict['RecoFull'][k] = {'-s':'RAW2DIGI,L1Reco,RECO,EI,PAT,VALIDATION:@standardValidation+@miniAODValidation,DQM:@standardDQM+@miniAODDQM',
                                       '--conditions':gt,

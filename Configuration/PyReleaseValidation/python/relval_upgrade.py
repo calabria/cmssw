@@ -26,8 +26,10 @@ for year in upgradeKeys:
             stepListTiming=[]
             for step in upgradeProperties[year][key]['ScenToRun']:                    
                 if 'Sim' in step:
-                    if 'HLBeamSpotFull' in step and '14TeV' in frag:
+                    if 'HLBeamSpotFull' in step and not 'Neutron' in step and '14TeV' in frag:
                         step = 'GenSimHLBeamSpotFull14'
+                    elif 'HLBeamSpotFullNeutron' in step and '14TeV' in frag:
+                        step = 'GenSimHLBeamSpotFull14Neutron'
                     stepList.append(k+'_'+step)
                     stepListTiming.append(k+'_'+step+'_Timing')
                 else:
