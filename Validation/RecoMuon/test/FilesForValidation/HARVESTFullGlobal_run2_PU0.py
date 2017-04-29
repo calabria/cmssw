@@ -27,7 +27,13 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("DQMRootSource",
-    fileNames = cms.untracked.vstring('file:step3_inDQM.root')
+    fileNames = cms.untracked.vstring(
+                            
+'/store/user/calabria/RelValZMM_13/crab_Val_900_pre4_RUN2_7/170426_093637/0000/step31_1.root',
+'/store/user/calabria/RelValZMM_13/crab_Val_900_pre4_RUN2_7/170426_093637/0000/step31_2.root',
+'/store/user/calabria/RelValZMM_13/crab_Val_900_pre4_RUN2_7/170426_093637/0000/step31_3.root',
+                            
+                            )
 )
 
 process.options = cms.untracked.PSet(
@@ -49,6 +55,8 @@ process.configurationMetadata = cms.untracked.PSet(
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+
+process.dqmSaver.workflow = "/Global/CMSSW_9_0_0_pre4/RECO_PU0_Run2_ZMM"
 
 # Path and EndPath definitions
 process.validationHarvestingHI = cms.Path(process.postValidationHI)
