@@ -17,11 +17,11 @@ class TrackingParticleSelector {
 
 public:
   TrackingParticleSelector(){}
-  TrackingParticleSelector ( double ptMin, double ptMax, double minRapidity,double maxRapidity,
+  TrackingParticleSelector ( double ptMin, double ptMax, double minRapidity,double maxRapidity, bool useAbsEta,
 			     double tip,double lip,int minHit, bool signalOnly, bool intimeOnly, bool chargedOnly, bool stableOnly,
 			     const std::vector<int>& pdgId = std::vector<int>(),
 			     double minPhi=-3.2, double maxPhi=3.2) :
-    ptMin2_( ptMin*ptMin ), ptMax2_( ptMax*ptMax ), minRapidity_( minRapidity ), maxRapidity_( maxRapidity ),
+    ptMin2_( ptMin*ptMin ), ptMax2_( ptMax*ptMax ), minRapidity_( minRapidity ), maxRapidity_( maxRapidity ), useAbsEta_(useAbsEta),
     meanPhi_((minPhi+maxPhi)/2.), rangePhi_((maxPhi-minPhi)/2.),
     tip2_( tip*tip ), lip_( lip ), minHit_( minHit ), signalOnly_(signalOnly), intimeOnly_(intimeOnly), chargedOnly_(chargedOnly), stableOnly_(stableOnly), pdgId_( pdgId ) {
     if(minPhi >= maxPhi) {
@@ -71,6 +71,11 @@ public:
     auto etaOk = [&](const TrackingParticle& p)->bool{ float eta= etaFromXYZ(p.px(),p.py(),p.pz()); return (eta>= minRapidity_) & (eta<=maxRapidity_);};
     auto phiOk = [&](const TrackingParticle& p) { float dphi = deltaPhi(atan2f(p.py(),p.px()), meanPhi_); return dphi >= -rangePhi_ && dphi <= rangePhi_; };
     auto ptOk = [&](const TrackingParticle& p) { double pt2 = tp.p4().perp2(); return pt2 >= ptMin2_ && pt2 <= ptMax2_; };
+          auto absetaOk = [&](const TrackingParticle& p)->bool{ float eta= std::fabs(etaFromXYZ(p.px(),p.py(),p.pz())); return (eta>= minRapidity_) & (eta<=maxRapidity_);};
+      
+    bool etaRangeOk = etaOk(tp);
+    if(useAbsEta_) etaRangeOk = absetaOk(tp);
+      
     return (
  	    tp.numberOfTrackerLayers() >= minHit_ &&
             ptOk(tp) &&
@@ -88,6 +93,8 @@ private:
   float maxRapidity_;
   float meanPhi_;
   float rangePhi_;
+  bool useAbsEta;
+  bool useAbsEta_;
   double tip2_;
   double lip_;
   int    minHit_;
@@ -113,6 +120,7 @@ namespace reco {
  	  cfg.getParameter<double>( "ptMax" ),
 	  cfg.getParameter<double>( "minRapidity" ),
 	  cfg.getParameter<double>( "maxRapidity" ),
+      cfg.getParameter<bool>( "useAbsEta" ),
 	  cfg.getParameter<double>( "tip" ),
 	  cfg.getParameter<double>( "lip" ),
 	  cfg.getParameter<int>( "minHit" ),

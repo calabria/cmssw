@@ -60,6 +60,7 @@ TPNtuplizer::TPNtuplizer(edm::ParameterSet const& conf) :
                                          conf_.getParameter<double>("ptMaxTP"),
                                          conf_.getParameter<double>("minRapidityTP"),
                                          conf_.getParameter<double>("maxRapidityTP"),
+                                         conf_.getParameter<bool>("useAbsEta"),
                                          conf_.getParameter<double>("tipTP"),
                                          conf_.getParameter<double>("lipTP"),
                                          conf_.getParameter<int>("minHitTP"),
