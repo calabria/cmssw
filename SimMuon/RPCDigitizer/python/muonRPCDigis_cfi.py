@@ -57,7 +57,7 @@ _simMuonRPCDigisPhaseII = cms.EDProducer("RPCandIRPCDigiProducer",
         sigmaY = cms.double(2.), # resolution of 2 cm
         do_Y_coordinate = cms.bool(False),
         digitizeElectrons = cms.bool(True),
-        IRPC_time_resolution = cms.double(1.5),# intrinsic time resolution of 1.5 ns
+        IRPC_time_resolution = cms.double(1.0),# resolution of 1 ns, after LB upgrade. Here the RPC resolution is set
         IRPC_electronics_jitter = cms.double(0.1)# resolution of 100 ps
     ),
     doBkgNoise = cms.bool(False), #False - no noise and bkg simulation
