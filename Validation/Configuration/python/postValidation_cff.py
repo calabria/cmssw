@@ -76,11 +76,6 @@ postValidation_trackingOnly = cms.Sequence(
 
 postValidation_muons = cms.Sequence(
     recoMuonPostProcessors
-    + MuonGEMHitsPostProcessors
-    + MuonGEMDigisPostProcessors
-    + MuonGEMRecHitsPostProcessors
-    + MuonME0DigisPostProcessors
-    + MuonME0SegPostProcessors
     + rpcRecHitPostValidation_step
 )
 
@@ -112,7 +107,7 @@ _phase1_postValidation += siPixelPhase1OfflineDQM_harvestingV
 from Configuration.Eras.Modifier_phase1Pixel_cff import phase1Pixel
 phase1Pixel.toReplaceWith( postValidation, _phase1_postValidation )
 
-_run3_postValidation = postValidation.copy()
+_run3_postValidation = postValidation_muons.copy()
 _run3_postValidation += MuonGEMHitsPostProcessors
 _run3_postValidation += MuonGEMDigisPostProcessors
 _run3_postValidation += MuonGEMRecHitsPostProcessors
