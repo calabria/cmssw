@@ -65,16 +65,24 @@ ME0GeometryAnalyzer::analyze( const edm::Event& /*iEvent*/, const edm::EventSetu
   edm::ESHandle<ME0Geometry> pDD;
   iSetup.get<MuonGeometryRecord>().get(pDD);
 	    
-  // for (auto roll : pDD->etaPartitions()){
-  for (auto layer : pDD->layers()){
+   for (auto ch : pDD->chambers()){
+       
+//    ME0DetId chId(ch->id());
+//    ofos << "\"" << chId.rawId() << ":0.0\","<<endl;
+       
+       for (auto la : ch->layers()){
+           ME0DetId laId(la->id());
+           ofos << "\"" << laId.rawId() << ":0.0\","<<endl;
 
-    for (auto roll : layer->etaPartitions()){
-        
-      ME0DetId rId(roll->id());
-//      ofos<<"\tME0EtaPartition , ME0DetId = " << rId.rawId() << ", " << rId << endl;
-      ofos << "\"" << rId.rawId() << ":0.0\","<<endl;;
-
-    }
+//    for (auto roll : layer->etaPartitions()){
+//        
+//      ME0DetId rId(roll->id());
+////      ofos<<"\tME0EtaPartition , ME0DetId = " << rId.rawId() << ", " << rId << endl;
+//      ofos << "\"" << rId.rawId() << ":0.0\","<<endl;;
+//
+//    }
+           
+       }
   }
   
 }

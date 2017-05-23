@@ -81,18 +81,21 @@ GEMGeometryAnalyzer::analyze( const edm::Event& /*iEvent*/, const edm::EventSetu
               for (auto ch : sch->chambers()){
           
                   GEMDetId chId(ch->id());
-                  int k = 1;
-                  auto& rolls(ch->etaPartitions());
-	    
-                  for (auto roll : rolls){
-            
-                      GEMDetId rId(roll->id());
-                      if(rId.station() != 2) continue;
-//                      ofos<<"Station: "<< rId.station() << " \"" << rId.rawId() << ":0.0\" " << rId << endl;
-                      ofos<< "\"" << rId.rawId() << ":0.0\","<<endl;
-            
-                      ++k;
-                  }
+                  if(chId.station() != 2) continue;
+                  ofos<< "\"" << chId.rawId() << ":0.0\","<<endl;
+
+//                  int k = 1;
+//                  auto& rolls(ch->etaPartitions());
+//	    
+//                  for (auto roll : rolls){
+//            
+//                      GEMDetId rId(roll->id());
+//                      if(rId.station() != 2) continue;
+////                      ofos<<"Station: "<< rId.station() << " \"" << rId.rawId() << ":0.0\" " << rId << endl;
+//                      ofos<< "\"" << rId.rawId() << ":0.0\","<<endl;
+//            
+//                      ++k;
+//                  }
                   ++j;
               }
               ++i;
