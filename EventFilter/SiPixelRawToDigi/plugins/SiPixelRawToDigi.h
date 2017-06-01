@@ -61,5 +61,9 @@ private:
   bool usePilotBlade;
   bool usePhase1;
   std::string cablingMapLabel;
+
+  unsigned int *word; // to hold input for rawtodigi on GPU
+  unsigned int *fedIndex; // to hold fed index inside word[] for rawtodigi on GPU
+  
 };
 #endif

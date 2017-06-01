@@ -6,8 +6,6 @@
 // Jan 2016 Tamas Almos Vami (Tav) (Wigner RCP) -- Cabling Map label option
 // Jul 2017 Viktor Veszpremi -- added PixelFEDChannel
 
-#include "SiPixelRawToDigi.h"
-
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/ESTransientHandle.h"
@@ -36,11 +34,26 @@
 #include "EventFilter/SiPixelRawToDigi/interface/PixelUnpackingRegions.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 
+#include "FWCore/PluginManager/interface/ModuleDef.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
+
 #include "TH1D.h"
 #include "TFile.h"
+#include "SiPixelRawToDigi.h"
+#include <string>
+#include <chrono>
+#include <iostream>
+#include <fstream>
+// for GPU
+// device memory intialization for RawTodigi
+#include "RawToDigiCPUGPU.h"
+// device memory initialization for CPE
+//#include "CPEGPUMem.h"
 
 using namespace std;
-
+// wrapper function to call RawToDigi on the GPU
+void RawToDigi_kernel_wrapper (const unsigned int wordCounterGPU,
+     unsigned int *word,const unsigned int fedCounter,unsigned int *fedIndex);
 // -----------------------------------------------------------------------------
 SiPixelRawToDigi::SiPixelRawToDigi( const edm::ParameterSet& conf ) 
   : config_(conf), 
@@ -103,7 +116,16 @@ SiPixelRawToDigi::SiPixelRawToDigi( const edm::ParameterSet& conf )
   }
   //CablingMap could have a label //Tav
   cablingMapLabel = config_.getParameter<std::string> ("CablingMapLabel");
-
+  
+  //GPU specific
+  const int MAX_FED  = 150;
+  const int MAX_WORD = 4096;
+  word = (unsigned int*)malloc(MAX_FED*MAX_WORD*sizeof(unsigned int));
+  fedIndex =(unsigned int*)malloc(2*(MAX_FED+1)*sizeof(unsigned int));
+  // allocate memory for RawToDigi on GPU
+  initDeviceMemory();
+  // allocate memory for CPE on GPU
+  //initDeviceMemCPE();
 }
 
 
@@ -118,7 +140,12 @@ SiPixelRawToDigi::~SiPixelRawToDigi() {
     hCPU->Write();
     hDigi->Write();
   }
-
+  free(word);
+  free(fedIndex);
+  // free device memory used for RawToDigi on GPU
+  freeMemory(); 
+  // free device memory used for CPE on GPU
+  //freeDeviceMemCPE();
 }
 
 void
@@ -213,10 +240,19 @@ void SiPixelRawToDigi::produce( edm::Event& ev,
     LogDebug("SiPixelRawToDigi") << "region2unpack #feds: "<<regions_->nFEDs();
     LogDebug("SiPixelRawToDigi") << "region2unpack #modules (BPIX,EPIX,total): "<<regions_->nBarrelModules()<<" "<<regions_->nForwardModules()<<" "<<regions_->nModules();
   }
-
+  //GPU specific 
+  unsigned int wordCounterGPU =0;
+  unsigned int fedCounter =0;
+  const unsigned int MAX_FED = 150;
   for (auto aFed = fedIds.begin(); aFed != fedIds.end(); ++aFed) {
     int fedId = *aFed;
-
+    //cout<<"FedId: "<<fedId<<endl;
+    // for GPU
+    // first 150 index stores the fedId and next 150 will store the
+    // start index of word in that fed
+    fedIndex[fedCounter] = fedId-1200;
+    fedIndex[MAX_FED + fedCounter] = wordCounterGPU; // MAX_FED = 150
+    fedCounter++;
     if(!usePilotBlade && (fedId==40) ) continue; // skip pilot blade data
 
     if (regions_ && !regions_->mayUnpackFED(fedId)) continue;
@@ -227,9 +263,10 @@ void SiPixelRawToDigi::produce( edm::Event& ev,
 
     //get event data for this fed
     const FEDRawData& fedRawData = buffers->FEDData( fedId );
-
+    //GPU specific
+    
     //convert data to digi and strip off errors
-    formatter.interpretRawData( errorsInEvent, fedId, fedRawData, *collection, errors);
+    formatter.interpretRawData( errorsInEvent, fedId, fedRawData, *collection, errors,word, wordCounterGPU);
 
     //pack errors into collection
     if(includeErrors) {
@@ -323,4 +360,26 @@ void SiPixelRawToDigi::produce( edm::Event& ev,
     ev.put(std::move(usererror_detidcollection), "UserErrorModules");
     ev.put(std::move(disabled_channelcollection));
   }
-}
+  //GPU specific
+ 
+  static int eventCount=0;
+  eventCount ++;
+  //for(unsigned int i=0;i<fedCounter;i++) {
+   // cout<<"fedId: "<<i<<"   Index: "<<fedIndex[150+i]<<endl;
+  //}
+  //using namespace std::chrono;
+  //high_resolution_clock:: time_point t1 = high_resolution_clock::now();
+  //cout<<"RawToDigi Conversion started on GPU..."<<endl;
+  RawToDigi_kernel_wrapper (wordCounterGPU, word, fedCounter,fedIndex);
+  //high_resolution_clock:: time_point t2 = high_resolution_clock::now();
+  //double micro_seconds = duration_cast<microseconds>(t2-t1).count();
+	//ofstream timeFile;
+	//timeFile.open("RawToDigiGPUTime1E.txt", ios::out | ios::app); 
+	//timeFile<<setw(2)<<eventCount<<setw(8)<<wordCounterGPU<<setw(8)<<micro_seconds<<endl;
+	wordCounterGPU = 0;
+  fedCounter =0;
+} // end of produce function
+
+//define as runnable module
+DEFINE_FWK_MODULE(SiPixelRawToDigi);
+
