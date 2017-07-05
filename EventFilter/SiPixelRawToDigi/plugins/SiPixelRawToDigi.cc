@@ -6,6 +6,9 @@
 // Jan 2016 Tamas Almos Vami (Tav) (Wigner RCP) -- Cabling Map label option
 // Jul 2017 Viktor Veszpremi -- added PixelFEDChannel
 
+// This code is an entry point for GPU based pixel track reconstruction for HLT
+// Modified by Sushil and Shashi for this purpose July-2017
+
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/ESTransientHandle.h"
@@ -45,12 +48,9 @@
 #include <iostream>
 #include <fstream>
 
-// for GPU
-// for pinned memory
-#include <cuda.h> 
-#include <cuda_runtime.h>
-// Event Info
-#include "EventInfoGPU.h"
+#include <cuda.h>             // for GPU
+#include <cuda_runtime.h>     // for pinned memory
+#include "EventInfoGPU.h"     // Event Info
 // device memory intialization for RawTodigi
 #include "RawToDigiMem.h"
 // device memory initialization for CPE
@@ -135,10 +135,13 @@ SiPixelRawToDigi::SiPixelRawToDigi( const edm::ParameterSet& conf )
   cudaMallocHost((void**)&fedIndex, FSIZE);
   eventIndex = (unsigned int*)malloc((NEVENT+1)*sizeof(unsigned int));
   eventIndex[0] =0;
+
   // allocate memory for RawToDigi on GPU
   initDeviceMemory();
+
   // allocate auxilary memory for clustering
   initDeviceMemCluster();
+
   // allocate memory for CPE on GPU
   initDeviceMemCPE();
   
@@ -156,18 +159,17 @@ SiPixelRawToDigi::~SiPixelRawToDigi() {
     hCPU->Write();
     hDigi->Write();
   }
-  //free(word);
+  // free(word);
   cudaFreeHost(word);
-  //free(fedIndex);
+  // free(fedIndex);
   cudaFreeHost(fedIndex);
   free(eventIndex);
   // free device memory used for RawToDigi on GPU
   freeMemory(); 
-   // free auxilary memory used for clustering
+  // free auxilary memory used for clustering
   freeDeviceMemCluster();
   // free device memory used for CPE on GPU
   freeDeviceMemCPE();
- 
 }
 
 void
@@ -214,7 +216,7 @@ void SiPixelRawToDigi::produce( edm::Event& ev,
   //const uint32_t dummydetid = 0xffffffff;
   debug = edm::MessageDrop::instance()->debugEnabled;
 
-// initialize cabling map or update if necessary
+  // initialize cabling map or update if necessary
   if (recordWatcher.check( es )) {
     // cabling map, which maps online address (fed->link->ROC->local pixel) to offline (DetId->global pixel)
     edm::ESTransientHandle<SiPixelFedCablingMap> cablingMap;
@@ -223,7 +225,8 @@ void SiPixelRawToDigi::produce( edm::Event& ev,
     cabling_ = cablingMap->cablingTree();
     LogDebug("map version:")<< cabling_->version();
   }
-// initialize quality record or update if necessary
+
+  // initialize quality record or update if necessary
   if (qualityWatcher.check( es )&&useQuality) {
     // quality info for dead pixel modules or ROCs
     edm::ESHandle<SiPixelQuality> qualityInfo;
@@ -262,8 +265,7 @@ void SiPixelRawToDigi::produce( edm::Event& ev,
     LogDebug("SiPixelRawToDigi") << "region2unpack #feds: "<<regions_->nFEDs();
     LogDebug("SiPixelRawToDigi") << "region2unpack #modules (BPIX,EPIX,total): "<<regions_->nBarrelModules()<<" "<<regions_->nForwardModules()<<" "<<regions_->nModules();
   }
-  // GPU specific 
-  // data extraction for RawToDigi GPU
+  // GPU specific: Data extraction for RawToDigi GPU
   static unsigned int wordCounterGPU =0;
   unsigned int fedCounter = 0;
   const unsigned int MAX_FED = 150;
@@ -317,18 +319,15 @@ void SiPixelRawToDigi::produce( edm::Event& ev,
       moreTrailers = trailerStatus;
     }
 
-    // data words
-    //LogTrace("")<<"data words: "<< (trailer-header-1);
-
     const  Word32 * bw =(const  Word32 *)(header+1);
     const  Word32 * ew =(const  Word32 *)(trailer);
     if ( *(ew-1) == 0 ) { ew--; }
     for (auto ww = bw; ww < ew; ++ww) {
-      //LogTrace("")<<"DATA: " <<  print(*word);
       word[wordCounterGPU++] = *ww;
     }
   }  // end of for loop
   
+ 
 
   // original for loop
  /*
@@ -452,6 +451,7 @@ void SiPixelRawToDigi::produce( edm::Event& ev,
   //GPU specific
   
   // RawToDigi -> clustering -> CPE
+
   eventCount++;
   eventIndex[eventCount] = wordCounterGPU;
   cout<<"Data read for event: "<<eventCount<<endl;
