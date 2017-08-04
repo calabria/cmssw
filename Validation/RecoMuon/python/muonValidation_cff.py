@@ -248,6 +248,42 @@ looseModExtMuonTrackVSel0MuonAssoc.nintRes = 28
 looseModExtMuonTrackVSel0MuonAssoc.useFabsEta = True
 looseModExtMuonTrackVSel0MuonAssoc.useAbsEta = True
 
+looseModExtMuonTrackVSel4MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+looseModExtMuonTrackVSel4MuonAssoc.associatormap = 'tpToLooseModExtSel4MuonAssociation'
+looseModExtMuonTrackVSel4MuonAssoc.associators = ('MuonAssociationByHits',)
+looseModExtMuonTrackVSel4MuonAssoc.label = ('bestMuonLooseModExt',)
+looseModExtMuonTrackVSel4MuonAssoc.usetracker = True
+looseModExtMuonTrackVSel4MuonAssoc.usemuon = True
+looseModExtMuonTrackVSel4MuonAssoc.useMCTruth = False
+looseModExtMuonTrackVSel4MuonAssoc.minRapidityTP = 0.0
+looseModExtMuonTrackVSel4MuonAssoc.maxRapidityTP = 2.8
+looseModExtMuonTrackVSel4MuonAssoc.min = 0.0
+looseModExtMuonTrackVSel4MuonAssoc.max = 2.8
+looseModExtMuonTrackVSel4MuonAssoc.nint = 28
+looseModExtMuonTrackVSel4MuonAssoc.minRes = 0.0
+looseModExtMuonTrackVSel4MuonAssoc.maxRes = 2.8
+looseModExtMuonTrackVSel4MuonAssoc.nintRes = 28
+looseModExtMuonTrackVSel4MuonAssoc.useFabsEta = True
+looseModExtMuonTrackVSel4MuonAssoc.useAbsEta = True
+
+loose2ModExtMuonTrackVSel0MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+loose2ModExtMuonTrackVSel0MuonAssoc.associatormap = 'tpToLoose2ModExtSel0MuonAssociation'
+loose2ModExtMuonTrackVSel0MuonAssoc.associators = ('MuonAssociationByHits',)
+loose2ModExtMuonTrackVSel0MuonAssoc.label = ('bestMuonLoose2ModExt',)
+loose2ModExtMuonTrackVSel0MuonAssoc.usetracker = True
+loose2ModExtMuonTrackVSel0MuonAssoc.usemuon = True
+loose2ModExtMuonTrackVSel0MuonAssoc.useMCTruth = False
+loose2ModExtMuonTrackVSel0MuonAssoc.minRapidityTP = 0.0
+loose2ModExtMuonTrackVSel0MuonAssoc.maxRapidityTP = 2.8
+loose2ModExtMuonTrackVSel0MuonAssoc.min = 0.0
+loose2ModExtMuonTrackVSel0MuonAssoc.max = 2.8
+loose2ModExtMuonTrackVSel0MuonAssoc.nint = 28
+loose2ModExtMuonTrackVSel0MuonAssoc.minRes = 0.0
+loose2ModExtMuonTrackVSel0MuonAssoc.maxRes = 2.8
+loose2ModExtMuonTrackVSel0MuonAssoc.nintRes = 28
+loose2ModExtMuonTrackVSel0MuonAssoc.useFabsEta = True
+loose2ModExtMuonTrackVSel0MuonAssoc.useAbsEta = True
+
 looseModExtMuonTrackVSelUncMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 looseModExtMuonTrackVSelUncMuonAssoc.associatormap = 'tpToLooseModExtSelUncMuonAssociation'
 looseModExtMuonTrackVSelUncMuonAssoc.associators = ('MuonAssociationByHits',)
@@ -285,6 +321,26 @@ looseModExtMuonTrackVSel05SimMuonAssoc.maxRes = 2.8
 looseModExtMuonTrackVSel05SimMuonAssoc.nintRes = 28
 looseModExtMuonTrackVSel05SimMuonAssoc.useFabsEta = True
 looseModExtMuonTrackVSel05SimMuonAssoc.useAbsEta = True
+
+loose2ModExtMuonTrackVSel05SimMuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
+loose2ModExtMuonTrackVSel05SimMuonAssoc.associatormap = 'tpToLoose2ModExtSel0MuonAssociation'
+loose2ModExtMuonTrackVSel05SimMuonAssoc.associators = ('MuonAssociationByHits',)
+loose2ModExtMuonTrackVSel05SimMuonAssoc.label = ('bestMuonLoose2ModExt',)
+loose2ModExtMuonTrackVSel05SimMuonAssoc.ptMinTP = 5.0
+loose2ModExtMuonTrackVSel05SimMuonAssoc.usetracker = True
+loose2ModExtMuonTrackVSel05SimMuonAssoc.usemuon = True
+loose2ModExtMuonTrackVSel05SimMuonAssoc.useMCTruth = False
+loose2ModExtMuonTrackVSel05SimMuonAssoc.dirName = 'Muons/RecoMuonV/MultiTrack/Cut5/'
+loose2ModExtMuonTrackVSel05SimMuonAssoc.minRapidityTP = 0.0
+loose2ModExtMuonTrackVSel05SimMuonAssoc.maxRapidityTP = 2.8
+loose2ModExtMuonTrackVSel05SimMuonAssoc.min = 0.0
+loose2ModExtMuonTrackVSel05SimMuonAssoc.max = 2.8
+loose2ModExtMuonTrackVSel05SimMuonAssoc.nint = 28
+loose2ModExtMuonTrackVSel05SimMuonAssoc.minRes = 0.0
+loose2ModExtMuonTrackVSel05SimMuonAssoc.maxRes = 2.8
+loose2ModExtMuonTrackVSel05SimMuonAssoc.nintRes = 28
+loose2ModExtMuonTrackVSel05SimMuonAssoc.useFabsEta = True
+loose2ModExtMuonTrackVSel05SimMuonAssoc.useAbsEta = True
 
 looseModExtMuonTrackVSel05MuonAssoc = Validation.RecoMuon.MuonTrackValidator_cfi.muonTrackValidator.clone()
 looseModExtMuonTrackVSel05MuonAssoc.associatormap = 'tpToLooseModExtSel05MuonAssociation'
@@ -847,8 +903,8 @@ displacedStaMuonTrackVMuonAssoc.associators = ('MuonAssociationByHits',)
 displacedStaMuonTrackVMuonAssoc.label = ('displacedStandAloneMuons',)
 displacedStaMuonTrackVMuonAssoc.usetracker = False
 displacedStaMuonTrackVMuonAssoc.usemuon = True
-displacedStaMuonTrackVMuonAssoc.tipTP = cms.double(500.)
-displacedStaMuonTrackVMuonAssoc.lipTP = cms.double(210.)
+displacedStaMuonTrackVMuonAssoc.tipTP = cms.double(50000.)
+displacedStaMuonTrackVMuonAssoc.lipTP = cms.double(21000.)
 displacedStaMuonTrackVMuonAssoc.vertexSrc = ""
 #displacedStaMuonTrackVMuonAssoc.prodRho = 350.
 #displacedStaMuonTrackVMuonAssoc.prodZ = 500.
@@ -861,8 +917,8 @@ displacedStaMuonTrackV15MuonAssoc.usetracker = False
 displacedStaMuonTrackV15MuonAssoc.usemuon = True
 displacedStaMuonTrackV15MuonAssoc.ptMinTP = 15.0
 displacedStaMuonTrackV15MuonAssoc.dirName = 'Muons/RecoMuonV/MultiTrack/Cut15/'
-displacedStaMuonTrackV15MuonAssoc.tipTP = cms.double(500.)
-displacedStaMuonTrackV15MuonAssoc.lipTP = cms.double(210.)
+displacedStaMuonTrackV15MuonAssoc.tipTP = cms.double(50000.)
+displacedStaMuonTrackV15MuonAssoc.lipTP = cms.double(21000.)
 displacedStaMuonTrackV15MuonAssoc.vertexSrc = ""
 #displacedStaMuonTrackV15MuonAssoc.prodRho = 350.
 #displacedStaMuonTrackV15MuonAssoc.prodZ = 500.
@@ -873,8 +929,8 @@ displacedStaMuonTrackVPurityMuonAssoc.associators = ('MuonAssociationByHits',)
 displacedStaMuonTrackVPurityMuonAssoc.label = ('displacedStandAloneMuons',)
 displacedStaMuonTrackVPurityMuonAssoc.usetracker = False
 displacedStaMuonTrackVPurityMuonAssoc.usemuon = True
-displacedStaMuonTrackVPurityMuonAssoc.tipTP = cms.double(500.)
-displacedStaMuonTrackVPurityMuonAssoc.lipTP = cms.double(210.)
+displacedStaMuonTrackVPurityMuonAssoc.tipTP = cms.double(50000.)
+displacedStaMuonTrackVPurityMuonAssoc.lipTP = cms.double(21000.)
 displacedStaMuonTrackVPurityMuonAssoc.vertexSrc = ""
 #displacedStaMuonTrackVPurityMuonAssoc.prodRho = 350.
 #displacedStaMuonTrackVPurityMuonAssoc.prodZ = 500.
@@ -887,8 +943,8 @@ displacedStaMuonTrackVPurity15MuonAssoc.usetracker = False
 displacedStaMuonTrackVPurity15MuonAssoc.usemuon = True
 displacedStaMuonTrackVPurity15MuonAssoc.ptMinTP = 15.0
 displacedStaMuonTrackVPurity15MuonAssoc.dirName = 'Muons/RecoMuonV/MultiTrack/Cut15/'
-displacedStaMuonTrackVPurity15MuonAssoc.tipTP = cms.double(500.)
-displacedStaMuonTrackVPurity15MuonAssoc.lipTP = cms.double(210.)
+displacedStaMuonTrackVPurity15MuonAssoc.tipTP = cms.double(50000.)
+displacedStaMuonTrackVPurity15MuonAssoc.lipTP = cms.double(21000.)
 displacedStaMuonTrackVPurity15MuonAssoc.vertexSrc = ""
 #displacedStaMuonTrackVPurity15MuonAssoc.prodRho = 350.
 #displacedStaMuonTrackVPurity15MuonAssoc.prodZ = 500.
@@ -1229,10 +1285,13 @@ muonValidation_seq = cms.Sequence(
     #+ looseModMuonTrackVSel0MuonAssoc
     #Loose ID with PFMuon selections by hand with ME0Muon
     + looseModExtMuonTrackVSel0MuonAssoc
+    + looseModExtMuonTrackVSel4MuonAssoc
+    + loose2ModExtMuonTrackVSel0MuonAssoc
     #Loose ID with PFMuon selections by hand and with pT > 5 GeV
     #+ looseModMuonTrackVSel05SimMuonAssoc
     #Loose ID with PFMuon selections by hand and with pT > 5 GeV with ME0Muon
     + looseModExtMuonTrackVSel05SimMuonAssoc
+    + loose2ModExtMuonTrackVSel05SimMuonAssoc
     + looseModExtMuonTrackVSel05MuonAssoc
     #Tight ID with PFMuon selections by hand
     #+ tightModMuonTrackVSel0MuonAssoc
@@ -1301,7 +1360,7 @@ muonValidationCosmic_seq = cms.Sequence(
 recoMuonValidation = cms.Sequence(
     muonAssociation_seq * muonValidation_seq
     #+ muonValidationTEV_seq + muonValidationRefit_seq
-    + muonValidationDisplaced_seq
+#    + muonValidationDisplaced_seq
 )
 
 # no displaces in fastsim
@@ -1314,8 +1373,13 @@ recoCosmicMuonValidation = cms.Sequence(
     muonValidationCosmic_seq
 )
 
-gemMuonValidation = cms.Sequence(extractGemMuonsTracks_seq + tpToGEMMuonMuonAssociation + gemMuonTrackVMuonAssoc)
-me0MuonValidation = cms.Sequence(extractMe0MuonsTracks_seq +
+gemMuonValidation = cms.Sequence(
+#                                 extractGemMuonsTracks_seq +
+#                                 tpToGEMMuonMuonAssociation +
+#                                 gemMuonTrackVMuonAssoc
+                                 )
+me0MuonValidation = cms.Sequence(
+                                 extractMe0MuonsTracks_seq +
 #                                 tpToME0MuonMuonAssociation +
 #                                 me0MuonTrackVMuonAssoc +
                                  tpToME0LooseMuonMuonAssociation +
