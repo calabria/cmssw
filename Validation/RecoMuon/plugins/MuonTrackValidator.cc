@@ -984,7 +984,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
             if(fabs(momentumTP.eta()) > 1.6 && fabs(momentumTP.eta()) < 2.4) totSIMpTBin3[w][f]++;
               
             if(fabs(momentumTP.eta()) < 2.4) totSIMpT_24[w][f]++;
-            if(fabs(momentumTP.eta()) > 2.4 && fabs(momentumTP.eta()) < 2.8) totSIMpT_28[w][f]++;
+            if(fabs(momentumTP.eta()) > 1.6 && fabs(momentumTP.eta()) < 2.8) totSIMpT_28[w][f]++;
 	    if (TP_is_matched) {
 	      totASSpT[w][f]++;
           if(fabs(momentumTP.eta()) < 0.9) totASSpTBin1[w][f]++;
@@ -992,7 +992,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
           if(fabs(momentumTP.eta()) > 1.6 && fabs(momentumTP.eta()) < 2.4) totASSpTBin3[w][f]++;
             
           if(fabs(momentumTP.eta()) < 2.4) totASSpT_24[w][f]++;
-          if(fabs(momentumTP.eta()) > 2.4 && fabs(momentumTP.eta()) < 2.8) totASSpT_28[w][f]++;
+          if(fabs(momentumTP.eta()) > 1.6 && fabs(momentumTP.eta()) < 2.8) totASSpT_28[w][f]++;
 	      
 	      if (MABH) {
 		if (Quality075) {
@@ -1013,13 +1013,13 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
             totSIMp[w][f]++;
               
             if(fabs(momentumTP.eta()) < 2.4) totSIMp_24[w][f]++;
-            if(fabs(momentumTP.eta()) > 2.4 && fabs(momentumTP.eta()) < 2.8) totSIMp_28[w][f]++;
+            if(fabs(momentumTP.eta()) > 1.6 && fabs(momentumTP.eta()) < 2.8) totSIMp_28[w][f]++;
               
 	    if (TP_is_matched) {
 	      totASSp[w][f]++;
             
           if(fabs(momentumTP.eta()) < 2.4) totASSp_24[w][f]++;
-          if(fabs(momentumTP.eta()) > 2.4 && fabs(momentumTP.eta()) < 2.8) totASSp_28[w][f]++;
+          if(fabs(momentumTP.eta()) > 1.6 && fabs(momentumTP.eta()) < 2.8) totASSp_28[w][f]++;
 
         }
 	  }
@@ -1028,9 +1028,9 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	for (unsigned int f=0; f<dxyintervals[w].size()-1; f++){
 	  if (getDxy(dxySim)>dxyintervals[w][f]&&
 	      getDxy(dxySim)<dxyintervals[w][f+1]) {
-	    if(fabs(momentumTP.eta()) > 1.6 && fabs(momentumTP.eta()) < 2.4) totSIM_dxy[w][f]++;
+	    totSIM_dxy[w][f]++;
 	    if (TP_is_matched) {
-	      if(fabs(momentumTP.eta()) > 1.6 && fabs(momentumTP.eta()) < 2.4) totASS_dxy[w][f]++;
+	      totASS_dxy[w][f]++;
 	    }
 	  }
 	} // END for (unsigned int f=0; f<dxyintervals[w].size()-1; f++){
@@ -1367,7 +1367,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
         if(fabs(track->momentum().eta()) > 1.6 && fabs(track->momentum().eta()) < 2.4) totRECpTBin3[w][f]++;
           
         if(fabs(track->momentum().eta()) < 2.4) totRECpT_24[w][f]++;
-        if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totRECpT_28[w][f]++;
+        if(fabs(track->momentum().eta()) > 1.6 && fabs(track->momentum().eta()) < 2.8) totRECpT_28[w][f]++;
           
 	    if (Track_is_matched) {
 	      totASS2pT[w][f]++;
@@ -1376,14 +1376,14 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
           if(fabs(track->momentum().eta()) > 1.6 && fabs(track->momentum().eta()) < 2.4) totASS2pTBin3[w][f]++;
             
           if(fabs(track->momentum().eta()) < 2.4) totASS2pT_24[w][f]++;
-          if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totASS2pT_28[w][f]++;
+          if(fabs(track->momentum().eta()) > 1.6 && fabs(track->momentum().eta()) < 2.8) totASS2pT_28[w][f]++;
 	    }
           
         if(Track_is_matched_SignalMuon){
             
           totASS2pT_SgnMu[w][f]++;
           if(fabs(track->momentum().eta()) < 2.4) totASS2pT_SgnMu_24[w][f]++;
-          if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totASS2pT_SgnMu_28[w][f]++;
+          if(fabs(track->momentum().eta()) > 1.6 && fabs(track->momentum().eta()) < 2.8) totASS2pT_SgnMu_28[w][f]++;
           
         }
           
@@ -1407,20 +1407,20 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    totRECp[w][f]++;
 
         if(fabs(track->momentum().eta()) < 2.4) totRECp_24[w][f]++;
-        if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totRECp_28[w][f]++;
+        if(fabs(track->momentum().eta()) > 1.6 && fabs(track->momentum().eta()) < 2.8) totRECp_28[w][f]++;
           
 	    if (Track_is_matched) {
 	      totASS2p[w][f]++;
 
           if(fabs(track->momentum().eta()) < 2.4) totASS2p_24[w][f]++;
-          if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totASS2p_28[w][f]++;
+          if(fabs(track->momentum().eta()) > 1.6 && fabs(track->momentum().eta()) < 2.8) totASS2p_28[w][f]++;
 	    }
           
         if(Track_is_matched_SignalMuon){
             
           totASS2p_SgnMu[w][f]++;
           if(fabs(track->momentum().eta()) < 2.4) totASS2p_SgnMu_24[w][f]++;
-          if(fabs(track->momentum().eta()) > 2.4 && fabs(track->momentum().eta()) < 2.8) totASS2p_SgnMu_28[w][f]++;
+          if(fabs(track->momentum().eta()) > 1.6 && fabs(track->momentum().eta()) < 2.8) totASS2p_SgnMu_28[w][f]++;
           
         }
           
