@@ -180,6 +180,38 @@ std::vector<int> MuonTrackValidator::isInMuonSysAcceptance(TrackingParticle* tpR
     
 }
 
+bool MuonTrackValidator::isTPIsolated(TrackingParticle* tpRtS, const edm::Event& event, const edm::EventSetup& setup, double dR = 0.1){
+    
+    bool result = true;
+    TrackingParticle::Vector momentumTP_1;
+    momentumTP_1 = tpRtS->momentum();
+    
+    edm::Handle<TrackingParticleCollection> TPCollectionHeff ;
+    event.getByToken(tp_effic_Token,TPCollectionHeff);
+    TrackingParticleCollection const & tPCeff = *(TPCollectionHeff.product());
+    
+    for (TrackingParticleCollection::size_type i=0; i<tPCeff.size(); i++){
+	
+        TrackingParticleRef tpr(TPCollectionHeff, i);
+        TrackingParticle* tp = const_cast<TrackingParticle*>(tpr.get());
+
+//	    if(! tpSelector(*tp)) continue;
+        
+        TrackingParticle::Vector momentumTP_2;
+	    momentumTP_2 = tp->momentum();
+            
+        double dR_ = sqrt( (momentumTP_1.eta() - momentumTP_2.eta())*(momentumTP_1.eta() - momentumTP_2.eta()) + (momentumTP_1.phi() - momentumTP_2.phi())*(momentumTP_1.phi() - momentumTP_2.phi()) );
+        
+        cout<<"dR: "<<dR_<<endl;
+        
+        if(dR_ < dR && dR_ != 0) result = false;
+      
+    }
+    
+    return result;
+    
+}
+
 void MuonTrackValidator::bookHistograms(DQMStore::IBooker& ibooker, edm::Run const&, edm::EventSetup const& setup) {
 
   int j=0;
@@ -905,6 +937,7 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    LogTrace("MuonTrackValidator") <<"TrackingParticle "<< i;
           
 	    if(! tpSelector(*tp)) continue;
+          
 	    momentumTP = tp->momentum();
 	    vertexTP = tp->vertex();
           
@@ -912,20 +945,26 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 //        std::cout<<"dR: "<<dR<<std::endl;
         h_drSIM[w]->Fill(dR);
           
+//        bool isoRes = isTPIsolated(tp, event, setup, 0.5);
+//        if(!isoRes) cout<<"------------------------------------------------------------------ ISOLATED????: "<<isoRes<<endl;
+//        if(!isoRes) continue;
+//        if(dR > 0.1) continue;
+          
         prodRho = sqrt(vertexTP.perp2());
 		prodZ = vertexTP.z();
         prodR = sqrt(prodRho*prodRho + prodZ*prodZ);
-        int hitsPdgId = tp->pdgId();
-		int hitsStatus = tp->status();
-        int bx = tp->eventId().bunchCrossing();
-        int evtID = tp->eventId().event();
-          
-        bool isSignalMuon = (abs(tp->pdgId())==13 || abs(tp->pdgId())==11 || abs(tp->pdgId())==15) && !tp->genParticles().empty() && (tp->eventId().event() == 0) && (tp->eventId().bunchCrossing() == 0); //segnale muone
-        if(isSignalMuon) {
-          cout<<"-----------------------------------------------------------------------------------------------"<<endl;
-          cout << "\t Particle pdgId = "<< hitsPdgId << " status: " << hitsStatus << " rho = " << prodRho << ", z = " << prodZ << ", evtID = " << evtID << ", bx = " << bx << ", L = " << prodR << ", pT: " << sqrt(momentumTP.perp2()) << endl;
-          cout<<"-----------------------------------------------------------------------------------------------"<<endl;
-        }
+//        int hitsPdgId = tp->pdgId();
+//        int hitsStatus = tp->status();
+//        int bx = tp->eventId().bunchCrossing();
+//        int evtID = tp->eventId().event();
+//          
+//        bool isSignalMuon = (abs(tp->pdgId())==13 || abs(tp->pdgId())==11 || abs(tp->pdgId())==15) && !tp->genParticles().empty() && (tp->eventId().event() == 0) && (tp->eventId().bunchCrossing() == 0); //segnale muone
+//        if(isSignalMuon) {
+//          cout<<"-----------------------------------------------------------------------------------------------"<<endl;
+//          cout << "\t Particle pdgId = "<< hitsPdgId << " status: " << hitsStatus << " rho = " << prodRho << ", z = " << prodZ << ", evtID = " << evtID << ", bx = " << bx << ", L = " << prodR << ", pT: " << sqrt(momentumTP.perp2()) << endl;
+//          cout<<"\t Eta = "<<momentumTP.eta()<<", Phi = "<<momentumTP.phi()<<endl;
+//          cout<<"-----------------------------------------------------------------------------------------------"<<endl;
+//        }
           
         if(!(fabs(prodRho) < prodRho_ && fabs(prodZ) < prodZ_)) continue;
           
@@ -949,12 +988,11 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
           
         if(!(muonAcceptance[6] > 0)) continue;
         if(!(muonAcceptance[0] > 0 || muonAcceptance[1] > 0)) continue;
-//        if(dR > 0.05) continue;
-          
-        std::cout<<"DT: "<<muonAcceptance[0]<<", CSC: "<<muonAcceptance[1]<<std::endl;
-        std::cout<<"RPCb: "<<muonAcceptance[2]<<", RPCf: "<<muonAcceptance[3]<<std::endl;
-        std::cout<<"GEM: "<<muonAcceptance[4]<<", ME0: "<<muonAcceptance[5]<<std::endl;
-        std::cout<<"--------------------"<<std::endl;
+
+//        std::cout<<"DT: "<<muonAcceptance[0]<<", CSC: "<<muonAcceptance[1]<<std::endl;
+//        std::cout<<"RPCb: "<<muonAcceptance[2]<<", RPCf: "<<muonAcceptance[3]<<std::endl;
+//        std::cout<<"GEM: "<<muonAcceptance[4]<<", ME0: "<<muonAcceptance[5]<<std::endl;
+//        std::cout<<"--------------------"<<std::endl;
           
 	    //if(! isSignalFromZgamma(tp)) continue;
 	    //if(isSignalFromZgamma(tp)) cout<<"Signal: 1"<<endl;
@@ -995,7 +1033,6 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
 	    RefToBase<Track> assoc_recoTrack = rt.begin()->first;
 	    edm::LogVerbatim("MuonTrackValidator")<<"-----------------------------associated Track #"<<assoc_recoTrack.key();
           
-        //if(assoc_recoTrack->hitPattern().muonStationsWithValidHits() > 1){
             TP_is_matched = true;
             ats++;
             quality = rt.begin()->second;
@@ -1299,8 +1336,6 @@ void MuonTrackValidator::analyze(const edm::Event& event, const edm::EventSetup&
         bool Track_is_matched_075 = false;
         bool Track_is_matched_050 = false;
 	RefToBase<Track> track(trackCollection, i);
-    //if(track->hitPattern().muonStationsWithValidHits() <= 1) continue;
-    //if((track->numberOfValidHits()) == 0) continue;
 	rT++;
           
     double ipxy = -1, ipz = -1;

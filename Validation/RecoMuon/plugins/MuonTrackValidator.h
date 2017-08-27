@@ -169,6 +169,7 @@ private:
 			double& phi, double& phiError) const;
   bool isSignalFromZgamma(TrackingParticle* tpRtS, bool debug);
   std::vector<int> isInMuonSysAcceptance(TrackingParticle*, const edm::Event&, const edm::EventSetup&, bool);
+  bool isTPIsolated(TrackingParticle*, const edm::Event&, const edm::EventSetup&, double);
 
  private:
   std::string dirName_;
