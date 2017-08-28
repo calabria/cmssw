@@ -370,7 +370,7 @@ TEfficiency * calcEff(TH1F* num, TH1F* den, bool remove = false, bool rebin = fa
 
 	Double_t bin[] = {0., 1., 3., 5., 10., 20., 35., 50., 70., 100., 2500.};
 	Double_t binEta[] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.5};
-    Double_t binLr[] = {0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 1000};
+    Double_t binLr[] = {0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 1000};
     Double_t binDxy[] = {0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 500};
     
     //std::cout<<i<<" "<<num->GetMean()<<" "<<den->GetMean()<<std::endl;
@@ -424,8 +424,8 @@ TEfficiency * calcEff(TH1F* num, TH1F* den, bool remove = false, bool rebin = fa
 	}
     else if(rebin && type == "lr"){
         
-        TH1F * numEtaNew = num->Rebin(21,num->GetName(),binLr);
-        TH1F * denEtaNew = den->Rebin(21,den->GetName(),binLr);
+        TH1F * numEtaNew = num->Rebin(11,num->GetName(),binLr);
+        TH1F * denEtaNew = den->Rebin(11,den->GetName(),binLr);
         num = numEtaNew;
         den = denEtaNew;
         
@@ -602,7 +602,7 @@ void setEverything(std::vector<TH1F*> genericVector, double min, double max, boo
 		if(name3 == "Muon10") header = "Muon p_{T} = 10 GeV";
 		//else if(name3 == "Muon100") header = "Muon p_{T} = 100 GeV/c";
 		else if(name3 == "Muon100") header = "Standalone Muon reconstruction";
-		else if (name3 == "DY") header = "Displaced muons: 0 < d_{xy} < 50 cm, 2 < p_{T} < 50 GeV";
+		else if (name3 == "DY") header = "Displaced muons: 0 < d_{xy} < 50 cm";
 		if(!(ptRange == "24" || ptRange == "28" || ptRange == "full")) header += ptRange;
 
 		std::string addString2 = "";
@@ -891,7 +891,7 @@ void setEverything(std::vector<TProfile*> genericVector, double min, double max,
 		if(name3 == "Muon10") header = "Muon p_{T} = 10 GeV";
 		//else if(name3 == "Muon100") header = "Muon p_{T} = 100 GeV/c";
 		else if(name3 == "Muon100") header = "Standalone Muon reconstruction";
-        else if (name3 == "DY") header = "Displaced muons: 0 < d_{xy} < 50 cm, 2 < p_{T} < 50 GeV";
+        else if (name3 == "DY") header = "Displaced muons: 0 < d_{xy} < 50 cm";
 		if(!(ptRange == "24" || ptRange == "28" || ptRange == "full")) header += ptRange;
 
 		std::string addString2 = "";
@@ -1152,7 +1152,7 @@ void setEverything2(std::vector<TEfficiency*> genericVector, double min, double 
 		std::string header = "";
 		if(name3 == "Muon10") header = "Muon p_{T} = 10 GeV";
 		else if(name3 == "Muon100") header = "Muon p_{T} = 100 GeV";
-        else if (name3 == "DY") header = "Displaced muons: 0 < d_{xy} < 50 cm, 2 < p_{T} < 50 GeV";
+        else if (name3 == "DY") header = "Displaced muons: 0 < d_{xy} < 50 cm";
         if(!(ptRange == "24" || ptRange == "28" || ptRange == "full")) header += ptRange;
 
 		std::string addString2 = "";
@@ -1360,7 +1360,7 @@ void setEverything3(std::vector<TEfficiency*> genericVector, std::vector<TEffici
     std::string header = "";
     if(name3 == "Muon10") header = "Muon p_{T} = 10 GeV";
     else if(name3 == "Muon100") header = "Muon p_{T} = 100 GeV";
-    else if (name3 == "DY") header = "Displaced muons: 0 < d_{xy} < 50 cm, 2 < p_{T} < 50 GeV";
+    else if (name3 == "DY") header = "Displaced muons: 0 < d_{xy} < 50 cm";
     if(!(ptRange == "24" || ptRange == "28" || ptRange == "full")) header += ptRange;
     
     std::string addString2 = "";
@@ -1927,8 +1927,8 @@ void makePlots(std::vector<std::string> allNames, std::string name3){
     
     setEverything(qOverPtRes_vs_eta, minRes, maxRes, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "#sigma(p_{T})/p_{T}", "invRes_", false, "24", "invRes");
 	setEverything(qOverPtResRMS_vs_eta, 0.5, 3, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "q/p_{T} RMS", "invResRMS_", false, "24", "invRes");
-    setEverything(qOverPtRes_vs_pt, minRes, 3, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "#sigma(p_{T})/p_{T}", "invResPt_", false, "24", "invResPt");
-    setEverything(qOverPtResRMS_vs_pt, minRes, 3, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "q/p_{T} RMS", "invResRMSPt_", false, "24", "invResPt");
+    setEverything(qOverPtRes_vs_pt, minRes, maxRes, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "#sigma(p_{T})/p_{T}", "invResPt_", false, "24", "invResPt");
+    setEverything(qOverPtResRMS_vs_pt, 0.3, 3, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "q/p_{T} RMS", "invResRMSPt_", false, "24", "invResPt");
     setEverything(qOverPtRes_vs_lr, minRes, maxRes, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "#sigma(p_{T})/p_{T}", "invRes_lr_", false, "24", "invResLr");
 
 	setEverything(qOverPtRes1_vs_eta, 0.003, 0.1, true, 0.20, 0.65, 0.70, 0.85, name3, allNames[6], "#sigma(p_{T})/p_{T}", "invRes1_", false, ", 5 < p_{T} < 10 GeV");

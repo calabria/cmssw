@@ -600,7 +600,7 @@ void MuonTrackValidator::bookHistograms(DQMStore::IBooker& ibooker, edm::Run con
       qOverPtresXL4_vs_eta_sim.push_back(ibooker.book2D("qOverPtresXL4_vs_eta_sim","qOverPtres4_vs_eta sim",nintRes,minRes,maxRes, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
 
       qOverPtresXL_vs_phi_sim.push_back( ibooker.book2D("qOverPtresXL_vs_phi_sim","q/p_{t} res vs #phi sim",nintPhi,minPhi,maxPhi, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
-      qOverPtresXL_vs_pt_sim.push_back(ibooker.book2D("qOverPtresXL_vs_pt_sim","qOverPtres_vs_pt sim",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
+      qOverPtresXL_vs_pt_sim.push_back(ibooker.book2D("qOverPtresXL_vs_pt_sim","qOverPtres_vs_pt sim",(nintpT/5),minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
       qOverPtresXLB_vs_pt_sim.push_back(ibooker.book2D("qOverPtresXLB_vs_pt_sim","qOverPtresB_vs_pt sim",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
       qOverPtresXLO_vs_pt_sim.push_back(ibooker.book2D("qOverPtresXLO_vs_pt_sim","qOverPtresO_vs_pt sim",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
       qOverPtresXLE_vs_pt_sim.push_back(ibooker.book2D("qOverPtresXLE_vs_pt_sim","qOverPtresE_vs_pt sim",nintpT,minpT,maxpT, 20*ptRes_nbin, 20*ptRes_rangeMin, 20*ptRes_rangeMax));
