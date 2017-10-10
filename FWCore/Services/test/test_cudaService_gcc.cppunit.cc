@@ -24,7 +24,7 @@
 #include <thread>
 #include <chrono>
 #include <random>
-#include <cuda_runtime.h>
+#include "FWCore/ServiceRegistry/interface/cuda_runtime.h"
 // CMSSW
 #include "FWCore/ServiceRegistry/interface/ServiceRegistry.h"
 #include "FWCore/PluginManager/interface/standard.h"
