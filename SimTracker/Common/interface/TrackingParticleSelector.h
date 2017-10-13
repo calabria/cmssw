@@ -77,13 +77,13 @@ public:
     if(useAbsEta_) etaRangeOk = absetaOk(tp);
       
     return (
- 	    tp.numberOfTrackerLayers() >= minHit_ &&
+            tp.numberOfTrackerLayers() >= minHit_ &&
             ptOk(tp) &&
-            etaOk(tp) &&
+            etaRangeOk &&
             phiOk(tp) &&
             std::abs(tp.vertex().z()) <= lip_ &&   // vertex last to avoid to load it if not striclty necessary...
-	    tp.vertex().perp2() <= tip2_
-	    );
+            tp.vertex().perp2() <= tip2_
+           );
   }
 
 private:
@@ -91,13 +91,13 @@ private:
   double ptMax2_;
   float minRapidity_;
   float maxRapidity_;
-  float meanPhi_;
-  float rangePhi_;
   bool useAbsEta;
   bool useAbsEta_;
+  float meanPhi_;
+  float rangePhi_;
   double tip2_;
-  double lip_;
-  int    minHit_;
+  double lip_; 
+  int minHit_;
   bool signalOnly_;
   bool intimeOnly_;
   bool chargedOnly_;
@@ -125,7 +125,7 @@ namespace reco {
 	  cfg.getParameter<double>( "lip" ),
 	  cfg.getParameter<int>( "minHit" ),
 	  cfg.getParameter<bool>( "signalOnly" ),
-          cfg.getParameter<bool>( "intimeOnly" ),
+      cfg.getParameter<bool>( "intimeOnly" ),
 	  cfg.getParameter<bool>( "chargedOnly" ),
 	  cfg.getParameter<bool>( "stableOnly" ),
 	  cfg.getParameter<std::vector<int> >( "pdgId" ),
