@@ -41,7 +41,7 @@ fileNames =  cms.untracked.vstring(
 #2017 CMSSW_9_2_0
 # download this file
 # /store/relval/CMSSW_9_2_0/RelValTTbar_13/GEN-SIM-DIGI-RAW/PU25ns_91X_upgrade2017_realistic_v5_PU50-v1/10000/7C654D7C-9E40-E711-8690-0025905A48BC.root
-'file:/afs/cern.ch/work/s/sdubey/data/Raw_Data_Phase1/7C654D7C-9E40-E711-8690-0025905A48BC.root'
+'/store/relval/CMSSW_9_2_0/RelValTTbar_13/GEN-SIM-DIGI-RAW/PU25ns_91X_upgrade2017_realistic_v5_PU50-v1/10000/085D5AAF-9E40-E711-B12A-0025905A609E.root'
 #'file:/home/fpantale/data/920/PU50/085D5AAF-9E40-E711-B12A-0025905A609E.root'
 #2016 CMSSW_8_1_0
 #'file:/afs/cern.ch/work/s/sdubey/data/Raw_Data_Phase1/0216ABF7-19B1-E611-8786-0025905A60F8.root'
@@ -84,21 +84,22 @@ process.siPixelDigis.IncludeErrors = False #True
 process.siPixelDigis.Timing = False 
 process.siPixelDigis.UsePhase1 = cms.bool(True)
 
-process.MessageLogger = cms.Service("MessageLogger",
-    #debugModules = cms.untracked.vstring('siPixelDigis'),
-    destinations = cms.untracked.vstring('log'),
-    log = cms.untracked.PSet( threshold = cms.untracked.string('WARNING'))
-    #log = cms.untracked.PSet( threshold = cms.untracked.string('DEBUG'))
-)
+#process.MessageLogger = cms.Service("MessageLogger",
+#    #debugModules = cms.untracked.vstring('siPixelDigis'),
+#    destinations = cms.untracked.vstring('log'),
+#    log = cms.untracked.PSet( threshold = cms.untracked.string('WARNING'))
+#    #log = cms.untracked.PSet( threshold = cms.untracked.string('DEBUG'))
+#)
 
-# process.out = cms.OutputModule("PoolOutputModule",
-#      fileName =  cms.untracked.string('file:digis_phase1.root'),
-# #    fileName =  cms.untracked.string('file:/afs/cern.ch/work/d/dkotlins/public/data/digis/digi_zb_248025.root'),
-#     #fileName =  cms.untracked.string('file:/afs/cern.ch/work/d/dkotlins/public/MC/mu_phase1/pt100_81/digis/digis1_formatfix.root'),
-#     #outputCommands = cms.untracked.vstring("drop *","keep *_siPixelDigis_*_*")
-# )
+process.out = cms.OutputModule("PoolOutputModule",
+      fileName =  cms.untracked.string('file:digis_phase1.root'),
+ #    fileName =  cms.untracked.string('file:/afs/cern.ch/work/d/dkotlins/public/data/digis/digi_zb_248025.root'),
+     #fileName =  cms.untracked.string('file:/afs/cern.ch/work/d/dkotlins/public/MC/mu_phase1/pt100_81/digis/digis1_formatfix.root'),
+     #outputCommands = cms.untracked.vstring("drop *","keep *_siPixelDigis_*_*")
+)
 
 
 process.p = cms.Path(process.siPixelDigis)
 #process.p = cms.Path(process.siPixelDigis*process.a)
-# process.ep = cms.EndPath(process.out)
+process.ep = cms.EndPath(process.out)
+
