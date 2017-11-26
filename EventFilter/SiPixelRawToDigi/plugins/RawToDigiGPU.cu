@@ -98,6 +98,7 @@ void initDeviceMemory() {
   cudaMalloc((void**)&yy_adc,       MAX_WORD_SIZE);
   cudaMalloc((void**)&adc_d,        MAX_WORD_SIZE);
   cudaMalloc((void**)&layer_d ,     MAX_WORD_SIZE);
+  cudaMalloc((void**)&rawIdArr_d,         MAX_WORD_SIZE); // to store the x and y coordinate
 
   cudaMalloc((void**)&moduleId_d,   MAX_WORD_SIZE);
   cudaMalloc((void**)&mIndexStart_d, MSIZE);
@@ -125,6 +126,7 @@ void freeMemory() {
   cudaFree(yy_d);
   cudaFree(xx_adc);
   cudaFree(yy_adc);
+  cudaFree(rawIdArr_d);
   
   cudaFree(moduleId_d);
   cudaFree(mIndexStart_d);
@@ -293,7 +295,7 @@ __global__ void applyADCthreshold_kernel
 // Kernel to perform Raw to Digi conversion
 __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const uint *fedIndex, 
                                  uint *eventIndex,const uint stream, uint *XX, uint *YY, uint *moduleId, int *mIndexStart, 
-                                 int *mIndexEnd, uint *ADC, uint *layerArr) 
+                                 int *mIndexEnd, uint *ADC, uint *layerArr, uint *rawIdArr)
 {
   uint blockId  = blockIdx.x;
   uint eventno  = blockIdx.y + gridDim.y*stream;
@@ -377,6 +379,7 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
       ADC[gIndex]   = getADC(ww);
       layerArr[gIndex] = layer;
       moduleId[gIndex] = detId.moduleId;
+      rawIdArr[gIndex] = rawId;
     } // end of if(gIndex < end)
   } // end of for(int i =0;i<no_itr...)
   
@@ -464,7 +467,7 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
 // kernel wrapper called from runRawToDigi_kernel
 void RawToDigi_wrapper (const uint wordCounter, uint *word, const uint fedCounter,  uint *fedIndex,
                         uint *eventIndex,bool convertADCtoElectrons, uint *xx_h, uint *yy_h, uint *adc_h, int *mIndexStart_h,
-                        int *mIndexEnd_h) { 
+                        int *mIndexEnd_h, uint *rawIdArr_h) {
   
  
   cout<<"Inside GPU RawToDigi , Total pixels: "<<wordCounter<<endl;
@@ -497,7 +500,7 @@ void RawToDigi_wrapper (const uint wordCounter, uint *word, const uint fedCounte
     cudaMemcpyAsync(&fedIndex_d[fedOffset], &fedIndex[fedOffset], FSIZE, cudaMemcpyHostToDevice, stream[i]); 
     // Launch rawToDigi kernel
     RawToDigi_kernel<<<gridsize,threads,0, stream[i]>>>(Map,word_d, fedIndex_d,eventIndex_d,i, xx_d, yy_d, moduleId_d,
-                                        mIndexStart_d, mIndexEnd_d, adc_d,layer_d);
+                                        mIndexStart_d, mIndexEnd_d, adc_d, layer_d, rawIdArr_d);
   }
   
   checkCUDAError("Error in RawToDigi_kernel");
@@ -528,6 +531,7 @@ void RawToDigi_wrapper (const uint wordCounter, uint *word, const uint fedCounte
     cudaMemcpy(yy_h, yy_d, wordCounter*sizeof(uint), cudaMemcpyDeviceToHost);
   }
   cudaMemcpy(adc_h, adc_d, wordCounter*sizeof(uint), cudaMemcpyDeviceToHost);
+  cudaMemcpy(rawIdArr_h, rawIdArr_d, wordCounter*sizeof(uint), cudaMemcpyDeviceToHost);
 
   cudaMemcpy(mIndexStart_h, mIndexStart_d, NEVENT*NMODULE*sizeof(int), cudaMemcpyDeviceToHost);
   cudaMemcpy(mIndexEnd_h, mIndexEnd_d, NEVENT*NMODULE*sizeof(int), cudaMemcpyDeviceToHost);
