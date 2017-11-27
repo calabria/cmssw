@@ -19,7 +19,7 @@ siPixelDigis.UsePhase1 = cms.bool(False)
 siPixelDigis.Regions = cms.PSet( ) 
 siPixelDigis.CablingMapLabel = cms.string("")
 
-siPixelDigisGPU = EventFilter.SiPixelRawToDigi.siPixelRawToDigi_cfi.siPixelRawToDigi.clone()
+siPixelDigisGPU = EventFilter.SiPixelRawToDigi.siPixelRawToDigiGPU_cfi.siPixelRawToDigiGPU.clone()
 siPixelDigisGPU.Timing = cms.untracked.bool(False)
 siPixelDigisGPU.IncludeErrors = cms.bool(False)
 siPixelDigisGPU.InputLabel = cms.InputTag("rawDataCollector")

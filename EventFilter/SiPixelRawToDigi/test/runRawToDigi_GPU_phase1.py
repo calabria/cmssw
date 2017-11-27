@@ -57,7 +57,7 @@ process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     fileName = cms.untracked.string('file:digi.root'),
-#    outputCommands = cms.untracked.vstring("drop *","keep *_siPixelDigis_*_*"),
+#    outputCommands = cms.untracked.vstring("drop *", "keep *_simSiPixelDigis_*_*", "keep *_siPixelDigisGPU_*_*"),
     outputCommands = cms.untracked.vstring("keep *"),
     splitLevel = cms.untracked.int32(0)
 )
@@ -71,15 +71,19 @@ process.load("EventFilter.SiPixelRawToDigi.SiPixelRawToDigi_cfi")
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2017_design', '')
 
+process.siPixelClustersPreSplitting.src = cms.InputTag("siPixelDigisGPU")
+
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.siPixelDigis)
 process.raw2digiGPU_step = cms.Path(process.siPixelDigisGPU)
+process.clustering = cms.Path(process.siPixelClustersPreSplitting)
 process.RECOSIMoutput_step = cms.EndPath(process.FEVTDEBUGHLToutput)
 
 
 # Schedule definition
 process.schedule = cms.Schedule(#process.raw2digi_step,
                                 process.raw2digiGPU_step,
+#                                process.clustering,
                                 process.RECOSIMoutput_step)
 
 
