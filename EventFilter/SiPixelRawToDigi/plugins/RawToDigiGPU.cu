@@ -320,13 +320,14 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
     uint gIndex = begin + threadId + i*blockDim.x; 
     if(gIndex < end) {
       uint ww = Word[gIndex]; // Array containing 32 bit raw data
-      if(ww == 0 ) {
+      if(ww == 0) {
         //noise and dead channels are ignored
         XX[gIndex]    = 0;  // 0 is an indicator of a noise/dead channel
         YY[gIndex]    = 0; // skip these pixels during clusterization
         ADC[gIndex]   = 0;
         layerArr[gIndex] = 0; 
-        moduleId[gIndex] = 9999; //9999 is the indication of bad module, taken care later  
+        moduleId[gIndex] = 9999; //9999 is the indication of bad module, taken care later
+        rawIdArr[gIndex] = 9999;
         continue ;         // 0: bad word, 
       } 
       uint link  = getLink(ww);            // Extract link
