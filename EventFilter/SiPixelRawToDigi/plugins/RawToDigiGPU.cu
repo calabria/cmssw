@@ -316,10 +316,10 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
   //if(threadId==0) printf("Event: %u blockId: %u start: %u end: %u\n", eventno, blockId, begin, end);
   int no_itr = (end - begin)/blockDim.x + 1; // to deal with number of hits greater than blockDim.x 
   #pragma unroll
-  for(int i =0; i<no_itr; i++) { // use a static number to optimize this loop
+  for(int i = 0; i < no_itr; i++) { // use a static number to optimize this loop
     uint gIndex = begin + threadId + i*blockDim.x; 
-    if(gIndex <end) {
-      uint ww    = Word[gIndex]; // Array containing 32 bit raw data
+    if(gIndex < end) {
+      uint ww = Word[gIndex]; // Array containing 32 bit raw data
       if(ww == 0 ) {
         //noise and dead channels are ignored
         XX[gIndex]    = 0;  // 0 is an indicator of a noise/dead channel

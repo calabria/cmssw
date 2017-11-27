@@ -349,27 +349,27 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
   // GPU specific: RawToDigi -> clustering -> CPE
   eventCount++;
   eventIndex[eventCount] = wordCounterGPU;
-  static int ec=1;
+  static int ec = 1;
   cout<<"Data read for event: "<<ec++<<endl;
-  int r2d_debug=0;
+  int r2d_debug = 0;
   if(eventCount==NEVENT) {
     RawToDigi_wrapper(wordCounterGPU, word, fedCounter,fedIndex, eventIndex, convertADCtoElectrons, xx_h, yy_h, adc_h, mIndexStart_h, mIndexEnd_h, rawIdArr_h);
 
-    if(1){
+    if(r2d_debug == 1){
       //write output to text file (for debugging purpose only)
       static int count = 1;
       cout << "Writing output to the file " << endl;
       ofstream ofileXY("GPU_RawToDigi_Output_Part1_Event_"+to_string((count-1)*NEVENT+1)+"to"+to_string(count*NEVENT)+".txt");
       ofileXY<<"  Index     xcor   ycor    adc  rawId"<<endl;
-      for(uint i=0; i<wordCounterGPU; i++) {
-        ofileXY<<setw(10) << i  << setw(6) << xx_h[i] << setw(6) << yy_h[i] << setw(8) << adc_h[i] << setw(10) << rawIdArr_h[i] << endl;
+      for(uint i = 0; i < wordCounterGPU; i++) {
+        ofileXY<< setw(10) << i  << setw(6) << xx_h[i] << setw(6) << yy_h[i] << setw(8) << adc_h[i] << setw(10) << rawIdArr_h[i] << endl;
       }
       //store the module index, which stores the index of x, y & adc for each module
       ofstream ofileModule("GPU_RawToDigi_Output_Part2_Event_"+to_string((count-1)*NEVENT+1)+"to"+to_string(count*NEVENT)+".txt");
       ofileModule<<"Event_No  Module_no   mIndexStart   mIndexEnd "<<endl;
-      for(int ev = (count-1)*NEVENT+1; ev <=count*NEVENT; ev++) {
-        for(int mod =0; mod < NMODULE; mod++) {
-          ofileModule << setw(8) << ev << setw(8) <<mod << setw(10) << mIndexStart_h[mod] << setw(10) << mIndexEnd_h[mod]<<endl;
+      for(int ev = (count-1)*NEVENT+1; ev <= count*NEVENT; ev++) {
+        for(int mod = 0; mod < NMODULE; mod++) {
+          ofileModule << setw(8) << ev << setw(8) << mod << setw(10) << mIndexStart_h[mod] << setw(10) << mIndexEnd_h[mod]<<endl;
         }
       }
       count++;
@@ -379,24 +379,26 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
       
     for(uint i = 0; i < wordCounterGPU; i++) {
         
-        if(rawIdArr_h[i] == 0) continue;        
+        //if(rawIdArr_h[i] == 0) continue;
         detDigis = &(*collection).find_or_insert(rawIdArr_h[i]);
         if ( (*detDigis).empty() ) (*detDigis).data.reserve(32); // avoid the first relocations
         (*detDigis).data.emplace_back(xx_h[i], yy_h[i], adc_h[i]);
         
     }
-    wordCounterGPU =  0;
-    eventCount=0;
+    wordCounterGPU = 0;
+    eventCount = 0;
       
   } //if(eventCount == NEVENT)
   fedCounter =0;
     
-  edm::DetSetVector<PixelDigi>::const_iterator it;
-  for (it = collection->begin(); it != collection->end(); ++it) {
-      for(PixelDigi const& digi : *it) {
+  if(r2d_debug == 1){
+      edm::DetSetVector<PixelDigi>::const_iterator it;
+      for (it = collection->begin(); it != collection->end(); ++it) {
+          for(PixelDigi const& digi : *it) {
 
-          std::cout<<"RawID: "<<DetId(it->detId())<<", row: "<<digi.row()<<", col: "<<digi.column()<<", adc: "<<digi.adc()<<std::endl;
+              std::cout<<"RawID: "<<DetId(it->detId())<<", row: "<<digi.row()<<", col: "<<digi.column()<<", adc: "<<digi.adc()<<std::endl;
 
+          }
       }
   }
     
