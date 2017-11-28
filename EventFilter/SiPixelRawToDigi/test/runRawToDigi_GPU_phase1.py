@@ -21,6 +21,7 @@ process.load('Configuration.StandardSequences.PATMC_cff')
 process.load('Configuration.StandardSequences.Validation_cff')
 process.load('DQMOffline.Configuration.DQMOfflineMC_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+process.load('Configuration.StandardSequences.DQMSaverAtRunEnd_cff')
 
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(10)
@@ -39,7 +40,8 @@ process.source = cms.Source("PoolSource",
 )
 
 process.options = cms.untracked.PSet(
-
+    Rethrow = cms.untracked.vstring('ProductNotFound'),
+    fileMode = cms.untracked.string('FULLMERGE')
 )
 
 # Production Info
@@ -62,8 +64,16 @@ process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
     splitLevel = cms.untracked.int32(0)
 )
 
+process.DQMoutput = cms.OutputModule("DQMRootOutputModule",
+    dataset = cms.untracked.PSet(
+        dataTier = cms.untracked.string('DQMIO'),
+        filterName = cms.untracked.string('')
+    ),
+    fileName = cms.untracked.string('file:step3_inDQM.root'),
+    outputCommands = process.DQMEventContent.outputCommands,
+    splitLevel = cms.untracked.int32(0)
+)
 
-process.load("EventFilter.SiPixelRawToDigi.SiPixelRawToDigi_cfi")
 
 # Additional output definition
 
@@ -71,20 +81,50 @@ process.load("EventFilter.SiPixelRawToDigi.SiPixelRawToDigi_cfi")
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2017_design', '')
 
+process.load("EventFilter.SiPixelRawToDigi.SiPixelRawToDigi_cfi")
 process.siPixelClustersPreSplitting.src = cms.InputTag("siPixelDigisGPU")
+
+from Validation.SiPixelPhase1DigisV.SiPixelPhase1DigisV_cfi import *
+
+SiPixelPhase1DigisADCGPU = SiPixelPhase1DigisADC.clone()
+SiPixelPhase1DigisNdigisGPU = SiPixelPhase1DigisNdigis.clone()
+SiPixelPhase1DigisRowsGPU = SiPixelPhase1DigisRows.clone()
+SiPixelPhase1DigisColumnsGPU = SiPixelPhase1DigisColumns.clone()
+SiPixelPhase1DigisADCGPU.topFolderName = "PixelPhase1V/DigisGPU"
+SiPixelPhase1DigisNdigisGPU.topFolderName = "PixelPhase1V/DigisGPU"
+SiPixelPhase1DigisRowsGPU.topFolderName = "PixelPhase1V/DigisGPU"
+SiPixelPhase1DigisColumnsGPU.topFolderName = "PixelPhase1V/DigisGPU"
+SiPixelPhase1DigisConfGPU = cms.VPSet(SiPixelPhase1DigisADCGPU,
+                                      SiPixelPhase1DigisNdigisGPU,
+                                      SiPixelPhase1DigisRowsGPU,
+                                      SiPixelPhase1DigisColumnsGPU)
+
+process.SiPixelPhase1DigisAnalyzerVGPU = process.SiPixelPhase1DigisAnalyzerV.clone()
+process.SiPixelPhase1DigisHarvesterVGPU = process.SiPixelPhase1DigisHarvesterV.clone()
+process.SiPixelPhase1DigisAnalyzerVGPU.src = cms.InputTag("siPixelDigisGPU")
+process.SiPixelPhase1DigisAnalyzerVGPU.histograms = SiPixelPhase1DigisConfGPU
+process.SiPixelPhase1DigisHarvesterVGPU.histograms = SiPixelPhase1DigisConfGPU
+
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.siPixelDigis)
 process.raw2digiGPU_step = cms.Path(process.siPixelDigisGPU)
 process.clustering = cms.Path(process.siPixelClustersPreSplitting)
+process.validation_step = cms.Path(process.SiPixelPhase1DigisAnalyzerV + process.SiPixelPhase1DigisAnalyzerVGPU)
+process.harvesting_step = cms.Path(process.SiPixelPhase1DigisHarvesterV + process.SiPixelPhase1DigisHarvesterVGPU)
 process.RECOSIMoutput_step = cms.EndPath(process.FEVTDEBUGHLToutput)
-
+process.DQMoutput_step = cms.EndPath(process.DQMoutput)
+process.dqmsave_step = cms.Path(process.DQMSaver)
 
 # Schedule definition
 process.schedule = cms.Schedule(#process.raw2digi_step,
                                 process.raw2digiGPU_step,
 #                                process.clustering,
-                                process.RECOSIMoutput_step)
+                                process.validation_step,
+                                process.harvesting_step,
+                                process.RECOSIMoutput_step,
+                                process.DQMoutput_step,
+                                process.dqmsave_step)
 
 
 # customisation of the process.
