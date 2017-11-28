@@ -405,6 +405,7 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
         atomicExch(&YY[gIndex+2], atomicExch(&YY[gIndex+1], YY[gIndex+2]));
         atomicExch(&ADC[gIndex+2], atomicExch(&ADC[gIndex+1], ADC[gIndex+2]));
         atomicExch(&layerArr[gIndex+2], atomicExch(&layerArr[gIndex+1], layerArr[gIndex+2]));
+        atomicExch(&rawIdArr[gIndex+2], atomicExch(&rawIdArr[gIndex+1], rawIdArr[gIndex+2]));
       }
       __syncthreads();
 
@@ -418,6 +419,7 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
         atomicExch(&YY[gIndex+1], atomicExch(&YY[gIndex], YY[gIndex+1]));
         atomicExch(&ADC[gIndex+1], atomicExch(&ADC[gIndex], ADC[gIndex+1]));
         atomicExch(&layerArr[gIndex+1], atomicExch(&layerArr[gIndex], layerArr[gIndex+1]));
+        atomicExch(&rawIdArr[gIndex+1], atomicExch(&rawIdArr[gIndex], rawIdArr[gIndex+1]));
       }
 
       // moduleId== 9999 then pixel is bad with x=y=layer=adc=0
@@ -513,12 +515,12 @@ void RawToDigi_wrapper (const uint wordCounter, uint *word, const uint fedCounte
   //cudaDeviceSynchronize();  
  
   // kernel to apply adc threashold on the channel
-  ADCThreshold adcThreshold;
-  uint numThreads = 512;
-  uint numBlocks = wordCounter/512 +1;
-  applyADCthreshold_kernel<<<numBlocks, numThreads>>>(xx_d, yy_d,layer_d,adc_d,wordCounter,adcThreshold, xx_adc, yy_adc);
-  cudaDeviceSynchronize();
-  checkCUDAError("Error in applying ADC threshold");
+  //ADCThreshold adcThreshold;
+  //uint numThreads = 512;
+  //uint numBlocks = wordCounter/512 +1;
+  //applyADCthreshold_kernel<<<numBlocks, numThreads>>>(xx_d, yy_d,layer_d,adc_d, wordCounter, adcThreshold, xx_adc, yy_adc);
+  //cudaDeviceSynchronize();
+  //checkCUDAError("Error in applying ADC threshold");
   cout << "Raw data is converted into digi for " << NEVENT << "  Events" << endl;
 
   // copy data to host variable
