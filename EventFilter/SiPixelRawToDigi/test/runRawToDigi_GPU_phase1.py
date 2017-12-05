@@ -94,6 +94,10 @@ SiPixelPhase1DigisADCGPU.topFolderName = "PixelPhase1V/DigisGPU"
 SiPixelPhase1DigisNdigisGPU.topFolderName = "PixelPhase1V/DigisGPU"
 SiPixelPhase1DigisRowsGPU.topFolderName = "PixelPhase1V/DigisGPU"
 SiPixelPhase1DigisColumnsGPU.topFolderName = "PixelPhase1V/DigisGPU"
+SiPixelPhase1DigisColumns.range_max = 450
+SiPixelPhase1DigisColumns.range_nbins = 450
+SiPixelPhase1DigisColumnsGPU.range_max = 450
+SiPixelPhase1DigisColumnsGPU.range_nbins = 450
 SiPixelPhase1DigisConfGPU = cms.VPSet(SiPixelPhase1DigisADCGPU,
                                       SiPixelPhase1DigisNdigisGPU,
                                       SiPixelPhase1DigisRowsGPU,
