@@ -195,7 +195,6 @@ __device__ Pixel frameConversion(bool bpix, int side, uint layer, uint rocIdInDe
       } // if roc
     }
     else { // +Z side: 4 non-flipped modules oriented like 'pppp', but all 8 in layer1
-      //printf("%i %i %i %i\n", bpix, side, layer, rocIdInDetUnit);
       if(rocIdInDetUnit < 8) {
         slopeRow  = -1;
         slopeCol  =  1;
@@ -246,7 +245,7 @@ __device__ Pixel frameConversion(bool bpix, int side, uint layer, uint rocIdInDe
 
   uint gRow = rowOffset+slopeRow*local.row;
   uint gCol = colOffset+slopeCol*local.col;
-  //if(layer == 1) printf("Inside frameConversion row: %u, column: %u\n",gRow, gCol);
+  //printf("Inside frameConversion row: %u, column: %u\n",gRow, gCol);
   Pixel global = {gRow, gCol};
   return global;
 }
@@ -366,9 +365,6 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
         uint row = (ww >> ROW_shift) & ROW_mask;
         localPix.row = row;
         localPix.col = col;
-        //printf("GPU row: %i, column: %i, word: %i\n", row, col, ww);
-        //printf("\t GPU ROW_shift: %i, COL_shift: %i\n", ROW_shift, COL_shift);
-        //printf("\t GPU ROW_mask: %i, COL_mask: %i\n", ROW_mask, COL_mask);
 
       }
       else {
@@ -382,7 +378,7 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
       }
       
       Pixel globalPix = frameConversion(barrel, side, layer, rocIdInDetUnit, localPix);
-      if(layer == 1) printf("GPU side: %i, layer: %i, roc: %i, lrow: %i, lcol: %i, grow: %i, gcol: %i, word: %i\n", side, layer, rocIdInDetUnit, localPix.row, localPix.col, globalPix.row, globalPix.col, ww);
+      //printf("GPU side: %i, layer: %i, roc: %i, lrow: %i, lcol: %i, grow: %i, gcol: %i, word: %i\n", side, layer, rocIdInDetUnit, localPix.row, localPix.col, globalPix.row, globalPix.col, ww);
       XX[gIndex]    = globalPix.row+1  ; // origin shifting by 1 0-159
       YY[gIndex]    = globalPix.col+1 ; // origin shifting by 1 0-415
       ADC[gIndex]   = getADC(ww);
