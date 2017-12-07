@@ -24,7 +24,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load('Configuration.StandardSequences.DQMSaverAtRunEnd_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10)
+    input = cms.untracked.int32(1)
 )
 
 # Input source
@@ -79,7 +79,7 @@ process.DQMoutput = cms.OutputModule("DQMRootOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2017_design', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2018_realistic', '')
 
 process.load("EventFilter.SiPixelRawToDigi.SiPixelRawToDigi_cfi")
 process.siPixelClustersPreSplitting.src = cms.InputTag("siPixelDigisGPU")
@@ -121,7 +121,7 @@ process.DQMoutput_step = cms.EndPath(process.DQMoutput)
 process.dqmsave_step = cms.Path(process.DQMSaver)
 
 # Schedule definition
-process.schedule = cms.Schedule(#process.raw2digi_step,
+process.schedule = cms.Schedule(process.raw2digi_step,
                                 process.raw2digiGPU_step,
 #                                process.clustering,
                                 process.validation_step,
