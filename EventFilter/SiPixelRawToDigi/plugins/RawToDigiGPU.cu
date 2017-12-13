@@ -379,8 +379,8 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
       
       Pixel globalPix = frameConversion(barrel, side, layer, rocIdInDetUnit, localPix);
       //printf("GPU side: %i, layer: %i, roc: %i, lrow: %i, lcol: %i, grow: %i, gcol: %i, word: %i\n", side, layer, rocIdInDetUnit, localPix.row, localPix.col, globalPix.row, globalPix.col, ww);
-      XX[gIndex]    = globalPix.row+1  ; // origin shifting by 1 0-159
-      YY[gIndex]    = globalPix.col+1 ; // origin shifting by 1 0-415
+      XX[gIndex]    = globalPix.row  ; // origin shifting by 1 0-159
+      YY[gIndex]    = globalPix.col ; // origin shifting by 1 0-415
       ADC[gIndex]   = getADC(ww);
       layerArr[gIndex] = layer;
       moduleId[gIndex] = detId.moduleId;

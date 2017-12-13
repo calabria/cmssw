@@ -408,7 +408,7 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
         if(rawIdArr_h[i] == 9999) continue;
         detDigis = &(*collection).find_or_insert(rawIdArr_h[i]);
         if ( (*detDigis).empty() ) (*detDigis).data.reserve(32); // avoid the first relocations
-        (*detDigis).data.emplace_back(xx_h[i]-1, yy_h[i]-1, adc_h[i]);
+        (*detDigis).data.emplace_back(xx_h[i], yy_h[i], adc_h[i]);
         
     }
     wordCounterGPU = 0;

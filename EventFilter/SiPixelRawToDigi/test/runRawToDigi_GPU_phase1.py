@@ -59,8 +59,7 @@ process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     fileName = cms.untracked.string('file:digi.root'),
-#    outputCommands = cms.untracked.vstring("drop *", "keep *_simSiPixelDigis_*_*", "keep *_siPixelDigisGPU_*_*"),
-    outputCommands = cms.untracked.vstring("keep *"),
+    outputCommands = cms.untracked.vstring("drop *", "keep *_*_*_MyDigis"),
     splitLevel = cms.untracked.int32(0)
 )
 
@@ -82,7 +81,14 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2018_realistic', '')
 
 process.load("EventFilter.SiPixelRawToDigi.SiPixelRawToDigi_cfi")
-process.siPixelClustersPreSplitting.src = cms.InputTag("siPixelDigisGPU")
+process.siPixelClustersPreSplittingGPU = process.siPixelClustersPreSplitting.clone()
+process.siPixelClustersPreSplittingGPU.src = "siPixelDigisGPU"
+process.siPixelClustersGPU = process.siPixelClusters.clone()
+process.siPixelClustersGPU.pixelClusters = "siPixelClustersPreSplittingGPU"
+process.siPixelRecHitsGPU = process.siPixelRecHits.clone()
+process.siPixelRecHitsGPU.src = "siPixelClustersGPU"
+process.siPixelRecHitsPreSplittingGPU = process.siPixelRecHitsPreSplitting.clone()
+process.siPixelRecHitsPreSplittingGPU.src = "siPixelClustersPreSplittingGPU"
 
 from Validation.SiPixelPhase1DigisV.SiPixelPhase1DigisV_cfi import *
 
@@ -113,22 +119,30 @@ process.SiPixelPhase1DigisHarvesterVGPU.histograms = SiPixelPhase1DigisConfGPU
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.siPixelDigis)
 process.raw2digiGPU_step = cms.Path(process.siPixelDigisGPU)
-process.clustering = cms.Path(process.siPixelClustersPreSplitting)
-process.validation_step = cms.Path(process.SiPixelPhase1DigisAnalyzerV + process.SiPixelPhase1DigisAnalyzerVGPU)
-process.harvesting_step = cms.Path(process.SiPixelPhase1DigisHarvesterV + process.SiPixelPhase1DigisHarvesterVGPU)
+process.clustering = cms.Path(process.siPixelClustersPreSplittingGPU + process.siPixelClustersGPU)
+process.rechits = cms.Path(process.siPixelRecHitsGPU + process.siPixelRecHitsPreSplittingGPU)
+process.validation_step = cms.Path(process.SiPixelPhase1DigisAnalyzerV)
+process.harvesting_step = cms.Path(process.SiPixelPhase1DigisHarvesterV)
+process.validationGPU_step = cms.Path(process.SiPixelPhase1DigisAnalyzerVGPU)
+process.harvestingGPU_step = cms.Path(process.SiPixelPhase1DigisHarvesterVGPU)
 process.RECOSIMoutput_step = cms.EndPath(process.FEVTDEBUGHLToutput)
 process.DQMoutput_step = cms.EndPath(process.DQMoutput)
 process.dqmsave_step = cms.Path(process.DQMSaver)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.raw2digi_step,
+process.schedule = cms.Schedule(
+#                                process.raw2digi_step,
                                 process.raw2digiGPU_step,
-#                                process.clustering,
+                                process.clustering,
+                                process.rechits,
                                 process.validation_step,
                                 process.harvesting_step,
+                                process.validationGPU_step,
+                                process.harvestingGPU_step,
                                 process.RECOSIMoutput_step,
                                 process.DQMoutput_step,
-                                process.dqmsave_step)
+                                process.dqmsave_step
+                                )
 
 
 # customisation of the process.
