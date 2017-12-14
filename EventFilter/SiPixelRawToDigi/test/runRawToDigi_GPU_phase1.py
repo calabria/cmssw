@@ -24,7 +24,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load('Configuration.StandardSequences.DQMSaverAtRunEnd_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(10)
 )
 
 # Input source
@@ -135,11 +135,11 @@ SiPixelPhase1TrackClustersConfGPU = cms.VPSet(
                                            SiPixelPhase1TrackClustersSizeXGPU,
                                            SiPixelPhase1TrackClustersSizeYGPU
                                            )
-SiPixelPhase1TrackClustersAnalyzerVGPU = SiPixelPhase1TrackClustersAnalyzerV.clone()
-SiPixelPhase1TrackClustersHarvesterVGPU = SiPixelPhase1TrackClustersHarvesterV.clone()
-SiPixelPhase1TrackClustersAnalyzerVGPU.clusters = "siPixelClustersGPU"
-SiPixelPhase1TrackClustersAnalyzerVGPU.histograms = SiPixelPhase1TrackClustersConfGPU
-SiPixelPhase1TrackClustersHarvesterVGPU.histograms = SiPixelPhase1TrackClustersConfGPU
+process.SiPixelPhase1TrackClustersAnalyzerVGPU = process.SiPixelPhase1TrackClustersAnalyzerV.clone()
+process.SiPixelPhase1TrackClustersHarvesterVGPU = process.SiPixelPhase1TrackClustersHarvesterV.clone()
+process.SiPixelPhase1TrackClustersAnalyzerVGPU.clusters = "siPixelClustersGPU"
+process.SiPixelPhase1TrackClustersAnalyzerVGPU.histograms = SiPixelPhase1TrackClustersConfGPU
+process.SiPixelPhase1TrackClustersHarvesterVGPU.histograms = SiPixelPhase1TrackClustersConfGPU
 
 ### RecHit validation
 
@@ -181,11 +181,11 @@ SiPixelPhase1RecHitsConfGPU = cms.VPSet(
                                      SiPixelPhase1RecHitsPullXGPU,
                                      SiPixelPhase1RecHitsPullYGPU,
                                      )
-SiPixelPhase1RecHitsAnalyzerVGPU = SiPixelPhase1RecHitsAnalyzerV.clone()
-SiPixelPhase1RecHitsHarvesterVGPU = SiPixelPhase1RecHitsHarvesterV.clone()
-SiPixelPhase1RecHitsAnalyzerVGPU.src = "siPixelRecHitsGPU"
-SiPixelPhase1RecHitsAnalyzerVGPU.histograms = SiPixelPhase1RecHitsConfGPU
-SiPixelPhase1RecHitsHarvesterVGPU.histograms = SiPixelPhase1RecHitsConfGPU
+process.SiPixelPhase1RecHitsAnalyzerVGPU = process.SiPixelPhase1RecHitsAnalyzerV.clone()
+process.SiPixelPhase1RecHitsHarvesterVGPU = process.SiPixelPhase1RecHitsHarvesterV.clone()
+process.SiPixelPhase1RecHitsAnalyzerVGPU.src = "siPixelRecHitsGPU"
+process.SiPixelPhase1RecHitsAnalyzerVGPU.histograms = SiPixelPhase1RecHitsConfGPU
+process.SiPixelPhase1RecHitsHarvesterVGPU.histograms = SiPixelPhase1RecHitsConfGPU
 
 process.InitialStepPreSplitting = cms.Sequence(
                                                 #process.trackerClusterCheckPreSplitting
@@ -208,7 +208,6 @@ process.InitialStepPreSplitting = cms.Sequence(
 #                                               +process.siPixelRecHits
 #                                               +process.MeasurementTrackerEvent
 #                                               +process.siPixelClusterShapeCache
-                                               
                                                )
 
 # Path and EndPath definitions
@@ -216,10 +215,10 @@ process.raw2digi_step = cms.Path(process.siPixelDigis)
 process.raw2digiGPU_step = cms.Path(process.siPixelDigisGPU)
 process.clustering = cms.Path(process.InitialStepPreSplitting + process.siPixelClustersPreSplittingGPU + process.siPixelClustersGPU)
 process.rechits = cms.Path(process.siPixelRecHitsGPU + process.siPixelRecHitsPreSplittingGPU)
-process.validation_step = cms.Path(process.SiPixelPhase1DigisAnalyzerV)
-process.harvesting_step = cms.Path(process.SiPixelPhase1DigisHarvesterV)
-process.validationGPU_step = cms.Path(process.SiPixelPhase1DigisAnalyzerVGPU + SiPixelPhase1TrackClustersAnalyzerVGPU + SiPixelPhase1TrackClustersHarvesterVGPU)
-process.harvestingGPU_step = cms.Path(process.SiPixelPhase1DigisHarvesterVGPU + SiPixelPhase1RecHitsAnalyzerVGPU + SiPixelPhase1RecHitsHarvesterVGPU)
+process.validation_step = cms.Path(process.SiPixelPhase1DigisAnalyzerV + process.SiPixelPhase1TrackClustersAnalyzerV + process.SiPixelPhase1TrackClustersHarvesterV)
+process.harvesting_step = cms.Path(process.SiPixelPhase1DigisHarvesterV + process.SiPixelPhase1RecHitsAnalyzerV + process.SiPixelPhase1RecHitsHarvesterV)
+process.validationGPU_step = cms.Path(process.SiPixelPhase1DigisAnalyzerVGPU + process.SiPixelPhase1TrackClustersAnalyzerVGPU + process.SiPixelPhase1TrackClustersHarvesterVGPU)
+process.harvestingGPU_step = cms.Path(process.SiPixelPhase1DigisHarvesterVGPU + process.SiPixelPhase1RecHitsAnalyzerVGPU + process.SiPixelPhase1RecHitsHarvesterVGPU)
 process.RECOSIMoutput_step = cms.EndPath(process.FEVTDEBUGHLToutput)
 process.DQMoutput_step = cms.EndPath(process.DQMoutput)
 process.dqmsave_step = cms.Path(process.DQMSaver)
