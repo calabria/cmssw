@@ -2,8 +2,11 @@
 #ifndef CablingMap_H
 #define CablingMap_H
 
-struct  CablingMap{
-  unsigned int  size;
+struct CablingMap{
+  unsigned int size;
+  unsigned int *fed;
+  unsigned int *link;
+  unsigned int *roc;
   unsigned int *RawId;
   unsigned int *rocInDet;
   unsigned int *moduleId;

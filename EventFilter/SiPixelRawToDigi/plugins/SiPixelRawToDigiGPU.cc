@@ -308,7 +308,7 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
     LogDebug("SiPixelRawToDigiGPU") << "region2unpack #modules (BPIX,EPIX,total): "<<regions_->nBarrelModules()<<" "<<regions_->nForwardModules()<<" "<<regions_->nModules();
   }*/
   // GPU specific: Data extraction for RawToDigi GPU
-  static unsigned int wordCounterGPU =0;
+  static unsigned int wordCounterGPU = 0;
   unsigned int fedCounter = 0;
   const unsigned int MAX_FED = 150;
   static int eventCount = 0;
@@ -329,18 +329,19 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
 
     //get event data for this fed
     const FEDRawData& rawData = buffers->FEDData( fedId );
-    //GPU specific 
+      
+    //GPU specific
     PixelDataFormatter::Errors errors;
     int nWords = rawData.size()/sizeof(Word64);
     if(nWords==0) {
-      word[wordCounterGPU++] =0;
+      word[wordCounterGPU++] = 0;
       continue;
     }  
 
     // check CRC bit
     const Word64* trailer = reinterpret_cast<const Word64* >(rawData.data())+(nWords-1);  
     if(!errorcheck.checkCRC(errorsInEvent, fedId, trailer, errors)) {
-      word[wordCounterGPU++] =0;
+      word[wordCounterGPU++] = 0;
       continue;
     }
 
@@ -379,7 +380,7 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
   cout<<"Data read for event: "<<ec++<<endl;
   int r2d_debug = 0;
   if(eventCount==NEVENT) {
-    RawToDigi_wrapper(cablingMapGPU, wordCounterGPU, word, fedCounter,fedIndex, eventIndex, convertADCtoElectrons, xx_h, yy_h, adc_h, mIndexStart_h, mIndexEnd_h, rawIdArr_h);
+    RawToDigi_wrapper(cablingMapGPU, wordCounterGPU, word, fedCounter, fedIndex, eventIndex, convertADCtoElectrons, xx_h, yy_h, adc_h, mIndexStart_h, mIndexEnd_h, rawIdArr_h);
 
     if(r2d_debug == 1){
       //write output to text file (for debugging purpose only)
@@ -402,6 +403,9 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
       ofileXY.close();
       ofileModule.close();
     }
+      
+    //Fill errors contaned with all the other errors
+    //Fill error collections
       
     for(uint i = 0; i < wordCounterGPU; i++) {
         

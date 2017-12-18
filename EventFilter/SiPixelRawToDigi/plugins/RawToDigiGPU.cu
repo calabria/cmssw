@@ -165,7 +165,7 @@ __device__ bool isBarrel(uint rawId) {
 //__device__ uint FED_START = 1200;
 
 __device__ DetIdGPU getRawId(const CablingMap *Map, uint fed, uint link, uint roc) {
-  uint index = fed * MAX_LINK* MAX_ROC + (link-1)* MAX_ROC + roc;
+  uint index = fed * MAX_LINK * MAX_ROC + (link-1) * MAX_ROC + roc;
   DetIdGPU detId = {Map->RawId[index], Map->rocInDet[index], Map->moduleId[index]};
   return detId;  
 }
@@ -250,6 +250,113 @@ __device__ Pixel frameConversion(bool bpix, int side, uint layer, uint rocIdInDe
   return global;
 }
 
+__device__ uint conversionError(uint errorWord, uint status)
+{
+  uint errorType = 0;
+  switch (status) {
+      case(1) : {
+        //LogDebug("ErrorChecker::conversionError") << " Fed: " << fedId << "  invalid channel Id (errorType=35)";
+        errorType = 35;
+        break;
+      }
+      case(2) : {
+        //LogDebug("ErrorChecker::conversionError")<< " Fed: " << fedId << "  invalid ROC Id (errorType=36)";
+        errorType = 36;
+        break;
+      }
+      case(3) : {
+        //LogDebug("ErrorChecker::conversionError")<< " Fed: " << fedId << "  invalid dcol/pixel value (errorType=37)";
+        errorType = 37;
+        break;
+      }
+      case(4) : {
+        //LogDebug("ErrorChecker::conversionError")<< " Fed: " << fedId << "  dcol/pixel read out of order (errorType=38)";
+        errorType = 38;
+        break;
+      }
+      default: printf("Cabling check returned unexpected result, status = %i", status);
+  };
+  return errorType;
+}
+
+__device__ bool rocRowColIsValid(uint rocRow, uint rocCol)
+{
+    uint numRowsInRoc = 80;
+    uint numColsInRoc = 52;
+    
+    /// row and collumn in ROC representation
+    return ( (rocRow < numRowsInRoc) & (rocCol < numColsInRoc) );
+}
+
+__device__ bool dcolIsValid(uint dcol, uint pxid)
+{
+    return ( (dcol < 26) &  (2 <= pxid) & (pxid < 162) );
+}
+
+__device__ uint checkROC(uint errorWord, uint fedId, uint link, const CablingMap *Map)
+{
+ int errorType = (errorWord >> ROC_shift) & ERROR_mask;
+ bool errorsInEvent = false;
+
+ switch (errorType) {
+    case(25) : {
+     uint index = fedId * MAX_LINK * MAX_ROC + (link-1) * MAX_ROC + 1;
+     if(index > 1 && index <= Map->size){
+       if(!(link == Map->link[index] && 1 == Map->roc[index])) errorsInEvent = true;
+     }
+     else{
+       errorsInEvent = true;
+       //LogDebug("")<<"  invalid ROC=25 found (errorType=25)";
+     }
+     break;
+   }
+   case(26) : {
+     //LogDebug("")<<"  gap word found (errorType=26)";
+     errorsInEvent = true;
+     break;
+   }
+   case(27) : {
+     //LogDebug("")<<"  dummy word found (errorType=27)";
+     errorsInEvent = true;
+     break;
+   }
+   case(28) : {
+     //LogDebug("")<<"  error fifo nearly full (errorType=28)";
+     errorsInEvent = true;
+     break;
+   }
+   case(29) : {
+     //LogDebug("")<<"  timeout on a channel (errorType=29)";
+     if ((errorWord >> OMIT_ERR_shift) & OMIT_ERR_mask) {
+       //LogDebug("")<<"  ...first errorType=29 error, this gets masked out";
+     }
+     errorsInEvent = true;
+     break;
+   }
+   case(30) : {
+     //LogDebug("")<<"  TBM error trailer (errorType=30)";
+     int StateMatch_bits      = 4;
+     int StateMatch_shift     = 8;
+     uint32_t StateMatch_mask = ~(~uint32_t(0) << StateMatch_bits);
+     int StateMatch = (errorWord >> StateMatch_shift) & StateMatch_mask;
+     if( StateMatch!=1 && StateMatch!=8 ) {
+       //LogDebug("")<<" FED error 30 with unexpected State Bits (errorType=30)";
+     }
+     if( StateMatch==1 ) errorType = 40; // 1=Overflow -> 40, 8=number of ROCs -> 30
+     errorsInEvent = true;
+     break;
+   }
+   case(31) : {
+     //LogDebug("")<<"  event number error (errorType=31)";
+     errorsInEvent = true;
+     break;
+   }
+   default: errorsInEvent = false;
+
+ };
+
+ return errorsInEvent? errorType : 0;
+}
 
 /*----------
 * Name: applyADCthreshold_kernel()
@@ -295,8 +402,8 @@ __global__ void applyADCthreshold_kernel
 
 
 // Kernel to perform Raw to Digi conversion
-__global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const uint *fedIndex, 
-                                 uint *eventIndex,const uint stream, uint *XX, uint *YY, uint *moduleId, int *mIndexStart, 
+__global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const uint *fedIndex,
+                                 uint *eventIndex, const uint stream, uint *XX, uint *YY, uint *moduleId, int *mIndexStart,
                                  int *mIndexEnd, uint *ADC, uint *layerArr, uint *rawIdArr)
 {
   uint blockId  = blockIdx.x;
@@ -308,13 +415,14 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
   uint fedId     = fedIndex[fedOffset+blockId];
   uint threadId  = threadIdx.x;
   
-  uint begin  = fedIndex[fedOffset + MAX_FED+blockId];
-  uint end    = fedIndex[fedOffset + MAX_FED+blockId+1];
+  uint begin  = fedIndex[fedOffset + MAX_FED + blockId];
+  uint end    = fedIndex[fedOffset + MAX_FED + blockId + 1];
 
-  if(blockIdx.x==gridDim.x-1) {
+  if(blockIdx.x == gridDim.x-1) {
     end = eventIndex[eventno+1]; // for last fed to get the end index
   }
 
+  bool skipROC = false;
   //if(threadId==0) printf("Event: %u blockId: %u start: %u end: %u\n", eventno, blockId, begin, end);
   int no_itr = (end - begin)/blockDim.x + 1; // to deal with number of hits greater than blockDim.x 
   #pragma unroll
@@ -334,6 +442,17 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
       } 
       uint link  = getLink(ww);            // Extract link
       uint roc   = getRoc(ww);             // Extract Roc in link
+        
+      skipROC = (roc<maxROCIndex) ? false : (checkROC(ww, fedId, link, Map) != 0);
+      if (skipROC) continue;
+      /*rocp = converter.toRoc(link,roc); //Apparently this check is not needed, we don't have this conversion
+      if unlikely(!rocp) {
+          errorsInEvent = true;
+          conversionError(fedId, &converter, 2, ww, errors); //stessa funzione a cui si devono passare 3 array al posto di errors
+          skipROC=true;
+          continue;
+      }*/
+        
       DetIdGPU detId = getRawId(Map, fedId, link, roc);
       uint rawId  = detId.RawId;
       uint rocIdInDetUnit = detId.rocInDet;
@@ -341,31 +460,39 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
       bool barrel = isBarrel(rawId);
   
       uint layer = 0;//, ladder =0;
-      int side = 0, panel = 0, module = 0;//disk =0,blade =0
+      int side = 0, panel = 0, module = 0;//disk = 0,blade = 0
     
       if(barrel) {
         layer  = (rawId >> layerStartBit_) & layerMask_;
         //ladder = (rawId >> ladderStartBit_) & ladderMask_;
         module = (rawId >> moduleStartBit_) & moduleMask_;
-        side   = (module<5)? -1:1;
-     
+        side   = (module<5)? -1 : 1;
       }
       else {
         // endcap ids
         layer = 0;
         panel = (rawId >> panelStartBit_) & panelMask_;
         //disk  = (rawId >> diskStartBit_)  & diskMask_ ;
-        side  = (panel==1)? -1:1;
+        side  = (panel==1)? -1 : 1;
         //blade = (rawId>>bladeStartBit_) & bladeMask_;
       }
+        
       // ***special case of layer to 1 be handled here
       Pixel localPix;
-      if(layer==1) {
+      if(layer == 1) {
         uint col = (ww >> COL_shift) & COL_mask;
         uint row = (ww >> ROW_shift) & ROW_mask;
         localPix.row = row;
         localPix.col = col;
-
+          
+        if( !rocRowColIsValid(row, col) ) {
+          //LogDebug("PixelDataFormatter::interpretRawData")<< "status #3";
+          //errorsInEvent = true;
+          uint error = conversionError(ww, 3); //use the device function and fill the arrays
+          printf("Error: %i\n", error);
+          continue;
+        }
+          
       }
       else {
         // ***conversion rules for dcol and pxid
@@ -375,6 +502,15 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
         uint col  = dcol*2 + pxid%2;
         localPix.row = row;
         localPix.col = col;
+          
+        if( !dcolIsValid(dcol, pxid) ) {
+          //LogDebug("PixelDataFormatter::interpretRawData")<< "status #3";
+          //errorsInEvent = true;
+          uint error = conversionError(ww, 3);
+          printf("Error: %i\n", error);
+          continue;
+	    }
+        
       }
       
       Pixel globalPix = frameConversion(barrel, side, layer, rocIdInDetUnit, localPix);
@@ -398,7 +534,7 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
   // do the swapping for above case and replace the 9999 with 
   // valid moduleId
    
-  for(int i =0; i<no_itr; i++) { 
+  for(int i = 0; i < no_itr; i++) {
     uint gIndex = begin + threadId + i*blockDim.x;  
     if(gIndex <end) {
       //rare condition 
@@ -432,25 +568,26 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
       // assign the previous valid moduleId to this pixel to remove 9999
       // so that we can get the start & end index of module easily.
       __syncthreads(); // let the swapping finish first
-      if(moduleId[gIndex]==9999) {
+        
+      if(moduleId[gIndex] == 9999) {
         int m=gIndex;
-        while(moduleId[--m]==9999) {} //skip till you get the valid module
-        moduleId[gIndex]=moduleId[m];
+        while(moduleId[--m] == 9999) {} //skip till you get the valid module
+        moduleId[gIndex] = moduleId[m];
       } 
     } // end of if(gIndex<end)
   } //  end of for(int i=0;i<no_itr;...)
   __syncthreads();
 
-  // mIndexStart stores staring index of module 
+  // mIndexStart stores starting index of module
   // mIndexEnd stores end index of module 
   // both indexes are inclusive 
   // check consecutive module numbers
   // for start of fed
-  for(int i =0; i<no_itr; i++) { 
+  for(int i = 0; i < no_itr; i++) {
     uint gIndex = begin + threadId + i*blockDim.x; 
     uint moduleOffset = NMODULE*eventno; 
     //if(threadId==0) printf("moduleOffset: %u\n",moduleOffset );
-    if(gIndex <end) {
+    if(gIndex < end) {
       if(gIndex == begin) {
         mIndexStart[moduleOffset+moduleId[gIndex]] = gIndex;
       }
@@ -473,7 +610,7 @@ __global__ void RawToDigi_kernel(const CablingMap *Map,const uint *Word,const ui
 
 // kernel wrapper called from runRawToDigi_kernel
 void RawToDigi_wrapper (const CablingMap* cablingMapDevice, const uint wordCounter, uint *word, const uint fedCounter,  uint *fedIndex,
-                        uint *eventIndex,bool convertADCtoElectrons, uint *xx_h, uint *yy_h, uint *adc_h, int *mIndexStart_h,
+                        uint *eventIndex, bool convertADCtoElectrons, uint *xx_h, uint *yy_h, uint *adc_h, int *mIndexStart_h,
                         int *mIndexEnd_h, uint *rawIdArr_h) {
   
  
@@ -493,10 +630,10 @@ void RawToDigi_wrapper (const CablingMap* cablingMapDevice, const uint wordCount
   
   int FSIZE = (blockY*2*MAX_FED +1)*sizeof(uint); // 0 to 150:fedId, 150:300: fedIndex
   
-	int fedOffset  = 0;
+  int fedOffset  = 0;
   int wordOffset = 0;
   int wordSize   = 0;
-  for (int i=0; i<NSTREAM; i++) {
+  for (int i = 0; i < NSTREAM; i++) {
     fedOffset  = blockY*2*MAX_FED*i;
     wordOffset = eventIndex[blockY*i];
     // total no of words in blockY event to be trasfered on device 
@@ -507,12 +644,12 @@ void RawToDigi_wrapper (const CablingMap* cablingMapDevice, const uint wordCount
     cudaMemcpyAsync(&fedIndex_d[fedOffset], &fedIndex[fedOffset], FSIZE, cudaMemcpyHostToDevice, stream[i]); 
     // Launch rawToDigi kernel
 
-    RawToDigi_kernel<<<gridsize,threads,0, stream[i]>>>(cablingMapDevice, word_d, fedIndex_d,eventIndex_d,i, xx_d, yy_d, moduleId_d,
+    RawToDigi_kernel<<<gridsize, threads, 0, stream[i]>>>(cablingMapDevice, word_d, fedIndex_d,eventIndex_d,i, xx_d, yy_d, moduleId_d,
                                         mIndexStart_d, mIndexEnd_d, adc_d,layer_d, rawIdArr_d);
   }
   
   checkCUDAError("Error in RawToDigi_kernel");
-  for (int i = 0; i<NSTREAM; i++) {
+  for (int i = 0; i < NSTREAM; i++) {
     cudaStreamSynchronize(stream[i]);
     checkCUDAError("Error in cuda stream cudaStreamSynchronize");
   }

@@ -17,6 +17,9 @@ SiPixelFedCablingMapGPU::SiPixelFedCablingMapGPU(edm::ESTransientHandle<SiPixelF
 
 void SiPixelFedCablingMapGPU::process(CablingMap* &cablingMapGPU)  {
   int MAX_SIZE = MAX_FED * MAX_LINK * MAX_ROC;
+  unsigned int *fedMap   = new unsigned int[MAX_SIZE];
+  unsigned int *linkMap  = new unsigned int[MAX_SIZE];
+  unsigned int *rocMap   = new unsigned int[MAX_SIZE];
   unsigned int *RawId    = new unsigned int[MAX_SIZE];
   unsigned int *rocInDet = new unsigned int[MAX_SIZE];
   unsigned int *moduleId = new unsigned int[MAX_SIZE];
@@ -35,6 +38,9 @@ void SiPixelFedCablingMapGPU::process(CablingMap* &cablingMapGPU)  {
       for(unsigned int roc = 1; roc <= MAX_ROC; roc++) {
         path = {fed, link, roc};
         const sipixelobjects::PixelROC* pixelRoc = cabling_->findItem(path);
+        fedMap[index] = fed;
+        linkMap[index] = index;
+        rocMap[index] = roc;
         if(pixelRoc != nullptr) {
           RawId[index] = pixelRoc->rawId();
           rocInDet[index] = pixelRoc->idInDetUnit();
@@ -78,6 +84,9 @@ void SiPixelFedCablingMapGPU::process(CablingMap* &cablingMapGPU)  {
   }
   //cout << "size: "<< index << endl;
   cablingMapGPU->size = index-1;
+  delete[] fedMap;
+  delete[] linkMap;
+  delete[] rocMap;
   delete[] RawId;
   delete[] rocInDet;
   delete[] moduleId;
