@@ -153,6 +153,10 @@ SiPixelRawToDigiGPU::SiPixelRawToDigiGPU( const edm::ParameterSet& conf )
   yy_h = new uint[WSIZE];
   adc_h = new uint[WSIZE];
   rawIdArr_h = new uint[WSIZE];
+  errType_h = new uint[WSIZE];
+  errRawID_h = new uint[WSIZE];
+  errWord_h = new uint[WSIZE];
+  errFedID_h = new uint[WSIZE];
 
   mIndexStart_h = new int[NEVENT*NMODULE +1];
   mIndexEnd_h = new int[NEVENT*NMODULE +1];
@@ -190,6 +194,10 @@ SiPixelRawToDigiGPU::~SiPixelRawToDigiGPU() {
   delete[] yy_h;
   delete[] adc_h;
   delete[] rawIdArr_h;
+  delete[] errType_h;
+  delete[] errRawID_h;
+  delete[] errWord_h;
+  delete[] errFedID_h;
   delete[] mIndexStart_h;
   delete[] mIndexEnd_h;
 
@@ -248,7 +256,8 @@ SiPixelRawToDigiGPU::fillDescriptions(edm::ConfigurationDescriptions& descriptio
 void SiPixelRawToDigiGPU::produce( edm::Event& ev,
                               const edm::EventSetup& es) 
 {
-  //const uint32_t dummydetid = 0xffffffff;
+    
+  const uint32_t dummydetid = 0xffffffff;
   //debug = edm::MessageDrop::instance()->debugEnabled;
 
   // initialize cabling map or update if necessary
@@ -284,29 +293,24 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
 
   // create product (digis & errors)
   auto collection = std::make_unique<edm::DetSetVector<PixelDigi>>();
-  /*// collection->reserve(8*1024);
+  // collection->reserve(8*1024);
   auto errorcollection = std::make_unique<edm::DetSetVector<SiPixelRawDataError>>();
   auto tkerror_detidcollection = std::make_unique<DetIdCollection>();
   auto usererror_detidcollection = std::make_unique<DetIdCollection>();
   auto disabled_channelcollection = std::make_unique<edmNew::DetSetVector<PixelFEDChannel> >();
-
-  //PixelDataFormatter formatter(cabling_.get()); // phase 0 only
-  PixelDataFormatter formatter(cabling_.get(), usePhase1); // for phase 1 & 0
-
-  formatter.setErrorStatus(includeErrors);
-
-  if (useQuality) formatter.setQualityStatus(useQuality, badPixelInfo_);
-
-  if (theTimer) theTimer->start();
-  bool errorsInEvent = false;
+  
   PixelDataFormatter::DetErrors nodeterrors;
 
+  if (theTimer) theTimer->start();
+
+  /*
   if (regions_) {
     regions_->run(ev, es);
     formatter.setModulesToUnpack(regions_->modulesToUnpack());
     LogDebug("SiPixelRawToDigiGPU") << "region2unpack #feds: "<<regions_->nFEDs();
     LogDebug("SiPixelRawToDigiGPU") << "region2unpack #modules (BPIX,EPIX,total): "<<regions_->nBarrelModules()<<" "<<regions_->nForwardModules()<<" "<<regions_->nModules();
   }*/
+    
   // GPU specific: Data extraction for RawToDigi GPU
   static unsigned int wordCounterGPU = 0;
   unsigned int fedCounter = 0;
@@ -318,13 +322,14 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
 
   ErrorChecker errorcheck;
   for (auto aFed = fedIds.begin(); aFed != fedIds.end(); ++aFed) {
+      
     int fedId = *aFed;
    
     // for GPU
     // first 150 index stores the fedId and next 150 will store the
     // start index of word in that fed
-    fedIndex[2*MAX_FED*eventCount+fedCounter] = fedId-1200;
-    fedIndex[MAX_FED + 2*MAX_FED*eventCount+fedCounter] = wordCounterGPU; // MAX_FED = 150
+    fedIndex[2*MAX_FED*eventCount + fedCounter] = fedId - 1200;
+    fedIndex[MAX_FED + 2*MAX_FED*eventCount + fedCounter] = wordCounterGPU; // MAX_FED = 150
     fedCounter++;
 
     //get event data for this fed
@@ -380,7 +385,7 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
   cout<<"Data read for event: "<<ec++<<endl;
   int r2d_debug = 0;
   if(eventCount==NEVENT) {
-    RawToDigi_wrapper(cablingMapGPU, wordCounterGPU, word, fedCounter, fedIndex, eventIndex, convertADCtoElectrons, xx_h, yy_h, adc_h, mIndexStart_h, mIndexEnd_h, rawIdArr_h);
+    RawToDigi_wrapper(cablingMapGPU, wordCounterGPU, word, fedCounter, fedIndex, eventIndex, convertADCtoElectrons, xx_h, yy_h, adc_h, mIndexStart_h, mIndexEnd_h, rawIdArr_h, errType_h, errWord_h, errFedID_h, errRawID_h, includeErrors);
 
     if(r2d_debug == 1){
       //write output to text file (for debugging purpose only)
@@ -432,14 +437,25 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
       }
   }
     
+  if (theTimer) {
+    theTimer->stop();
+    LogDebug("SiPixelRawToDigi") << "TIMING IS: (real)" << theTimer->realTime() ;
+    ndigis += formatter.nDigis();
+    nwords += formatter.nWords();
+    LogDebug("SiPixelRawToDigi") << " (Words/Digis) this ev: "
+         <<formatter.nWords()<<"/"<<formatter.nDigis() << "--- all :"<<nwords<<"/"<<ndigis;
+    hCPU->Fill( theTimer->realTime() );
+    hDigi->Fill(formatter.nDigis());
+  }
+    
   //send digis and errors back to framework
   ev.put(std::move(collection));
-//  if(includeErrors){
-//    ev.put(std::move(errorcollection));
-//    ev.put(std::move(tkerror_detidcollection));
-//    ev.put(std::move(usererror_detidcollection), "UserErrorModules");
-//    ev.put(std::move(disabled_channelcollection));
-//  }
+  if(includeErrors){
+    ev.put(std::move(errorcollection));
+    ev.put(std::move(tkerror_detidcollection));
+    ev.put(std::move(usererror_detidcollection), "UserErrorModules");
+    ev.put(std::move(disabled_channelcollection));
+  }
     
 } //end of produce function
 

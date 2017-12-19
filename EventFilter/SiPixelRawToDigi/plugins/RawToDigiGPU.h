@@ -82,6 +82,7 @@ struct Pixel {
  //GPU specific
  uint *word_d, *fedIndex_d, *eventIndex_d;       // Device copy of input data
  uint *xx_d, *yy_d,*xx_adc, *yy_adc, *moduleId_d, *adc_d, *layer_d, *rawIdArr_d;  // Device copy
+ uint *errType_d, *errWord_d, *errFedID_d, *errRawID_d;  // Device copy
  // store the start and end index for each module (total 1856 modules-phase 1)
  cudaStream_t stream[NSTREAM];
  int *mIndexStart_d, *mIndexEnd_d; 
