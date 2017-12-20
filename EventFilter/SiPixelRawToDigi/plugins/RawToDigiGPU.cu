@@ -519,7 +519,7 @@ __global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const 
         errType[gIndex] = errorType;
         errWord[gIndex] = ww;
         errFedID[gIndex] = fedId;
-        errFedID[gIndex] = rID;
+        errRawID[gIndex] = rID;
         continue;
       }
       /*rocp = converter.toRoc(link,roc); //Apparently this check is not needed, we don't have this conversion
@@ -602,6 +602,11 @@ __global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const 
       layerArr[gIndex] = layer;
       moduleId[gIndex] = detId.moduleId;
       rawIdArr[gIndex] = rawId;
+        
+      errType[gIndex] = 0;
+      errWord[gIndex] = ww;
+      errFedID[gIndex] = fedId;
+      errRawID[gIndex] = rawId;
       //fill error type
     } // end of if(gIndex < end)
   } // end of for(int i =0;i<no_itr...)

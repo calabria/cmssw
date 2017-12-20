@@ -257,8 +257,10 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
                               const edm::EventSetup& es) 
 {
     
+  int theWordCounter = 0;
+  int theDigiCounter = 0;
   const uint32_t dummydetid = 0xffffffff;
-  //debug = edm::MessageDrop::instance()->debugEnabled;
+  debug = edm::MessageDrop::instance()->debugEnabled;
 
   // initialize cabling map or update if necessary
   if (recordWatcher.check( es )) {
@@ -266,15 +268,12 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
     edm::ESTransientHandle<SiPixelFedCablingMap> cablingMap;
     es.get<SiPixelFedCablingMapRcd>().get( cablingMapLabel, cablingMap ); //Tav
     fedIds   = cablingMap->fedIds();
-    // for(auto it = fedIds.begin(); it !=fedIds.end(); it++) {
-    //   cout << *it << endl;
-    // }
     // A new and simplified GPU friendly cabling map
     SiPixelFedCablingMapGPU cablingMapRcd(cablingMap);
     cablingMapRcd.process(cablingMapGPU);
 
-    // cabling_ = cablingMap->cablingTree();
-    // LogDebug("map version:")<< cabling_->version();
+    cabling_ = cablingMap->cablingTree();
+    LogDebug("map version:")<< cabling_->version();
   }
 
 /*  // initialize quality record or update if necessary
@@ -300,16 +299,16 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
   auto disabled_channelcollection = std::make_unique<edmNew::DetSetVector<PixelFEDChannel> >();
   
   PixelDataFormatter::DetErrors nodeterrors;
+  PixelDataFormatter::Errors errors;
 
   if (theTimer) theTimer->start();
 
-  /*
   if (regions_) {
     regions_->run(ev, es);
-    formatter.setModulesToUnpack(regions_->modulesToUnpack());
+    //formatter.setModulesToUnpack(regions_->modulesToUnpack()); //to reuse
     LogDebug("SiPixelRawToDigiGPU") << "region2unpack #feds: "<<regions_->nFEDs();
     LogDebug("SiPixelRawToDigiGPU") << "region2unpack #modules (BPIX,EPIX,total): "<<regions_->nBarrelModules()<<" "<<regions_->nForwardModules()<<" "<<regions_->nModules();
-  }*/
+  }
     
   // GPU specific: Data extraction for RawToDigi GPU
   static unsigned int wordCounterGPU = 0;
@@ -324,6 +323,10 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
   for (auto aFed = fedIds.begin(); aFed != fedIds.end(); ++aFed) {
       
     int fedId = *aFed;
+      
+    if(!usePilotBlade && (fedId==40) ) continue; // skip pilot blade data
+    if (regions_ && !regions_->mayUnpackFED(fedId)) continue;
+    if(debug) LogDebug("SiPixelRawToDigi")<< " PRODUCE DIGI FOR FED: " <<  fedId << endl;
    
     // for GPU
     // first 150 index stores the fedId and next 150 will store the
@@ -336,13 +339,12 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
     const FEDRawData& rawData = buffers->FEDData( fedId );
       
     //GPU specific
-    PixelDataFormatter::Errors errors;
     int nWords = rawData.size()/sizeof(Word64);
-    if(nWords==0) {
+    if(nWords == 0) {
       word[wordCounterGPU++] = 0;
       continue;
-    }  
-
+    }
+      
     // check CRC bit
     const Word64* trailer = reinterpret_cast<const Word64* >(rawData.data())+(nWords-1);  
     if(!errorcheck.checkCRC(errorsInEvent, fedId, trailer, errors)) {
@@ -369,11 +371,14 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
       bool trailerStatus = errorcheck.checkTrailer(errorsInEvent, fedId, nWords, trailer, errors);
       moreTrailers = trailerStatus;
     }
+      
+    theWordCounter += 2*(nWords-2);
 
     const  Word32 * bw =(const  Word32 *)(header+1);
     const  Word32 * ew =(const  Word32 *)(trailer);
-    if ( *(ew-1) == 0 ) { ew--; }
+    if ( *(ew-1) == 0 ) { ew--; theWordCounter--;}
     for (auto ww = bw; ww < ew; ++ww) {
+      if unlikely(ww==0) theWordCounter--;
       word[wordCounterGPU++] = *ww;
     }
   }  // end of for loop
@@ -383,11 +388,12 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
   eventIndex[eventCount] = wordCounterGPU;
   static int ec = 1;
   cout<<"Data read for event: "<<ec++<<endl;
-  int r2d_debug = 0;
-  if(eventCount==NEVENT) {
+    
+  if(eventCount == NEVENT) {
+      
     RawToDigi_wrapper(cablingMapGPU, wordCounterGPU, word, fedCounter, fedIndex, eventIndex, convertADCtoElectrons, xx_h, yy_h, adc_h, mIndexStart_h, mIndexEnd_h, rawIdArr_h, errType_h, errWord_h, errFedID_h, errRawID_h, includeErrors);
 
-    if(r2d_debug == 1){
+    if(debug){
       //write output to text file (for debugging purpose only)
       static int count = 1;
       cout << "Writing output to the file " << endl;
@@ -409,15 +415,19 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
       ofileModule.close();
     }
       
-    //Fill errors contaned with all the other errors
-    //Fill error collections
-      
     for(uint i = 0; i < wordCounterGPU; i++) {
         
-        if(rawIdArr_h[i] == 9999) continue;
-        detDigis = &(*collection).find_or_insert(rawIdArr_h[i]);
-        if ( (*detDigis).empty() ) (*detDigis).data.reserve(32); // avoid the first relocations
-        (*detDigis).data.emplace_back(xx_h[i], yy_h[i], adc_h[i]);
+        if(rawIdArr_h[i] != 9999){; //FIXME
+            detDigis = &(*collection).find_or_insert(rawIdArr_h[i]);
+            if ( (*detDigis).empty() ) (*detDigis).data.reserve(32); // avoid the first relocations
+            (*detDigis).data.emplace_back(xx_h[i], yy_h[i], adc_h[i]);
+            theDigiCounter++;
+        }
+        
+        if(errType_h[i] != 0){
+            SiPixelRawDataError error(errWord_h[i], errType_h[i], errFedID_h[i]);
+            errors[errRawID_h[i]].push_back(error);
+        }
         
     }
     wordCounterGPU = 0;
@@ -426,7 +436,7 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
   } //if(eventCount == NEVENT)
   fedCounter =0;
     
-  if(r2d_debug == 1){
+  if(debug){
       edm::DetSetVector<PixelDigi>::const_iterator it;
       for (it = collection->begin(); it != collection->end(); ++it) {
           for(PixelDigi const& digi : *it) {
@@ -437,16 +447,18 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
       }
   }
     
-  if (theTimer) {
+  if (theTimer) { //FIXME
     theTimer->stop();
     LogDebug("SiPixelRawToDigi") << "TIMING IS: (real)" << theTimer->realTime() ;
-    ndigis += formatter.nDigis();
-    nwords += formatter.nWords();
+    ndigis += theDigiCounter; //Check how this number is determined in the original code
+    nwords += theWordCounter;
     LogDebug("SiPixelRawToDigi") << " (Words/Digis) this ev: "
-         <<formatter.nWords()<<"/"<<formatter.nDigis() << "--- all :"<<nwords<<"/"<<ndigis;
+         <<theWordCounter<<"/"<<theDigiCounter<< "--- all :"<<nwords<<"/"<<ndigis;
     hCPU->Fill( theTimer->realTime() );
-    hDigi->Fill(formatter.nDigis());
+    hDigi->Fill(theDigiCounter);
   }
+    
+// Include here error treatement
     
   //send digis and errors back to framework
   ev.put(std::move(collection));
