@@ -56,7 +56,7 @@ void checkCUDAError(const char *msg) {
 void initDeviceMemory() {
   // int sizeByte = MAX_FED * MAX_LINK * MAX_ROC * sizeof(uint)+sizeof(uint);
   // // Unified memory for cabling map
-  // cudaMallocManaged((void**)&Map,  sizeof(CablingMap));
+  // cudaMallocManaged((void**)&Map, sizeof(CablingMap));
   // cudaMallocManaged((void**)&Map->RawId,    sizeByte);
   // cudaMallocManaged((void**)&Map->rocInDet, sizeByte);
   // cudaMallocManaged((void**)&Map->moduleId, sizeByte);
@@ -472,7 +472,8 @@ __global__ void applyADCthreshold_kernel
 __global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const uint *fedIndex,
                                  uint *eventIndex, const uint stream, uint *XX, uint *YY, uint *moduleId, int *mIndexStart,
                                  int *mIndexEnd, uint *ADC, uint *layerArr, uint *rawIdArr,
-                                 uint *errType, uint *errWord, uint *errFedID, uint *errRawID, bool includeErrors)
+                                 uint *errType, uint *errWord, uint *errFedID, uint *errRawID,
+                                 bool useQualityInfo, bool includeErrors, bool debug)
 {
   uint blockId  = blockIdx.x;
   uint eventno  = blockIdx.y + gridDim.y*stream;
@@ -510,12 +511,12 @@ __global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const 
       uint link  = getLink(ww);            // Extract link
       uint roc   = getRoc(ww);             // Extract Roc in link
         
-      uint errorType = checkROC(ww, fedId, link, Map, true);
-      skipROC = (roc<maxROCIndex) ? false : (errorType != 0);
+      uint errorType = checkROC(ww, fedId, link, Map, debug);
+      skipROC = (roc < maxROCIndex) ? false : (errorType != 0);
       //estrarre rawID nel caso di roc invalide
       //fill error type
       if (skipROC && includeErrors) {
-        uint rID = getErrRawID(fedId, ww, errorType, Map, false); //write the function
+        uint rID = getErrRawID(fedId, ww, errorType, Map, debug); //write the function
         errType[gIndex] = errorType;
         errWord[gIndex] = ww;
         errFedID[gIndex] = fedId;
@@ -535,6 +536,16 @@ __global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const 
       uint rocIdInDetUnit = detId.rocInDet;
      
       bool barrel = isBarrel(rawId);
+        
+      uint index = fedId * MAX_LINK * MAX_ROC + (link-1) * MAX_ROC + roc;
+      if (useQualityInfo) {
+          
+          skipROC = Map->badRocs[index];
+          if (skipROC) continue;
+          
+      }
+      skipROC = Map->modToUnp[index];
+      if (skipROC) continue;
   
       uint layer = 0;//, ladder =0;
       int side = 0, panel = 0, module = 0;//disk = 0,blade = 0
@@ -563,7 +574,7 @@ __global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const 
         localPix.col = col;
           
         if( !rocRowColIsValid(row, col) && includeErrors) {
-          uint error = conversionError(fedId, 3, false); //use the device function and fill the arrays
+          uint error = conversionError(fedId, 3, debug); //use the device function and fill the arrays
           errType[gIndex] = error;
           errWord[gIndex] = ww;
           errFedID[gIndex] = fedId;
@@ -583,7 +594,7 @@ __global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const 
         localPix.col = col;
           
         if( !dcolIsValid(dcol, pxid) && includeErrors) {
-          uint error = conversionError(fedId, 3, false);
+          uint error = conversionError(fedId, 3, debug);
           errType[gIndex] = error;
           errWord[gIndex] = ww;
           errFedID[gIndex] = fedId;
@@ -699,7 +710,8 @@ __global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const 
 // kernel wrapper called from runRawToDigi_kernel
 void RawToDigi_wrapper (const CablingMap* cablingMapDevice, const uint wordCounter, uint *word, const uint fedCounter,  uint *fedIndex,
                         uint *eventIndex, bool convertADCtoElectrons, uint *xx_h, uint *yy_h, uint *adc_h, int *mIndexStart_h,
-                        int *mIndexEnd_h, uint *rawIdArr_h, uint *errType_h, uint *errWord_h, uint *errFedID_h, uint *errRawID_h, bool includeErrors) {
+                        int *mIndexEnd_h, uint *rawIdArr_h, uint *errType_h, uint *errWord_h, uint *errFedID_h, uint *errRawID_h,
+                        bool useQualityInfo, bool includeErrors, bool debug) {
   
  
   cout<<"Inside GPU RawToDigi , Total pixels: "<<wordCounter<<endl;
@@ -733,7 +745,7 @@ void RawToDigi_wrapper (const CablingMap* cablingMapDevice, const uint wordCount
     // Launch rawToDigi kernel
 
     RawToDigi_kernel<<<gridsize, threads, 0, stream[i]>>>(cablingMapDevice, word_d, fedIndex_d,eventIndex_d,i, xx_d, yy_d, moduleId_d,
-                                        mIndexStart_d, mIndexEnd_d, adc_d,layer_d, rawIdArr_d, errType_d, errWord_d, errFedID_d, errRawID_d, includeErrors);
+                                        mIndexStart_d, mIndexEnd_d, adc_d,layer_d, rawIdArr_d, errType_d, errWord_d, errFedID_d, errRawID_d, useQualityInfo, includeErrors, debug);
   }
   
   checkCUDAError("Error in RawToDigi_kernel");

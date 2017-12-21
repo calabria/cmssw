@@ -10,6 +10,8 @@ struct CablingMap{
   unsigned int *RawId;
   unsigned int *rocInDet;
   unsigned int *moduleId;
+  bool *modToUnp;
+  bool *badRocs;
 };
 
 #endif

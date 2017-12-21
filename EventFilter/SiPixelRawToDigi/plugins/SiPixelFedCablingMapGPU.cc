@@ -15,7 +15,7 @@ SiPixelFedCablingMapGPU::SiPixelFedCablingMapGPU(edm::ESTransientHandle<SiPixelF
   cabling_ = cablingMap->cablingTree();
 }
 
-void SiPixelFedCablingMapGPU::process(CablingMap* &cablingMapGPU)  {
+void SiPixelFedCablingMapGPU::process(CablingMap* &cablingMapGPU, const SiPixelQuality* badPixelInfo, const std::set<unsigned int> * modules)  {
   int MAX_SIZE = MAX_FED * MAX_LINK * MAX_ROC;
   unsigned int *fedMap   = new unsigned int[MAX_SIZE];
   unsigned int *linkMap  = new unsigned int[MAX_SIZE];
@@ -23,6 +23,8 @@ void SiPixelFedCablingMapGPU::process(CablingMap* &cablingMapGPU)  {
   unsigned int *RawId    = new unsigned int[MAX_SIZE];
   unsigned int *rocInDet = new unsigned int[MAX_SIZE];
   unsigned int *moduleId = new unsigned int[MAX_SIZE];
+  bool *badRocs  = new bool[MAX_SIZE];
+  bool *modToUnp = new bool[MAX_SIZE];
 
   std::set<unsigned int> rawIdSet;
 
@@ -45,10 +47,26 @@ void SiPixelFedCablingMapGPU::process(CablingMap* &cablingMapGPU)  {
           RawId[index] = pixelRoc->rawId();
           rocInDet[index] = pixelRoc->idInDetUnit();
           rawIdSet.insert(RawId[index]);
+            
+            if(badPixelInfo != nullptr){
+                
+                modToUnp[index] = (modules->find(pixelRoc->rawId()) == modules->end());
+                badRocs[index] = badPixelInfo->IsRocBad(pixelRoc->rawId(), pixelRoc->idInDetUnit());
+                
+            }
+            else{
+                
+                modToUnp[index] = false;
+                badRocs[index] = true;
+                
+            }
+            
         }
         else { // store some dummy number
           RawId[index] = 9999;
           rocInDet[index] = 9999;
+          modToUnp[index] = false;
+          badRocs[index] = true;
         }
         index++;
       }
@@ -84,10 +102,13 @@ void SiPixelFedCablingMapGPU::process(CablingMap* &cablingMapGPU)  {
   }
   //cout << "size: "<< index << endl;
   cablingMapGPU->size = index-1;
+    
   delete[] fedMap;
   delete[] linkMap;
   delete[] rocMap;
   delete[] RawId;
   delete[] rocInDet;
   delete[] moduleId;
+  delete[] badRocs;
+  delete[] modToUnp;
 }
