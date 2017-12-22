@@ -486,9 +486,12 @@ __global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const 
   uint begin  = fedIndex[fedOffset + MAX_FED + blockId];
   uint end    = fedIndex[fedOffset + MAX_FED + blockId + 1];
 
-  if(blockIdx.x == gridDim.x-1) {
-    end = eventIndex[eventno+1]; // for last fed to get the end index
+  if(blockIdx.x == gridDim.x - 1) {
+    end = eventIndex[eventno + 1]; // for last fed to get the end index
   }
+
+  uint link = 0;
+  uint roc  = 0;
 
   bool skipROC = false;
   //if(threadId==0) printf("Event: %u blockId: %u start: %u end: %u\n", eventno, blockId, begin, end);
@@ -507,14 +510,16 @@ __global__ void RawToDigi_kernel(const CablingMap *Map, const uint *Word, const 
         moduleId[gIndex] = 9999; //9999 is the indication of bad module, taken care later
         rawIdArr[gIndex] = 9999;
         continue ; // 0: bad word,
-      } 
-      uint link  = getLink(ww);            // Extract link
-      uint roc   = getRoc(ww);             // Extract Roc in link
+      }
+      
+      uint nlink  = getLink(ww);            // Extract link
+      uint nroc   = getRoc(ww);             // Extract Roc in link
+      if (!((nlink != link) | (nroc != roc))) continue;
+      link = nlink;
+      roc = nroc;
         
       uint errorType = checkROC(ww, fedId, link, Map, debug);
       skipROC = (roc < maxROCIndex) ? false : (errorType != 0);
-      //estrarre rawID nel caso di roc invalide
-      //fill error type
       if (skipROC && includeErrors) {
         uint rID = getErrRawID(fedId, ww, errorType, Map, debug); //write the function
         errType[gIndex] = errorType;

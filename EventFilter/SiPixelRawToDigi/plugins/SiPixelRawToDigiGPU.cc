@@ -284,10 +284,12 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
     }
   }
     
+  std::set<unsigned int> modules;
   if (regions_) {
     regions_->run(ev, es);
     LogDebug("SiPixelRawToDigiGPU") << "region2unpack #feds: "<<regions_->nFEDs();
     LogDebug("SiPixelRawToDigiGPU") << "region2unpack #modules (BPIX,EPIX,total): "<<regions_->nBarrelModules()<<" "<<regions_->nForwardModules()<<" "<<regions_->nModules();
+    modules = *(regions_->modulesToUnpack());
   }
 
   // initialize cabling map or update if necessary
@@ -296,11 +298,11 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
     edm::ESTransientHandle<SiPixelFedCablingMap> cablingMap;
     es.get<SiPixelFedCablingMapRcd>().get( cablingMapLabel, cablingMap ); //Tav
     fedIds   = cablingMap->fedIds();
-    // A new and simplified GPU friendly cabling map
-    SiPixelFedCablingMapGPU cablingMapRcd(cablingMap);
-    cablingMapRcd.process(cablingMapGPU, badPixelInfo_, regions_->modulesToUnpack());
     cabling_ = cablingMap->cablingTree();
     LogDebug("map version:")<< cabling_->version();
+    // A new and simplified GPU friendly cabling map
+    SiPixelFedCablingMapGPU cablingMapRcd(cablingMap);
+    cablingMapRcd.process(cablingMapGPU, badPixelInfo_, modules);
   }
 
   edm::Handle<FEDRawDataCollection> buffers;
@@ -338,7 +340,7 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
       
     if(!usePilotBlade && (fedId==40) ) continue; // skip pilot blade data
     if (regions_ && !regions_->mayUnpackFED(fedId)) continue;
-    if(debug) LogDebug("SiPixelRawToDigi")<< " PRODUCE DIGI FOR FED: " <<  fedId << endl;
+    if(debug) LogDebug("SiPixelRawToDigiGPU")<< " PRODUCE DIGI FOR FED: " <<  fedId << endl;
    
     // for GPU
     // first 150 index stores the fedId and next 150 will store the
@@ -459,12 +461,12 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
       }
   }
     
-  if (theTimer) { //FIXME
+  if (theTimer) {
     theTimer->stop();
-    LogDebug("SiPixelRawToDigi") << "TIMING IS: (real)" << theTimer->realTime() ;
-    ndigis += theDigiCounter; //Check how this number is determined in the original code
+    LogDebug("SiPixelRawToDigiGPU") << "TIMING IS: (real)" << theTimer->realTime() ;
+    ndigis += theDigiCounter;
     nwords += theWordCounter;
-    LogDebug("SiPixelRawToDigi") << " (Words/Digis) this ev: "
+    LogDebug("SiPixelRawToDigiGPU") << " (Words/Digis) this ev: "
          <<theWordCounter<<"/"<<theDigiCounter<< "--- all :"<<nwords<<"/"<<ndigis;
     hCPU->Fill( theTimer->realTime() );
     hDigi->Fill(theDigiCounter);
@@ -539,6 +541,11 @@ void SiPixelRawToDigiGPU::produce( edm::Event& ev,
       } // if error assigned to a real DetId
     } // loop on errors in event for this FED
   } // if errors to be included in the event
+    
+  if(includeErrors) {
+    edm::DetSet<SiPixelRawDataError>& errorDetSet = errorcollection->find_or_insert(dummydetid);
+    errorDetSet.data = nodeterrors;
+  }
     
   //send digis and errors back to framework
   ev.put(std::move(collection));
