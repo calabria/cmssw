@@ -308,7 +308,6 @@ __device__ uint32_t checkROC(uint32_t errorWord, uint32_t fedId, uint32_t link, 
 
  };
     
- //printf("dentro checkROC %i %i\n", errorType, errorFound);
  return errorFound? errorType : 0;
 
 }
