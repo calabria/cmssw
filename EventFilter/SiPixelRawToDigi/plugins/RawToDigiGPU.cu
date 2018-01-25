@@ -573,8 +573,6 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
   } // end of for(int i =0;i<no_itr...)
 
   __syncthreads();
-    
-  printf();
 
   // three cases possible
   // case 1: 21 21 21 22 21 22 22
@@ -586,6 +584,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
 
   for(int i = 0; i < no_itr; i++) {
     uint32_t gIndex = begin + threadId + i*blockDim.x;
+      
     if (gIndex+2 < end) {
       //rare condition
       if (moduleId[gIndex] == moduleId[gIndex+2] and moduleId[gIndex] < moduleId[gIndex+1]) {
@@ -620,12 +619,13 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       __syncthreads(); // let the swapping finish first
 
       if (moduleId[gIndex] == 9999) {
-        int m=gIndex;
+        int m = gIndex;
         while(moduleId[--m] == 9999) {} //skip till you get the valid module
         moduleId[gIndex] = moduleId[m];
       }
     } // end of if (gIndex<end)
   } //  end of for(int i=0;i<no_itr;...)
+
   __syncthreads();
 
   // mIndexStart stores starting index of module
