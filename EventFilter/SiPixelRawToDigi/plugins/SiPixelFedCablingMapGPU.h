@@ -15,7 +15,7 @@ const unsigned int MAX_LINK =  48;  // maximum links/channels for Phase 1
 const unsigned int MAX_ROC  =   8;
 const unsigned int MAX_SIZE = MAX_FED * MAX_LINK * MAX_ROC;
 const unsigned int MAX_SIZE_BYTE_INT  = MAX_SIZE * sizeof(unsigned int);
-const unsigned int MAX_SIZE_BYTE_BOOL = MAX_SIZE * sizeof(bool);
+const unsigned int MAX_SIZE_BYTE_BOOL = MAX_SIZE * sizeof(short int);
 
 struct SiPixelFedCablingMapGPU {
   unsigned int size;
@@ -25,8 +25,8 @@ struct SiPixelFedCablingMapGPU {
   unsigned int * RawId;
   unsigned int * rocInDet;
   unsigned int * moduleId;
-  bool * modToUnp;
-  bool * badRocs;
+  short int * modToUnp;
+  short int * badRocs;
 };
 
 inline
@@ -61,3 +61,4 @@ void deallocateCablingMap(SiPixelFedCablingMapGPU* cablingMapHost, SiPixelFedCab
 void processCablingMap(SiPixelFedCablingMap const& cablingMap, SiPixelFedCablingMapGPU* cablingMapGPU, SiPixelFedCablingMapGPU* cablingMapDevice, const SiPixelQuality* badPixelInfo, std::set<unsigned int> const& modules);
 
 #endif // SiPixelFedCablingMapGPU_h
+

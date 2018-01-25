@@ -497,14 +497,14 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       bool barrel = isBarrel(rawId);
 
       uint32_t index = fedId * MAX_LINK * MAX_ROC + (link-1) * MAX_ROC + roc;
-      if (useQualityInfo) {
+      if (true) {
 
           skipROC = Map->badRocs[index];
-          printf("Use quality: %i", skipROC);
           if (skipROC) continue;
 
       }
       skipROC = Map->modToUnp[index];
+      printf("Use quality: %i\n", skipROC);
       if (skipROC) continue;
 
       uint32_t layer = 0;//, ladder =0;
@@ -735,3 +735,4 @@ void RawToDigi_wrapper(
   // End  of Raw2Digi and passing data for cluserisation
   // PixelCluster_Wrapper(c.xx_adc , c.yy_adc, c.adc_d,wordCounter, c.mIndexStart_d, c.mIndexEnd_d);
 }
+
