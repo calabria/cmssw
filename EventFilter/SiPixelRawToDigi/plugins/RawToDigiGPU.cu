@@ -201,26 +201,26 @@ __device__ uint32_t conversionError(uint32_t fedId, uint32_t status, bool debug 
 
   switch (status) {
       case(1) : {
-        if (debug) printf("Error in Fed: %i, invalid channel Id (errorType=35)", fedId );
+        if (debug) printf("Error in Fed: %i, invalid channel Id (errorType = 35)\n", fedId );
         errorType = 35;
         break;
       }
       case(2) : {
-        if (debug) printf("Error in Fed: %i, invalid ROC Id (errorType=36)", fedId);
+        if (debug) printf("Error in Fed: %i, invalid ROC Id (errorType = 36)\n", fedId);
         errorType = 36;
         break;
       }
       case(3) : {
-        if (debug) printf("Error in Fed: %i, invalid dcol/pixel value (errorType=37)", fedId);
+        if (debug) printf("Error in Fed: %i, invalid dcol/pixel value (errorType = 37)\n", fedId);
         errorType = 37;
         break;
       }
       case(4) : {
-        if (debug) printf("Error in Fed: %i, dcol/pixel read out of order (errorType=38)", fedId);
+        if (debug) printf("Error in Fed: %i, dcol/pixel read out of order (errorType = 38)\n", fedId);
         errorType = 38;
         break;
       }
-      default: if (debug) printf("Cabling check returned unexpected result, status = %i", status);
+      default: if (debug) printf("Cabling check returned unexpected result, status = %i\n", status);
   };
 
   return errorType;
@@ -248,65 +248,67 @@ __device__ uint32_t checkROC(uint32_t errorWord, uint32_t fedId, uint32_t link, 
 {
 
  int errorType = (errorWord >> ROC_shift) & ERROR_mask;
+ if (errorType < 25) return false;
  bool errorFound = false;
 
  switch (errorType) {
     case(25) : {
      uint32_t index = fedId * MAX_LINK * MAX_ROC + (link-1) * MAX_ROC + 1;
-     if (index > 1 && index <= Map->size){
+     if (index <= Map->size){
        if (!(link == Map->link[index] && 1 == Map->roc[index])) errorFound = false;
      }
      else{
        errorFound = true;
-       if (debug) printf("Invalid ROC = 25 found (errorType=25)");
+       if (debug) printf("Invalid ROC = 25 found (errorType = 25)\n");
      }
      break;
    }
    case(26) : {
-     if (debug) printf("Gap word found (errorType=26)");
+     if (debug) printf("Gap word found (errorType = 26)\n");
      errorFound = true;
      break;
    }
    case(27) : {
-     if (debug) printf("Dummy word found (errorType=27)");
+     if (debug) printf("Dummy word found (errorType = 27)\n");
      errorFound = true;
      break;
    }
    case(28) : {
-     if (debug) printf("Error fifo nearly full (errorType=28)");
+     if (debug) printf("Error fifo nearly full (errorType = 28)\n");
      errorFound = true;
      break;
    }
    case(29) : {
-     if (debug) printf("Timeout on a channel (errorType=29)");
+     if (debug) printf("Timeout on a channel (errorType = 29)\n");
      if ((errorWord >> OMIT_ERR_shift) & OMIT_ERR_mask) {
-       if (debug) printf("...first errorType=29 error, this gets masked out");
+       if (debug) printf("...first errorType = 29 error, this gets masked out\n");
      }
      errorFound = true;
      break;
    }
    case(30) : {
-     if (debug) printf("TBM error trailer (errorType=30)");
-     int StateMatch_bits      = 4;
-     int StateMatch_shift     = 8;
+     if (debug) printf("TBM error trailer (errorType = 30)\n");
+     int StateMatch_bits = 4;
+     int StateMatch_shift = 8;
      uint32_t StateMatch_mask = ~(~uint32_t(0) << StateMatch_bits);
      int StateMatch = (errorWord >> StateMatch_shift) & StateMatch_mask;
      if ( StateMatch != 1 && StateMatch != 8 ) {
-       if (debug) printf("FED error 30 with unexpected State Bits (errorType=30)");
+       if (debug) printf("FED error 30 with unexpected State Bits (errorType = 30)\n");
      }
-     if ( StateMatch==1 ) errorType = 40; // 1=Overflow -> 40, 8=number of ROCs -> 30
+     if ( StateMatch == 1 ) errorType = 40; // 1=Overflow -> 40, 8=number of ROCs -> 30
      errorFound = true;
      break;
    }
    case(31) : {
-     if (debug) printf("Event number error (errorType=31)");
+     if (debug) printf("Event number error (errorType = 31)\n");
      errorFound = true;
      break;
    }
    default: errorFound = false;
 
  };
-
+    
+ //printf("dentro checkROC %i %i\n", errorType, errorFound);
  return errorFound? errorType : 0;
 
 }
@@ -319,7 +321,7 @@ __device__ uint32_t getErrRawID(uint32_t fedId, uint32_t errWord, uint32_t error
 
   switch (errorType) {
     case  25 : case  30 : case  31 : case  36 : case 40 : {
-      // set dummy values for cabling just to get detId from link
+      //Set dummy values for cabling just to get detId from link
       //cabling.dcol = 0;
       //cabling.pxid = 2;
       uint32_t roc  = 1;
@@ -351,7 +353,7 @@ __device__ uint32_t getErrRawID(uint32_t fedId, uint32_t errWord, uint32_t error
       else chanNmbr = ((BLOCK-1)/2)*9+4+localCH;
       if ((chanNmbr < 1)||(chanNmbr > 36)) break;  // signifies unexpected result
 
-      // set dummy values for cabling just to get detId from link if in Barrel
+      //Set dummy values for cabling just to get detId from link if in Barrel
       //cabling.dcol = 0;
       //cabling.pxid = 2;
       uint32_t roc  = 1;
@@ -477,19 +479,17 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       roc = nroc;
       DetIdGPU detId = getRawId(Map, fedId, link, roc);
 
-
       uint32_t errorType = checkROC(ww, fedId, link, Map, debug);
       skipROC = (roc < maxROCIndex) ? false : (errorType != 0);
       if (includeErrors and skipROC)
       {
-        uint32_t rID = getErrRawID(fedId, ww, errorType, Map, debug); //write the function
+        uint32_t rID = getErrRawID(fedId, ww, errorType, Map, debug);
         errType[gIndex]  = errorType;
         errWord[gIndex]  = ww;
         errFedID[gIndex] = fedId;
         errRawID[gIndex] = rID;
         continue;
       }
-
 
       uint32_t rawId  = detId.RawId;
       uint32_t rocIdInDetUnit = detId.rocInDet;
@@ -500,6 +500,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       if (useQualityInfo) {
 
           skipROC = Map->badRocs[index];
+          printf("Use quality: %i", skipROC);
           if (skipROC) continue;
 
       }
@@ -513,14 +514,14 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       {
         layer  = (rawId >> layerStartBit_) & layerMask_;
         module = (rawId >> moduleStartBit_) & moduleMask_;
-        side   = (module<5)? -1 : 1;
+        side   = (module < 5)? -1 : 1;
       }
       else {
         // endcap ids
         layer = 0;
         panel = (rawId >> panelStartBit_) & panelMask_;
         //disk  = (rawId >> diskStartBit_)  & diskMask_ ;
-        side  = (panel==1)? -1 : 1;
+        side  = (panel == 1)? -1 : 1;
         //blade = (rawId>>bladeStartBit_) & bladeMask_;
       }
 
@@ -533,7 +534,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
         localPix.col = col;
         if (includeErrors) {
           if (not rocRowColIsValid(row, col)) {
-            uint32_t error = conversionError(fedId, 3, debug); //use the device function and fill the arrays
+            uint32_t error = conversionError(fedId, 3, debug);
             errType[gIndex]  = error;
             errWord[gIndex]  = ww;
             errFedID[gIndex] = fedId;

@@ -230,7 +230,7 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
   int theDigiCounter = 0;
   const uint32_t dummydetid = 0xffffffff;
   //debug = edm::MessageDrop::instance()->debugEnabled;
-  debug = false;
+  debug = true;
 
   // initialize quality record or update if necessary
   if (qualityWatcher.check( es ) && useQuality) {
@@ -388,6 +388,7 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
 
 
         if (errType_h[i] != 0) {
+            cout<<"Error "<<errWord_h[i]<<" "<<errType_h[i]<<" "<<errFedID_h[i]<<""<<errRawID_h[i]<<endl;
             SiPixelRawDataError error(errWord_h[i], errType_h[i], errFedID_h[i]);
             errors[errRawID_h[i]].push_back(error);
         }
