@@ -504,7 +504,6 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
 
       }
       skipROC = Map->modToUnp[index];
-      printf("Use quality: %i\n", skipROC);
       if (skipROC) continue;
 
       uint32_t layer = 0;//, ladder =0;
@@ -539,7 +538,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
             errWord[gIndex]  = ww;
             errFedID[gIndex] = fedId;
             errRawID[gIndex] = rawId;
-            printf("Error status: %i\n", error);
+            if(debug) printf("Error status: %i\n", error);
             continue;
           }
         }
@@ -557,7 +556,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
           errWord[gIndex] = ww;
           errFedID[gIndex] = fedId;
           errRawID[gIndex] = rawId;
-          printf("Error status: %i\n", error);
+          if(debug) printf("Error status: %i\n", error);
           continue;
         }
       }
