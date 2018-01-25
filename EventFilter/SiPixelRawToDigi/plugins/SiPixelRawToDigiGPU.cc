@@ -387,7 +387,6 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
             theDigiCounter++;
 
         if (errType_h[i] != 0) {
-            cout<<"Error "<<errWord_h[i]<<" "<<errType_h[i]<<" "<<errFedID_h[i]<<""<<errRawID_h[i]<<endl;
             SiPixelRawDataError error(errWord_h[i], errType_h[i], errFedID_h[i]);
             errors[errRawID_h[i]].push_back(error);
         }

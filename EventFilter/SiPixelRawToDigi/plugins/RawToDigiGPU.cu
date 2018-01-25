@@ -497,7 +497,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       bool barrel = isBarrel(rawId);
 
       uint32_t index = fedId * MAX_LINK * MAX_ROC + (link-1) * MAX_ROC + roc;
-      if (true) {
+      if (useQualityInfo) {
 
           skipROC = Map->badRocs[index];
           if (skipROC) continue;
