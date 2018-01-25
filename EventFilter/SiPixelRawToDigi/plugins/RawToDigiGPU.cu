@@ -444,9 +444,6 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
     end = wordCounter; // for last fed to get the end index
   }
 
-  uint32_t link = 0;
-  uint32_t roc  = 0;
-
   bool skipROC = false;
   //if (threadId==0) printf("Event: %u blockId: %u start: %u end: %u\n", eventno, blockId, begin, end);
   int no_itr = (end - begin)/blockDim.x + 1; // to deal with number of hits greater than blockDim.x
@@ -471,11 +468,8 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
         continue ; // 0: bad word,
       }
 
-      uint32_t nlink  = getLink(ww);            // Extract link
-      uint32_t nroc   = getRoc(ww);             // Extract Roc in link
-      if (!((nlink != link) | (nroc != roc))) continue;
-      link = nlink;
-      roc = nroc;
+      uint32_t link  = getLink(ww);            // Extract link
+      uint32_t roc   = getRoc(ww);             // Extract Roc in link
       DetIdGPU detId = getRawId(Map, fedId, link, roc);
 
       uint32_t errorType = checkROC(ww, fedId, link, Map, debug);
@@ -579,6 +573,8 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
   } // end of for(int i =0;i<no_itr...)
 
   __syncthreads();
+    
+  printf();
 
   // three cases possible
   // case 1: 21 21 21 22 21 22 22

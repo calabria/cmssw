@@ -359,7 +359,6 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
   // GPU specific: RawToDigi -> clustering -> CPE
 
 
-
     RawToDigi_wrapper(context_, cablingMapGPUDevice_, wordCounterGPU, word, fedCounter, fedIndex, convertADCtoElectrons, xx_h, yy_h, adc_h, mIndexStart_h, mIndexEnd_h, rawIdArr_h, errType_h, errWord_h, errFedID_h, errRawID_h, useQuality, includeErrors, debug);
 
 
@@ -394,7 +393,7 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
     }
 
 
-  fedCounter =0;
+  fedCounter = 0;
 
   if (theTimer) {
     theTimer->stop();
