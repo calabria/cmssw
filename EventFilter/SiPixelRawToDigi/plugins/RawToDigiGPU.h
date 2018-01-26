@@ -80,7 +80,6 @@ struct context {
 
   uint32_t * word_d;
   uint32_t * fedIndex_d;
-  uint32_t * eventIndex_d;
   uint32_t * xx_d;
   uint32_t * yy_d;
   uint32_t * xx_adc;
@@ -101,10 +100,11 @@ struct context {
 
 
 // wrapper function to call RawToDigi on the GPU from host side
-void RawToDigi_wrapper(context &, const SiPixelFedCablingMapGPU* cablingMapDevice, const uint32_t wordCounter, uint32_t *word, const uint32_t fedCounter,  uint32_t *fedIndex,
-                        bool convertADCtoElectrons, uint32_t *xx_h, uint32_t *yy_h, uint32_t *adc_h, int *mIndexStart_h,
-                        int *mIndexEnd_h, uint32_t *rawIdArr_h, uint32_t *errType_h, uint32_t *errWord_h, uint32_t *errFedID_h, uint32_t *errRawID_h,
-                        bool useQualityInfo, bool includeErrors, bool debug = false);
+void RawToDigi_wrapper(context &, const SiPixelFedCablingMapGPU* cablingMapDevice, const uint32_t wordCounter, uint32_t *word,
+                       const uint32_t fedCounter,  uint32_t *fedIndex, bool convertADCtoElectrons,
+                       uint32_t *xx_h, uint32_t *yy_h, uint32_t *adc_h, uint32_t *moduleId_h, int *mIndexStart_h, int *mIndexEnd_h,
+                       uint32_t *rawIdArr_h, uint32_t *errType_h, uint32_t *errWord_h, uint32_t *errFedID_h,
+                       uint32_t *errRawID_h, bool useQualityInfo, bool includeErrors, bool debug = false);
 
 // void initCablingMap();
 context initDeviceMemory();
