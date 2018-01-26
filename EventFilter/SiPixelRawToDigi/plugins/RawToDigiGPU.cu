@@ -582,6 +582,24 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
 
   for(int i = 0; i < no_itr; i++) {
     uint32_t gIndex = begin + threadId + i*blockDim.x;
+    if (gIndex < end) {
+        // moduleId== 9999 then pixel is bad with x=y=layer=adc=0
+        // this bad pixel will not affect the cluster, since for cluster
+        // the origin is shifted at (1,1) so x=y=0 will be ignored
+        // assign the previous valid moduleId to this pixel to remove 9999
+        // so that we can get the start & end index of module easily.
+        if (moduleId[gIndex] == 9999) {
+            int m = gIndex;
+            while(moduleId[--m] == 9999) {} //skip till you get the valid module
+            moduleId[gIndex] = moduleId[m];
+        }
+    }
+  }
+
+  __syncthreads();
+
+  for(int i = 0; i < no_itr; i++) {
+    uint32_t gIndex = begin + threadId + i*blockDim.x;
       
     if (gIndex+2 < end) {
       // rare condition
@@ -608,23 +626,17 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
         atomicExch(&layerArr[gIndex+1], atomicExch(&layerArr[gIndex], layerArr[gIndex+1]));
         atomicExch(&rawIdArr[gIndex+1], atomicExch(&rawIdArr[gIndex], rawIdArr[gIndex+1]));
       }
-
-      // moduleId== 9999 then pixel is bad with x=y=layer=adc=0
-      // this bad pixel will not affect the cluster, since for cluster
-      // the origin is shifted at (1,1) so x=y=0 will be ignored
-      // assign the previous valid moduleId to this pixel to remove 9999
-      // so that we can get the start & end index of module easily.
-      __syncthreads(); // let the swapping finish first
-
-      if (moduleId[gIndex] == 9999) {
-        int m = gIndex;
-        while(moduleId[--m] == 9999) {} //skip till you get the valid module
-        moduleId[gIndex] = moduleId[m];
-      }
     } // end of if (gIndex<end)
   } // end of for(int i=0;i<no_itr;...)
 
   __syncthreads();
+    
+    /*for(int i = 0; i < no_itr; i++) {
+        uint32_t gIndex = begin + threadId + i*blockDim.x;
+        if (gIndex < end) {
+            printf("Index: %i, modID: %i, start: %i, end: %i\n", gIndex, moduleId[gIndex], mIndexStart[gIndex], mIndexEnd[gIndex]);
+        }
+    }*/
     
   // mIndexStart stores starting index of module
   // mIndexEnd stores end index of module
@@ -653,6 +665,14 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       } //end of if (gIndex!= begin && (gIndex<(end-1)) ...
     } //end of if (gIndex <end)
   }
+    
+    for(int i = 0; i < no_itr; i++) {
+        uint32_t gIndex = begin + threadId + i*blockDim.x;
+        if (gIndex < end) {
+            printf("Index: %i, modID: %i, start: %i, end: %i\n", gIndex, moduleId[gIndex], mIndexStart[gIndex], mIndexEnd[gIndex]);
+        }
+    }
+    
 } // end of Raw to Digi kernel
 
 
