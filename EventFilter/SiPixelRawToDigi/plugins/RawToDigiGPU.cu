@@ -260,6 +260,10 @@ __device__ uint32_t checkROC(uint32_t errorWord, uint32_t fedId, uint32_t link, 
      uint32_t index = fedId * MAX_LINK * MAX_ROC + (link-1) * MAX_ROC + 1;
      if (index <= Map->size){
        if (!(link == Map->link[index] && 1 == Map->roc[index])) errorFound = false;
+       else{
+         errorFound = true;
+         if (debug) printf("Invalid ROC = 25 found (errorType = 25)\n");
+       }
      }
      else{
        errorFound = true;
@@ -474,10 +478,6 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       uint32_t link  = getLink(ww);            // Extract link
       uint32_t roc   = getRoc(ww);             // Extract Roc in link
       DetIdGPU detId = getRawId(Map, fedId, link, roc);
-        
-      uint32_t rawId  = detId.RawId;
-      uint32_t rocIdInDetUnit = detId.rocInDet;
-      rawIdArr[gIndex] = rawId;
 
       uint32_t errorType = checkROC(ww, fedId, link, Map, debug);
       skipROC = (roc < maxROCIndex) ? false : (errorType != 0);
@@ -491,6 +491,9 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
         continue;
       }
 
+      uint32_t rawId  = detId.RawId;
+      uint32_t rocIdInDetUnit = detId.rocInDet;
+      rawIdArr[gIndex] = rawId;
       bool barrel = isBarrel(rawId);
 
       uint32_t index = fedId * MAX_LINK * MAX_ROC + (link-1) * MAX_ROC + roc;
