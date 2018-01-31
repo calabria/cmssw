@@ -365,20 +365,15 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
 
 
   for (uint32_t i = 0; i < wordCounterGPU; i++) {
-      if (rawIdArr_h[i] == 9999)
+      if (rawIdArr_h[i] == 9999 or rawIdArr_h[i] == 0)
         continue;
       detDigis = &(*collection).find_or_insert(rawIdArr_h[i]);
       if ( (*detDigis).empty() ) (*detDigis).data.reserve(32); // avoid the first relocations
       break;
   }
-    
-//  for (uint32_t i = 0; i < wordCounterGPU; i++) {
-//      cout<<"Index: "<<i<<", ModuleID: "<<moduleId_h[i]<<", IndexStart: "<<mIndexStart_h[i]<<", IndexEnd: "<<mIndexEnd_h[i]
-//      <<", x: "<<xx_h[i]<<", y: "<<yy_h[i]<<", adc: "<<adc_h[i]<<endl;
-//  }
 
   for (uint32_t i = 0; i < wordCounterGPU; i++) {
-      if (rawIdArr_h[i] == 9999)
+      if (rawIdArr_h[i] == 9999 or rawIdArr_h[i] == 0)
           continue;
       if ( (*detDigis).detId() != rawIdArr_h[i])
       {
@@ -388,7 +383,7 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
       }
       (*detDigis).data.emplace_back(xx_h[i], yy_h[i], adc_h[i]);
       theDigiCounter++;
-
+      
       if (errType_h[i] != 0) {
           SiPixelRawDataError error(errWord_h[i], errType_h[i], errFedID_h[i]);
           errors[errRawID_h[i]].push_back(error);
@@ -428,6 +423,9 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
         std::vector<PixelFEDChannel> disabledChannelsDetSet;
 
         for (auto const& aPixelError : errorDetSet) {
+            
+          cout<<"DetID: "<<errordetid<<", Type: "<<aPixelError.getType()<<""<<endl;
+
           // For the time being, we extend the error handling functionality with ErrorType 25
           // In the future, we should sort out how the usage of tkerrorlist can be generalized
           if (aPixelError.getType() == 25) {

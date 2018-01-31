@@ -37,7 +37,7 @@ context initDeviceMemory() {
   context c;
 
   // Number of words for all the feds
-  constexpr uint32_t MAX_WORD_SIZE = MAX_FED * MAX_WORD  * sizeof(uint32_t);
+  constexpr uint32_t MAX_WORD_SIZE = MAX_FED * MAX_WORD * sizeof(uint32_t);
   constexpr uint32_t FSIZE = 2*MAX_FED*sizeof(uint32_t)+sizeof(uint32_t);
   constexpr uint32_t MSIZE = NMODULE*sizeof(int)+sizeof(int);
 
@@ -45,10 +45,10 @@ context initDeviceMemory() {
   cudaCheck(cudaMalloc((void**) & c.fedIndex_d,    FSIZE));
   cudaCheck(cudaMalloc((void**) & c.xx_d,          MAX_WORD_SIZE)); // to store the x and y coordinate
   cudaCheck(cudaMalloc((void**) & c.yy_d,          MAX_WORD_SIZE));
-  cudaCheck(cudaMalloc((void**) & c.xx_adc,        MAX_WORD_SIZE)); // to store the x and y coordinate
+  cudaCheck(cudaMalloc((void**) & c.xx_adc,        MAX_WORD_SIZE));
   cudaCheck(cudaMalloc((void**) & c.yy_adc,        MAX_WORD_SIZE));
   cudaCheck(cudaMalloc((void**) & c.adc_d,         MAX_WORD_SIZE));
-  cudaCheck(cudaMalloc((void**) & c.layer_d ,      MAX_WORD_SIZE));
+  cudaCheck(cudaMalloc((void**) & c.layer_d,       MAX_WORD_SIZE));
   cudaCheck(cudaMalloc((void**) & c.rawIdArr_d,    MAX_WORD_SIZE));
   cudaCheck(cudaMalloc((void**) & c.errType_d,     MAX_WORD_SIZE));
   cudaCheck(cudaMalloc((void**) & c.errWord_d,     MAX_WORD_SIZE));
@@ -69,13 +69,17 @@ void freeMemory(context & c) {
   // free the GPU memory
   cudaCheck(cudaFree(c.word_d));
   cudaCheck(cudaFree(c.fedIndex_d));
-  cudaCheck(cudaFree(c.adc_d));
-  cudaCheck(cudaFree(c.layer_d));
   cudaCheck(cudaFree(c.xx_d));
   cudaCheck(cudaFree(c.yy_d));
   cudaCheck(cudaFree(c.xx_adc));
   cudaCheck(cudaFree(c.yy_adc));
+  cudaCheck(cudaFree(c.adc_d));
+  cudaCheck(cudaFree(c.layer_d));
   cudaCheck(cudaFree(c.rawIdArr_d));
+  cudaCheck(cudaFree(c.errType_d));
+  cudaCheck(cudaFree(c.errWord_d));
+  cudaCheck(cudaFree(c.errFedID_d));
+  cudaCheck(cudaFree(c.errRawID_d));
   cudaCheck(cudaFree(c.moduleId_d));
   cudaCheck(cudaFree(c.mIndexStart_d));
   cudaCheck(cudaFree(c.mIndexEnd_d));
@@ -118,7 +122,7 @@ __device__ DetIdGPU getRawId(const SiPixelFedCablingMapGPU * Map, uint32_t fed, 
 // Convert local pixel to global pixel
 __device__ Pixel frameConversion(bool bpix, int side, uint32_t layer, uint32_t rocIdInDetUnit, Pixel local) {
 
-  int slopeRow  = 0,  slopeCol = 0;
+  int slopeRow  = 0, slopeCol = 0;
   int rowOffset = 0, colOffset = 0;
 
   if (bpix) {
@@ -450,12 +454,6 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
     auto gIndex = begin + threadId + i*blockDim.x;
     if (gIndex < end) {
       uint32_t ww = Word[gIndex]; // Array containing 32 bit raw data
-      if (includeErrors) {
-        errType[gIndex]  = 0;
-        errWord[gIndex]  = ww;
-        errFedID[gIndex] = fedId;
-        errRawID[gIndex] = 0;
-      }
       if (ww == 0) {
         //noise and dead channels are ignored
         XX[gIndex]    = 0;  // 0 is an indicator of a noise/dead channel
@@ -464,12 +462,22 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
         layerArr[gIndex] = 0;
         moduleId[gIndex] = 9999; //9999 is the indication of bad module, taken care later
         rawIdArr[gIndex] = 9999;
+        if (includeErrors) {
+            errType[gIndex]  = 0;
+            errWord[gIndex]  = ww;
+            errFedID[gIndex] = fedId;
+            errRawID[gIndex] = 9999;
+        }
         continue ; // 0: bad word,
       }
 
       uint32_t link  = getLink(ww);            // Extract link
       uint32_t roc   = getRoc(ww);             // Extract Roc in link
       DetIdGPU detId = getRawId(Map, fedId, link, roc);
+        
+      uint32_t rawId  = detId.RawId;
+      uint32_t rocIdInDetUnit = detId.rocInDet;
+      rawIdArr[gIndex] = rawId;
 
       uint32_t errorType = checkROC(ww, fedId, link, Map, debug);
       skipROC = (roc < maxROCIndex) ? false : (errorType != 0);
@@ -482,9 +490,6 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
         errRawID[gIndex] = rID;
         continue;
       }
-
-      uint32_t rawId  = detId.RawId;
-      uint32_t rocIdInDetUnit = detId.rocInDet;
 
       bool barrel = isBarrel(rawId);
 
@@ -559,9 +564,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       ADC[gIndex]   = getADC(ww);
       layerArr[gIndex] = layer;
       moduleId[gIndex] = detId.moduleId;
-      rawIdArr[gIndex] = rawId;
       if (includeErrors) {
-        //fill error type
         errType[gIndex]  = 0;
         errWord[gIndex]  = ww;
         errFedID[gIndex] = fedId;
@@ -583,6 +586,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
   for(int i = 0; i < no_itr; i++) {
     uint32_t gIndex = begin + threadId + i*blockDim.x;
     if (gIndex < end) {
+
         // moduleId== 9999 then pixel is bad with x=y=layer=adc=0
         // this bad pixel will not affect the cluster, since for cluster
         // the origin is shifted at (1,1) so x=y=0 will be ignored
@@ -605,7 +609,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       // rare condition
       if (moduleId[gIndex] == moduleId[gIndex+2] and moduleId[gIndex] < moduleId[gIndex+1]) {
         atomicExch(&moduleId[gIndex+2], atomicExch(&moduleId[gIndex+1], moduleId[gIndex+2]));
-        //*swap all the digi id
+        //swap all the digi id
         atomicExch(&XX[gIndex+2], atomicExch(&XX[gIndex+1], XX[gIndex+2]));
         atomicExch(&YY[gIndex+2], atomicExch(&YY[gIndex+1], YY[gIndex+2]));
         atomicExch(&ADC[gIndex+2], atomicExch(&ADC[gIndex+1], ADC[gIndex+2]));
@@ -619,7 +623,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       // here we need to swap 362 with previous 363
       if (moduleId[gIndex]==moduleId[gIndex+2] && moduleId[gIndex]>moduleId[gIndex+1]) {
         atomicExch(&moduleId[gIndex+1], atomicExch(&moduleId[gIndex], moduleId[gIndex+1]));
-        //*swap all the digi id
+        //swap all the digi id
         atomicExch(&XX[gIndex+1], atomicExch(&XX[gIndex], XX[gIndex+1]));
         atomicExch(&YY[gIndex+1], atomicExch(&YY[gIndex], YY[gIndex+1]));
         atomicExch(&ADC[gIndex+1], atomicExch(&ADC[gIndex], ADC[gIndex+1]));
@@ -630,13 +634,6 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
   } // end of for(int i=0;i<no_itr;...)
 
   __syncthreads();
-    
-    /*for(int i = 0; i < no_itr; i++) {
-        uint32_t gIndex = begin + threadId + i*blockDim.x;
-        if (gIndex < end) {
-            printf("Index: %i, modID: %i, start: %i, end: %i\n", gIndex, moduleId[gIndex], mIndexStart[gIndex], mIndexEnd[gIndex]);
-        }
-    }*/
     
   // mIndexStart stores starting index of module
   // mIndexEnd stores end index of module
@@ -665,13 +662,6 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       } //end of if (gIndex!= begin && (gIndex<(end-1)) ...
     } //end of if (gIndex <end)
   }
-    
-    for(int i = 0; i < no_itr; i++) {
-        uint32_t gIndex = begin + threadId + i*blockDim.x;
-        if (gIndex < end) {
-            printf("Index: %i, modID: %i, start: %i, end: %i\n", gIndex, moduleId[gIndex], mIndexStart[gIndex], mIndexEnd[gIndex]);
-        }
-    }
     
 } // end of Raw to Digi kernel
 
