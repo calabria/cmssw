@@ -236,9 +236,6 @@ void SiPixelRawToDigi::produce( edm::Event& ev,
       typedef PixelDataFormatter::Errors::iterator IE;
       for (IE is = errors.begin(); is != errors.end(); is++) {
 	uint32_t errordetid = is->first;
-          
-
-          
 	if (errordetid==dummydetid) {           // errors given dummy detId must be sorted by Fed
 	  nodeterrors.insert( nodeterrors.end(), errors[errordetid].begin(), errors[errordetid].end() );
 	} else {
@@ -252,9 +249,6 @@ void SiPixelRawToDigi::produce( edm::Event& ev,
 	  std::vector<PixelFEDChannel> disabledChannelsDetSet;
 
 	  for (auto const& aPixelError : errorDetSet) {
-          
-          cout<<"DetID: "<<errordetid<<", Type: "<<aPixelError.getType()<<""<<endl;
-
 	    // For the time being, we extend the error handling functionality with ErrorType 25
 	    // In the future, we should sort out how the usage of tkerrorlist can be generalized
 	    if (aPixelError.getType()==25) {
