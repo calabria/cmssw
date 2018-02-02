@@ -52,6 +52,7 @@ testCons::matched_g4_and_dd( void )
 
   CPPUNIT_ASSERT( abs(g4v - ddv) < numeric_limits<float>::epsilon());
   CPPUNIT_ASSERT( abs(g4v - ddsv) < numeric_limits<float>::epsilon());
+
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION( testCons );
