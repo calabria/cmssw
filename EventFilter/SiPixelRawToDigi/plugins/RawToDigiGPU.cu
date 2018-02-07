@@ -678,7 +678,7 @@ void RawToDigi_wrapper(
   */
 
   if (includeErrors) {
-    cudaCheck(cudaMemcpyAsync(&error_h, &c.error_d, wordCounter*2*(sizeof(uint32_t) + sizeof(unsigned char)), cudaMemcpyDeviceToHost, c.stream));
+    cudaCheck(cudaMemcpyAsync(&error_h, &c.error_d, c.error_d.maxSize*2*(sizeof(uint32_t) + sizeof(unsigned char)), cudaMemcpyDeviceToHost, c.stream));
   }
   cudaStreamSynchronize(c.stream);
   // End of Raw2Digi and passing data for clusterization
