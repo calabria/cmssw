@@ -68,7 +68,7 @@ private:
 
   // to store the output
   uint32_t *pdigi_h, *rawIdArr_h;                   // host copy of output
-  uint32_t *error_h;
+  vecError error_h;
   // store the start and end index for each module (total 1856 modules-phase 1)
   int *mIndexStart_h, *mIndexEnd_h;
 
