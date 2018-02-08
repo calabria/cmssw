@@ -147,10 +147,10 @@ inline uint32_t pack(uint32_t row, uint32_t col, uint32_t adc) {
 }
 
 typedef struct error {
-    unsigned char errorType;
-    uint32_t word;
-    unsigned char fedId;
     uint32_t rawId;
+    uint32_t word;
+    unsigned char errorType;
+    unsigned char fedId;
 } error_obj;
 
 typedef GPU::SimpleVector<error_obj> vecError;

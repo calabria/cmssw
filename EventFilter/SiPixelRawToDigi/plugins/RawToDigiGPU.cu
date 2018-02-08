@@ -40,6 +40,8 @@ context initDeviceMemory() {
   constexpr uint32_t MAX_WORD08_SIZE = MAX_FED * MAX_WORD * sizeof(uint8_t);
   constexpr uint32_t MAX_WORD32_SIZE = MAX_FED * MAX_WORD * sizeof(uint32_t);
   constexpr uint32_t MAX_WORD16_SIZE = MAX_FED * MAX_WORD * sizeof(uint16_t);
+  constexpr uint32_t ESIZE = 2*(sizeof(uint32_t) + sizeof(unsigned char));
+  constexpr uint32_t MAX_ERROR_SIZE  = MAX_FED * MAX_WORD * ESIZE;
   constexpr uint32_t MSIZE = NMODULE*sizeof(int)+sizeof(int);
 
   cudaCheck(cudaMalloc((void**) & c.word_d,        MAX_WORD32_SIZE));
@@ -53,7 +55,7 @@ context initDeviceMemory() {
   cudaCheck(cudaMalloc((void**) & c.layer_d,       MAX_WORD16_SIZE));
   cudaCheck(cudaMalloc((void**) & c.rawIdArr_d,    MAX_WORD32_SIZE));
   cudaCheck(cudaMalloc((void**) & c.moduleId_d,    MAX_WORD32_SIZE));
-  cudaCheck(cudaMalloc((void**) & c.error_d,       2*(MAX_WORD32_SIZE + 2*MAX_WORD08_SIZE)));
+  cudaCheck(cudaMalloc((void**) & c.error_d,       MAX_ERROR_SIZE));
   cudaCheck(cudaMalloc((void**) & c.mIndexStart_d, MSIZE));
   cudaCheck(cudaMalloc((void**) & c.mIndexEnd_d,   MSIZE));
 
@@ -627,8 +629,7 @@ void RawToDigi_wrapper(
     context & c,
     const SiPixelFedCablingMapGPU* cablingMapDevice, const uint32_t wordCounter, uint32_t *word, const uint32_t fedCounter,
     uint8_t *fedId_h, bool convertADCtoElectrons, uint32_t * pdigi_h, int *mIndexStart_h, int *mIndexEnd_h,
-    uint32_t *rawIdArr_h, vecError error_h,
-    bool useQualityInfo, bool includeErrors, bool debug)
+    uint32_t *rawIdArr_h, vecError error_h, bool useQualityInfo, bool includeErrors, bool debug)
 {
   const int threadsPerBlock = 512;
   const int blocks = (wordCounter + threadsPerBlock-1) /threadsPerBlock; // fill it all
@@ -678,7 +679,8 @@ void RawToDigi_wrapper(
   */
 
   if (includeErrors) {
-    cudaCheck(cudaMemcpyAsync(&error_h, &c.error_d, c.error_d.maxSize*2*(sizeof(uint32_t) + sizeof(unsigned char)), cudaMemcpyDeviceToHost, c.stream));
+    constexpr uint32_t ESIZE = 2*(sizeof(uint32_t) + sizeof(unsigned char));
+    cudaCheck(cudaMemcpyAsync(&error_h, &c.error_d, wordCounter*ESIZE, cudaMemcpyDeviceToHost, c.stream));
   }
   cudaStreamSynchronize(c.stream);
   // End of Raw2Digi and passing data for clusterization
