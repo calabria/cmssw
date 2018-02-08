@@ -128,8 +128,8 @@ SiPixelRawToDigiGPU::SiPixelRawToDigiGPU( const edm::ParameterSet& conf )
   // to store the output of RawToDigi
   cudaMallocHost(&pdigi_h,    sizeof(uint32_t)*WSIZE);
   cudaMallocHost(&rawIdArr_h, sizeof(uint32_t)*WSIZE);
-  cudaMallocHost((void * *) &error_h,    (2*sizeof(uint32_t) + 2*sizeof(unsigned char))*WSIZE);
-
+  uint32_t ESIZE =  2*(sizeof(uint32_t) + sizeof(unsigned char));
+  cudaMallocHost((void * *) &error_h, ESIZE*WSIZE);
 
   // mIndexStart_h = new int[NMODULE+1];
   // mIndexEnd_h = new int[NMODULE+1];
