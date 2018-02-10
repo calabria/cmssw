@@ -78,7 +78,7 @@ void freeMemory(context & c) {
   cudaCheck(cudaFree(c.adc_d));
   cudaCheck(cudaFree(c.layer_d));
   cudaCheck(cudaFree(c.rawIdArr_d));
-  cudaCheck(cudaFree(&c.error_d));
+  cudaCheck(cudaFree(c.error_d));
   cudaCheck(cudaFree(c.mIndexStart_d));
   cudaCheck(cudaFree(c.mIndexEnd_d));
 
@@ -433,7 +433,7 @@ __device__ uint32_t getErrRawID(uint32_t fedId, uint32_t errWord, uint32_t error
 __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint32_t wordCounter, const uint32_t *Word, const uint8_t *fedIds,
                                  uint16_t * XX, uint16_t * YY, uint16_t * ADC,
                                  uint32_t * pdigi, uint32_t *moduleId, int *mIndexStart,
-                                 int *mIndexEnd,  uint16_t *layerArr, uint32_t *rawIdArr, vecError err,
+                                 int *mIndexEnd,  uint16_t *layerArr, uint32_t *rawIdArr, vecError *err,
                                  bool useQualityInfo, bool includeErrors, bool debug)
 {
   uint32_t blockId  = blockIdx.x;
@@ -474,7 +474,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
         temp_err.word = ww;
         temp_err.fedId = fedId;
         temp_err.rawId = rID;
-        err.push_back_ts(temp_err);
+        err->push_back_ts(temp_err);
         continue;
       }
 
@@ -525,7 +525,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
             temp_err.word = ww;
             temp_err.fedId = fedId;
             temp_err.rawId = rawId;
-            err.push_back_ts(temp_err);
+            err->push_back_ts(temp_err);
             if(debug) printf("BPIX1  Error status: %i\n", error);
             continue;
           }
@@ -545,7 +545,7 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
           temp_err.word = ww;
           temp_err.fedId = fedId;
           temp_err.rawId = rawId;
-          err.push_back_ts(temp_err);
+          err->push_back_ts(temp_err);
           if(debug) printf("Error status: %i %d %d %d %d\n", error, dcol, pxid, fedId, roc);
           continue;
         }
@@ -629,7 +629,7 @@ void RawToDigi_wrapper(
     context & c,
     const SiPixelFedCablingMapGPU* cablingMapDevice, const uint32_t wordCounter, uint32_t *word, const uint32_t fedCounter,
     uint8_t *fedId_h, bool convertADCtoElectrons, uint32_t * pdigi_h, int *mIndexStart_h, int *mIndexEnd_h,
-    uint32_t *rawIdArr_h, vecError error_h, bool useQualityInfo, bool includeErrors, bool debug)
+    uint32_t *rawIdArr_h, vecError *error_h, bool useQualityInfo, bool includeErrors, bool debug)
 {
   const int threadsPerBlock = 512;
   const int blocks = (wordCounter + threadsPerBlock-1) /threadsPerBlock; // fill it all
@@ -680,7 +680,7 @@ void RawToDigi_wrapper(
 
   if (includeErrors) {
     constexpr uint32_t ESIZE = 2*(sizeof(uint32_t) + sizeof(unsigned char));
-    cudaCheck(cudaMemcpyAsync(&error_h, &c.error_d, wordCounter*ESIZE, cudaMemcpyDeviceToHost, c.stream));
+    cudaCheck(cudaMemcpyAsync(error_h, c.error_d, wordCounter*ESIZE, cudaMemcpyDeviceToHost, c.stream));
   }
   cudaStreamSynchronize(c.stream);
   // End of Raw2Digi and passing data for clusterization
