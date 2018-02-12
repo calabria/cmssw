@@ -109,7 +109,6 @@ __device__ bool isBarrel(uint32_t rawId) {
 }
 
 
-
 __device__ DetIdGPU getRawId(const SiPixelFedCablingMapGPU * Map, uint32_t fed, uint32_t link, uint32_t roc) {
   uint32_t index = fed * MAX_LINK * MAX_ROC + (link-1) * MAX_ROC + roc;
   DetIdGPU detId = { Map->RawId[index], Map->rocInDet[index], Map->moduleId[index] };
@@ -563,6 +562,13 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
       rawIdArr[gIndex] = rawId;
     } // end of if (gIndex < end)
    } // end fake loop
+    
+    printf("Size device: %i\n", err->size());
+    for(int i = 0; i < err->size(); i++){
+        error_obj minkia = (*err)[i];
+        printf("%i %i %i %i\n", minkia.errorType, minkia.word, minkia.fedId, minkia.rawId);
+        
+    }
 
   /*
    *   VI what below is either WRONG, or badly coded or just useless
@@ -649,6 +655,13 @@ void RawToDigi_wrapper(
   // wordCounter is the total no of words in each event to be trasfered on device
   cudaCheck(cudaMemcpyAsync(&c.word_d[0],  &word[0],    wordCounter*sizeof(uint32_t),  cudaMemcpyHostToDevice, c.stream));
   cudaCheck(cudaMemcpyAsync(&c.fedId_d[0], &fedId_h[0], wordCounter*sizeof(uint8_t)/2, cudaMemcpyHostToDevice, c.stream));
+  uint32_t ESIZE = 2*(sizeof(uint32_t) + sizeof(unsigned char));
+//cudaCheck(cudaMemcpyAsync(c.error_d, error_h_tmp, ESIZE, cudaMemcpyHostToDevice, c.stream));
+    std::cout<<"boh2"<<std::endl;
+
+  bool success = cudaMemcpyAsync(c.error_d, error_h_tmp, ESIZE, cudaMemcpyHostToDevice, c.stream) == cudaSuccess;
+  assert(success);
+    std::cout<<"boh3"<<std::endl;
 
   // Launch rawToDigi kernel
   RawToDigi_kernel<<<blocks, threadsPerBlock, 0, c.stream>>>(
@@ -670,18 +683,23 @@ void RawToDigi_wrapper(
   cudaCheck(cudaGetLastError());
 
   // copy data to host variable
-  constexpr uint32_t ESIZE = 2*(sizeof(uint32_t) + sizeof(unsigned char));
   cudaCheck(cudaMemcpyAsync(pdigi_h, c.pdigi_d, wordCounter*sizeof(uint32_t), cudaMemcpyDeviceToHost, c.stream));
   cudaCheck(cudaMemcpyAsync(rawIdArr_h, c.rawIdArr_d, wordCounter*sizeof(uint32_t), cudaMemcpyDeviceToHost, c.stream));
-  cudaCheck(cudaMemcpyAsync(c.error_d, error_h_tmp, ESIZE, cudaMemcpyHostToDevice, c.stream));
+  
   /*  When proven useful/correct
   cudaCheck(cudaMemcpyAsync(mIndexStart_h, c.mIndexStart_d, NMODULE*sizeof(int), cudaMemcpyDeviceToHost, c.stream));
   cudaCheck(cudaMemcpyAsync(mIndexEnd_h, c.mIndexEnd_d, NMODULE*sizeof(int), cudaMemcpyDeviceToHost, c.stream));
   */
 
   if (includeErrors) {
-    cudaCheck(cudaMemcpyAsync(error_h, c.error_d, ESIZE, cudaMemcpyDeviceToHost, c.stream));
-    cudaCheck(cudaMemcpyAsync(data_h, c.data_d, (c.error_d->size())*ESIZE, cudaMemcpyDeviceToHost, c.stream));
+      std::cout<<"boh4"<<std::endl;
+
+      cudaCheck(cudaMemcpyAsync(error_h, c.error_d, ESIZE, cudaMemcpyDeviceToHost, c.stream));
+      std::cout<<"boh5"<<std::endl;
+
+      cudaCheck(cudaMemcpyAsync(data_h, c.data_d, wordCounter*ESIZE, cudaMemcpyDeviceToHost, c.stream));
+      std::cout<<"boh6"<<std::endl;
+
   }
   cudaStreamSynchronize(c.stream);
   // End of Raw2Digi and passing data for clusterization
