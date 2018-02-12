@@ -129,9 +129,11 @@ SiPixelRawToDigiGPU::SiPixelRawToDigiGPU( const edm::ParameterSet& conf )
   cudaMallocHost(&pdigi_h,    sizeof(uint32_t)*WSIZE);
   cudaMallocHost(&rawIdArr_h, sizeof(uint32_t)*WSIZE);
   uint32_t ESIZE =  2*(sizeof(uint32_t) + sizeof(unsigned char));
-  cudaMallocHost(&error_h, ESIZE);
-  cudaMallocHost(&error_h_tmp, ESIZE);
-  cudaMallocHost(&data_h, WSIZE*ESIZE);
+  bool success = cudaMallocHost(&error_h, ESIZE) == cudaSuccess &&
+                 cudaMallocHost(&error_h_tmp, ESIZE) == cudaSuccess &&
+                 cudaMallocHost(&data_h, MAX_FED*MAX_WORD*ESIZE) == cudaSuccess;
+    
+  assert(success);
 
   // mIndexStart_h = new int[NMODULE+1];
   // mIndexEnd_h = new int[NMODULE+1];
@@ -140,6 +142,15 @@ SiPixelRawToDigiGPU::SiPixelRawToDigiGPU( const edm::ParameterSet& conf )
 
   // allocate memory for RawToDigi on GPU
   context_ = initDeviceMemory();
+    
+  new (error_h) GPU::SimpleVector<error_obj>(MAX_FED*MAX_WORD, data_h);
+  new (error_h_tmp) GPU::SimpleVector<error_obj>(MAX_FED*MAX_WORD, context_.data_d);
+  assert(error_h->size() == 0);
+  assert(error_h->capacity() == static_cast<int>(MAX_FED*MAX_WORD));
+  assert(error_h_tmp->size() == 0);
+  assert(error_h_tmp->capacity() == static_cast<int>(MAX_FED*MAX_WORD));
+    
+    cout<<"boh1"<<endl;
 
   // // allocate auxilary memory for clustering
   // initDeviceMemCluster();
@@ -346,8 +357,6 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
   }  // end of for loop
 
   // GPU specific: RawToDigi -> clustering -> CPE
-  new (error_h) GPU::SimpleVector<error_obj>(wordCounterGPU, data_h);
-  new (error_h_tmp) GPU::SimpleVector<error_obj>(wordCounterGPU, context_.data_d);
     
   RawToDigi_wrapper(context_, cablingMapGPUDevice_, wordCounterGPU, word, fedCounter, fedId_h, convertADCtoElectrons, pdigi_h, mIndexStart_h, mIndexEnd_h, rawIdArr_h, error_h, error_h_tmp, data_h, useQuality, includeErrors, debug);
 
