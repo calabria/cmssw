@@ -9,7 +9,7 @@
 
 #include "SiPixelFedCablingMapGPU.h"
 #include "SimpleVector.hpp"
-#include<algorithm>
+#include <algorithm>
 
 const uint32_t layerStartBit_   = 20;
 const uint32_t ladderStartBit_  = 12;
@@ -171,6 +171,7 @@ struct context {
   uint16_t * layer_d;
   uint32_t * rawIdArr_d;
   vecError * error_d;
+  error_obj * data_d;
 
   // store the start and end index for each module (total 1856 modules-phase 1)
   int *mIndexStart_d;
@@ -181,7 +182,7 @@ struct context {
 void RawToDigi_wrapper(context &, const SiPixelFedCablingMapGPU* cablingMapDevice, const uint32_t wordCounter, uint32_t *word, 
                         const uint32_t fedCounter,  uint8_t *fedId_h,
                         bool convertADCtoElectrons, uint32_t * pdigi_h, int *mIndexStart_h, int *mIndexEnd_h,
-                        uint32_t *rawIdArr_h, vecError *error_h,
+                        uint32_t *rawIdArr_h, vecError *error_h, vecError *error_h_tmp, error_obj *data_h,
                         bool useQualityInfo, bool includeErrors, bool debug = false);
 
 // void initCablingMap();

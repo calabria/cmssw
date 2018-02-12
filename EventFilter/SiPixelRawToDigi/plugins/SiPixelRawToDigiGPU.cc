@@ -129,7 +129,9 @@ SiPixelRawToDigiGPU::SiPixelRawToDigiGPU( const edm::ParameterSet& conf )
   cudaMallocHost(&pdigi_h,    sizeof(uint32_t)*WSIZE);
   cudaMallocHost(&rawIdArr_h, sizeof(uint32_t)*WSIZE);
   uint32_t ESIZE =  2*(sizeof(uint32_t) + sizeof(unsigned char));
-  cudaMallocHost(&error_h, ESIZE*WSIZE);
+  cudaMallocHost(&error_h, ESIZE);
+  cudaMallocHost(&error_h_tmp, ESIZE);
+  cudaMallocHost(&data_h, WSIZE*ESIZE);
 
   // mIndexStart_h = new int[NMODULE+1];
   // mIndexEnd_h = new int[NMODULE+1];
@@ -163,6 +165,8 @@ SiPixelRawToDigiGPU::~SiPixelRawToDigiGPU() {
   cudaFreeHost(pdigi_h);
   cudaFreeHost(rawIdArr_h);
   cudaFreeHost(error_h);
+  cudaFreeHost(error_h_tmp);
+  cudaFreeHost(data_h);
   cudaFreeHost(mIndexStart_h);
   cudaFreeHost(mIndexEnd_h);
 
@@ -342,8 +346,10 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
   }  // end of for loop
 
   // GPU specific: RawToDigi -> clustering -> CPE
-
-  RawToDigi_wrapper(context_, cablingMapGPUDevice_, wordCounterGPU, word, fedCounter, fedId_h, convertADCtoElectrons, pdigi_h, mIndexStart_h, mIndexEnd_h, rawIdArr_h, error_h, useQuality, includeErrors, debug);
+  new (error_h) GPU::SimpleVector<error_obj>(wordCounterGPU, data_h);
+  new (error_h_tmp) GPU::SimpleVector<error_obj>(wordCounterGPU, context_.data_d);
+    
+  RawToDigi_wrapper(context_, cablingMapGPUDevice_, wordCounterGPU, word, fedCounter, fedId_h, convertADCtoElectrons, pdigi_h, mIndexStart_h, mIndexEnd_h, rawIdArr_h, error_h, error_h_tmp, data_h, useQuality, includeErrors, debug);
 
   for (uint32_t i = 0; i < wordCounterGPU; i++) {
       if (pdigi_h[i]==0) continue;
