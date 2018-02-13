@@ -8,7 +8,8 @@
 #include <cuda_runtime.h>
 
 #include "SiPixelFedCablingMapGPU.h"
-#include<algorithm>
+#include "SimpleVector.hpp"
+#include <algorithm>
 
 const uint32_t layerStartBit_   = 20;
 const uint32_t ladderStartBit_  = 12;
@@ -145,13 +146,21 @@ inline uint32_t pack(uint32_t row, uint32_t col, uint32_t adc) {
 
 }
 
+typedef struct error {
+    uint32_t rawId;
+    uint32_t word;
+    unsigned char errorType;
+    unsigned char fedId;
+} error_obj;
+
+typedef GPU::SimpleVector<error_obj> vecError;
 
 // configuration and memory buffers alocated on the GPU
 struct context {
   cudaStream_t stream;
 
   uint32_t * word_d;
-  uint8_t * fedId_d;
+  uint8_t  * fedId_d;
   uint32_t * pdigi_d;
   uint16_t * xx_d;
   uint16_t * yy_d;
@@ -161,22 +170,19 @@ struct context {
   uint16_t * adc_d;
   uint16_t * layer_d;
   uint32_t * rawIdArr_d;
-  uint32_t * errType_d;
-  uint32_t * errWord_d;
-  uint32_t * errFedID_d;
-  uint32_t * errRawID_d;
+  vecError * error_d;
+  error_obj * data_d;
 
   // store the start and end index for each module (total 1856 modules-phase 1)
   int *mIndexStart_d;
   int *mIndexEnd_d;
 };
 
-
 // wrapper function to call RawToDigi on the GPU from host side
 void RawToDigi_wrapper(context &, const SiPixelFedCablingMapGPU* cablingMapDevice, const uint32_t wordCounter, uint32_t *word, 
                         const uint32_t fedCounter,  uint8_t *fedId_h,
-                        bool convertADCtoElectrons, uint32_t * pdigi_h, int *mIndexStart_h, int *mIndexEnd_h, 
-                        uint32_t *rawIdArr_h, uint32_t *errType_h, uint32_t *errWord_h, uint32_t *errFedID_h, uint32_t *errRawID_h,
+                        bool convertADCtoElectrons, uint32_t * pdigi_h, int *mIndexStart_h, int *mIndexEnd_h,
+                        uint32_t *rawIdArr_h, vecError *error_h, vecError *error_h_tmp, error_obj *data_h,
                         bool useQualityInfo, bool includeErrors, bool debug = false);
 
 // void initCablingMap();
