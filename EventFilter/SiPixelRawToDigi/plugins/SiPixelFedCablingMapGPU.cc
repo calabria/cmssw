@@ -25,8 +25,8 @@ void processCablingMap(SiPixelFedCablingMap const& cablingMap, SiPixelFedCabling
   std::vector<unsigned int>  RawId(MAX_SIZE);
   std::vector<unsigned int>  rocInDet(MAX_SIZE);
   std::vector<unsigned int>  moduleId(MAX_SIZE);
-  std::vector<short int>     badRocs(MAX_SIZE);
-  std::vector<short int>     modToUnp(MAX_SIZE);
+  std::vector<unsigned char> badRocs(MAX_SIZE);
+  std::vector<unsigned char> modToUnp(MAX_SIZE);
   std::set<unsigned int>     rawIdSet;
 
   unsigned int startFed = *(fedIds.begin());
@@ -92,7 +92,7 @@ void processCablingMap(SiPixelFedCablingMap const& cablingMap, SiPixelFedCabling
     LogDebug("SiPixelFedCablingMapGPU") << "----------------------------------------------------------------------------" << std::endl;
     LogDebug("SiPixelFedCablingMapGPU") << i << std::setw(20) << fedMap[i]  << std::setw(20) << linkMap[i]  << std::setw(20) << rocMap[i] << std::endl;
     LogDebug("SiPixelFedCablingMapGPU") << i << std::setw(20) << RawId[i]   << std::setw(20) << rocInDet[i] << std::setw(20) << moduleId[i] << std::endl;
-    LogDebug("SiPixelFedCablingMapGPU") << i << std::setw(20) << badRocs[i] << std::setw(20) << modToUnp[i] << std::endl;
+    LogDebug("SiPixelFedCablingMapGPU") << i << std::setw(20) << (int)badRocs[i] << std::setw(20) << (int)modToUnp[i] << std::endl;
     LogDebug("SiPixelFedCablingMapGPU") << "----------------------------------------------------------------------------" << std::endl;
   }
 
