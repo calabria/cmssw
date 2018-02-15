@@ -74,7 +74,7 @@ SiPixelRawToDigiGPU::SiPixelRawToDigiGPU( const edm::ParameterSet& conf )
     usererrorlist = config_.getParameter<std::vector<int> > ("UserErrorList");
   }
   tFEDRawDataCollection = consumes <FEDRawDataCollection> (config_.getParameter<edm::InputTag>("InputLabel"));
-
+  debug = config_.getParameter<bool>("enableErrorDebug");
 
   //start counters
   ndigis = 0;
@@ -138,10 +138,13 @@ SiPixelRawToDigiGPU::SiPixelRawToDigiGPU( const edm::ParameterSet& conf )
   cudaMallocHost(&pdigi_h,    sizeof(uint32_t)*WSIZE);
   cudaMallocHost(&rawIdArr_h, sizeof(uint32_t)*WSIZE);
 
-  cudaMallocHost(&errType_h,  sizeof(uint32_t)*WSIZE);
-  cudaMallocHost(&errRawID_h, sizeof(uint32_t)*WSIZE);
-  cudaMallocHost(&errWord_h,  sizeof(uint32_t)*WSIZE);
-  cudaMallocHost(&errFedID_h, sizeof(uint32_t)*WSIZE);
+  uint32_t VSIZE = sizeof(GPU::SimpleVector<error_obj>);
+  uint32_t ESIZE = sizeof(error_obj);
+  bool success = cudaMallocHost(&error_h, VSIZE) == cudaSuccess &&
+                 cudaMallocHost(&error_h_tmp, VSIZE) == cudaSuccess &&
+                 cudaMallocHost(&data_h, MAX_FED*MAX_WORD*ESIZE) == cudaSuccess;
+
+  assert(success);
 
   // mIndexStart_h = new int[NMODULE+1];
   // mIndexEnd_h = new int[NMODULE+1];
@@ -151,6 +154,13 @@ SiPixelRawToDigiGPU::SiPixelRawToDigiGPU( const edm::ParameterSet& conf )
   // allocate memory for RawToDigi on GPU
   context_ = initDeviceMemory();
 
+  new (error_h) GPU::SimpleVector<error_obj>(MAX_FED*MAX_WORD, data_h);
+  new (error_h_tmp) GPU::SimpleVector<error_obj>(MAX_FED*MAX_WORD, context_.data_d);
+  assert(error_h->size() == 0);
+  assert(error_h->capacity() == static_cast<int>(MAX_FED*MAX_WORD));
+  assert(error_h_tmp->size() == 0);
+  assert(error_h_tmp->capacity() == static_cast<int>(MAX_FED*MAX_WORD));
+    
   // // allocate auxilary memory for clustering
   // initDeviceMemCluster();
 
@@ -174,10 +184,9 @@ SiPixelRawToDigiGPU::~SiPixelRawToDigiGPU() {
   cudaFreeHost(fedId_h);
   cudaFreeHost(pdigi_h);
   cudaFreeHost(rawIdArr_h);
-  cudaFreeHost(errType_h);
-  cudaFreeHost(errRawID_h);
-  cudaFreeHost(errWord_h);
-  cudaFreeHost(errFedID_h);
+  cudaFreeHost(error_h);
+  cudaFreeHost(error_h_tmp);
+  cudaFreeHost(data_h);
   cudaFreeHost(mIndexStart_h);
   cudaFreeHost(mIndexEnd_h);
 
@@ -230,6 +239,7 @@ SiPixelRawToDigiGPU::fillDescriptions(edm::ConfigurationDescriptions& descriptio
   desc.add<std::string>("CablingMapLabel","")->setComment("CablingMap label"); //Tav
   desc.addOptional<bool>("CheckPixelOrder");  // never used, kept for back-compatibility
   desc.add<bool>("ConvertADCtoElectrons", false)->setComment("## do the calibration ADC-> Electron and apply the threshold, requried for clustering");
+  desc.add<bool>("enableErrorDebug",false);
   descriptions.add("siPixelRawToDigiGPU",desc);
 }
 
@@ -245,8 +255,6 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
   int theWordCounter = 0;
   int theDigiCounter = 0;
   const uint32_t dummydetid = 0xffffffff;
-  //debug = edm::MessageDrop::instance()->debugEnabled;
-  debug = false;
 
   // initialize quality record or update if necessary
   if (qualityWatcher.check( es ) && useQuality) {
@@ -284,7 +292,7 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
     // convert the cabling map to a GPU-friendly version
     processCablingMap(*cablingMap, *geom.product(), cablingMapGPUHost_, cablingMapGPUDevice_, badPixelInfo_, modules);
     
-    processGainCalibration(theSiPixelGainCalibration_.payload(), *geom.product(), gainForHLTonGPU_, gainDataOnGPU_);
+    //processGainCalibration(theSiPixelGainCalibration_.payload(), *geom.product(), gainForHLTonGPU_, gainDataOnGPU_);
 
   }
 
@@ -321,9 +329,7 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
 
     if (!usePilotBlade && (fedId==40) ) continue; // skip pilot blade data
     if (regions_ && !regions_->mayUnpackFED(fedId)) continue;
-    #if 0
-    if (debug) LogDebug("SiPixelRawToDigiGPU") << " PRODUCE DIGI FOR FED: " <<  fedId << endl;
-    #endif
+    LogDebug("SiPixelRawToDigiGPU") << " PRODUCE DIGI FOR FED: " <<  fedId << endl;
 
     // for GPU
     // first 150 index stores the fedId and next 150 will store the
@@ -383,7 +389,7 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
 
     uint32_t nModulesActive=0;
     RawToDigi_wrapper(context_, cablingMapGPUDevice_, gainForHLTonGPU_, wordCounterGPU, word, fedCounter, fedId_h, convertADCtoElectrons, pdigi_h, 
-                      rawIdArr_h, errType_h, errWord_h, errFedID_h, errRawID_h, useQuality, includeErrors, debug,nModulesActive);
+                      rawIdArr_h, error_h, error_h_tmp, data_h, useQuality, includeErrors, debug,nModulesActive);
 
 
      auto gpuProd = std::make_unique<std::vector<unsigned long long>>();
@@ -414,11 +420,14 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
         theDigiCounter++;
     }
 
-    for (uint32_t i = 0; i < wordCounterGPU; i++) {
-        if (errType_h[i] != 0) {
-            SiPixelRawDataError error(errWord_h[i], errType_h[i], errFedID_h[i]+1200);
-            errors[errRawID_h[i]].push_back(error);
-        }
+    uint32_t vec_size = error_h->size();
+    for (uint32_t i = 0; i < vec_size; i++) {
+//      error_obj err = *error_h[i];
+//      if (err.errorType != 0) {
+//          SiPixelRawDataError error(err.word, err.errorType, err.fedId + 1200);
+//          errors[err.rawId].push_back(error);
+//      }
+
     }
 
 
