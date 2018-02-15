@@ -103,8 +103,8 @@ void processCablingMap(SiPixelFedCablingMap const& cablingMap, SiPixelFedCabling
   cudaCheck(cudaMemcpy(cablingMapGPU->RawId,    RawId.data(),    RawId.size()    * sizeof(unsigned int), cudaMemcpyHostToDevice));
   cudaCheck(cudaMemcpy(cablingMapGPU->rocInDet, rocInDet.data(), rocInDet.size() * sizeof(unsigned int), cudaMemcpyHostToDevice));
   cudaCheck(cudaMemcpy(cablingMapGPU->moduleId, moduleId.data(), moduleId.size() * sizeof(unsigned int), cudaMemcpyHostToDevice));
-  cudaCheck(cudaMemcpy(cablingMapGPU->badRocs,  badRocs.data(),  badRocs.size()  * sizeof(short int), cudaMemcpyHostToDevice));
-  cudaCheck(cudaMemcpy(cablingMapGPU->modToUnp, modToUnp.data(), modToUnp.size() * sizeof(short int), cudaMemcpyHostToDevice));
+  cudaCheck(cudaMemcpy(cablingMapGPU->badRocs,  badRocs.data(),  badRocs.size()  * sizeof(unsigned char), cudaMemcpyHostToDevice));
+  cudaCheck(cudaMemcpy(cablingMapGPU->modToUnp, modToUnp.data(), modToUnp.size() * sizeof(unsigned char), cudaMemcpyHostToDevice));
   cudaCheck(cudaMemcpy(cablingMapDevice, cablingMapGPU, sizeof(SiPixelFedCablingMapGPU), cudaMemcpyHostToDevice));
   cudaDeviceSynchronize();
 }

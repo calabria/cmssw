@@ -364,6 +364,12 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
     }
 
     for (uint32_t i = 0; i < wordCounterGPU; i++) {
+        //errorType, word, fedID, rawID
+        if (errType_h[i] != 0) {
+            SiPixelRawDataError error(errWord_h[i], errType_h[i], errFedID_h[i]+1200);
+            errors[errRawID_h[i]].push_back(error);
+        }
+        
         if (pdigi_h[i]==0) continue;
         assert(rawIdArr_h[i] > 109999);
         if ( (*detDigis).detId() != rawIdArr_h[i])
@@ -374,13 +380,6 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
         }
         (*detDigis).data.emplace_back(pdigi_h[i]);
         theDigiCounter++;
-    }
-
-    for (uint32_t i = 0; i < wordCounterGPU; i++) {
-        if (errType_h[i] != 0) {
-            SiPixelRawDataError error(errWord_h[i], errType_h[i], errFedID_h[i]+1200);
-            errors[errRawID_h[i]].push_back(error);
-        }
     }
 
 
