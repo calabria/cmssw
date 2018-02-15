@@ -40,7 +40,8 @@ context initDeviceMemory() {
   constexpr uint32_t MAX_WORD08_SIZE = MAX_FED * MAX_WORD * sizeof(uint8_t);
   constexpr uint32_t MAX_WORD32_SIZE = MAX_FED * MAX_WORD * sizeof(uint32_t);
   constexpr uint32_t MAX_WORD16_SIZE = MAX_FED * MAX_WORD * sizeof(uint16_t);
-  constexpr uint32_t ESIZE = 2*(sizeof(uint32_t) + sizeof(unsigned char));
+  constexpr uint32_t VSIZE = sizeof(GPU::SimpleVector<error_obj>);
+  constexpr uint32_t ESIZE = sizeof(error_obj);
   constexpr uint32_t MAX_ERROR_SIZE  = MAX_FED * MAX_WORD * ESIZE;
   constexpr uint32_t MSIZE = NMODULE*sizeof(int)+sizeof(int);
 
@@ -55,7 +56,7 @@ context initDeviceMemory() {
   cudaCheck(cudaMalloc((void**) & c.layer_d,       MAX_WORD16_SIZE));
   cudaCheck(cudaMalloc((void**) & c.rawIdArr_d,    MAX_WORD32_SIZE));
   cudaCheck(cudaMalloc((void**) & c.moduleId_d,    MAX_WORD32_SIZE));
-  cudaCheck(cudaMalloc((void**) & c.error_d,       ESIZE));
+  cudaCheck(cudaMalloc((void**) & c.error_d,       VSIZE));
   cudaCheck(cudaMalloc((void**) & c.data_d,        MAX_ERROR_SIZE));
   cudaCheck(cudaMalloc((void**) & c.mIndexStart_d, MSIZE));
   cudaCheck(cudaMalloc((void**) & c.mIndexEnd_d,   MSIZE));
@@ -434,7 +435,7 @@ __device__ uint32_t getErrRawID(uint32_t fedId, uint32_t errWord, uint32_t error
 __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint32_t wordCounter, const uint32_t *Word, const uint8_t *fedIds,
                                  uint16_t * XX, uint16_t * YY, uint16_t * ADC,
                                  uint32_t * pdigi, uint32_t *moduleId, int *mIndexStart,
-                                 int *mIndexEnd,  uint16_t *layerArr, uint32_t *rawIdArr, vecError *err,
+                                 int *mIndexEnd,  uint16_t *layerArr, uint32_t *rawIdArr, GPU::SimpleVector<error_obj> *err,
                                  bool useQualityInfo, bool includeErrors, bool debug)
 {
   uint32_t blockId  = blockIdx.x;
@@ -563,13 +564,14 @@ __global__ void RawToDigi_kernel(const SiPixelFedCablingMapGPU *Map, const uint3
     } // end of if (gIndex < end)
    } // end fake loop
     
-    printf("Size device: %i\n", err->size());
-    for(int i = 0; i < err->size(); i++){
-        error_obj minkia = (*err)[i];
-        printf("%i %i %i %i\n", minkia.errorType, minkia.word, minkia.fedId, minkia.rawId);
-        
+    if(blockId == 0 && threadId == 0){
+        printf("Word: %i %i %i \n", Word[0], wordCounter, err->size());
+        for(int i = 0; i < (int)err->size(); i++){
+            printf("index %i\n", i);
+            //error_obj obj = (*err)[i];
+            //printf("Index: %i, Block: %i, Thread: %i, ErrorType: %i, Word: %i, fedId: %i, rawId: %i\n", i, threadId, blockId, obj.errorType, obj.word, obj.fedId, obj.rawId);
+        }
     }
-
   /*
    *   VI what below is either WRONG, or badly coded or just useless
 
@@ -636,7 +638,8 @@ void RawToDigi_wrapper(
     context & c,
     const SiPixelFedCablingMapGPU* cablingMapDevice, const uint32_t wordCounter, uint32_t *word, const uint32_t fedCounter,
     uint8_t *fedId_h, bool convertADCtoElectrons, uint32_t * pdigi_h, int *mIndexStart_h, int *mIndexEnd_h,
-    uint32_t *rawIdArr_h, vecError *error_h, vecError *error_h_tmp, error_obj *data_h, bool useQualityInfo, bool includeErrors, bool debug)
+    uint32_t *rawIdArr_h, GPU::SimpleVector<error_obj> *error_h, GPU::SimpleVector<error_obj> *error_h_tmp, error_obj *data_h,
+    bool useQualityInfo, bool includeErrors, bool debug)
 {
   const int threadsPerBlock = 512;
   const int blocks = (wordCounter + threadsPerBlock-1) /threadsPerBlock; // fill it all
@@ -655,13 +658,12 @@ void RawToDigi_wrapper(
   // wordCounter is the total no of words in each event to be trasfered on device
   cudaCheck(cudaMemcpyAsync(&c.word_d[0],  &word[0],    wordCounter*sizeof(uint32_t),  cudaMemcpyHostToDevice, c.stream));
   cudaCheck(cudaMemcpyAsync(&c.fedId_d[0], &fedId_h[0], wordCounter*sizeof(uint8_t)/2, cudaMemcpyHostToDevice, c.stream));
-  uint32_t ESIZE = 2*(sizeof(uint32_t) + sizeof(unsigned char));
-//cudaCheck(cudaMemcpyAsync(c.error_d, error_h_tmp, ESIZE, cudaMemcpyHostToDevice, c.stream));
-    std::cout<<"boh2"<<std::endl;
-
-  bool success = cudaMemcpyAsync(c.error_d, error_h_tmp, ESIZE, cudaMemcpyHostToDevice, c.stream) == cudaSuccess;
+    
+  constexpr uint32_t VSIZE = sizeof(GPU::SimpleVector<error_obj>);
+  constexpr uint32_t ESIZE = sizeof(error_obj);
+  //cudaCheck(cudaMemcpyAsync(c.error_d, error_h_tmp, VSIZE, cudaMemcpyHostToDevice, c.stream));
+  bool success = cudaMemcpy(c.error_d, error_h_tmp, VSIZE, cudaMemcpyHostToDevice) == cudaSuccess;
   assert(success);
-    std::cout<<"boh3"<<std::endl;
 
   // Launch rawToDigi kernel
   RawToDigi_kernel<<<blocks, threadsPerBlock, 0, c.stream>>>(
@@ -692,14 +694,13 @@ void RawToDigi_wrapper(
   */
 
   if (includeErrors) {
-      std::cout<<"boh4"<<std::endl;
-
-      cudaCheck(cudaMemcpyAsync(error_h, c.error_d, ESIZE, cudaMemcpyDeviceToHost, c.stream));
-      std::cout<<"boh5"<<std::endl;
-
-      cudaCheck(cudaMemcpyAsync(data_h, c.data_d, wordCounter*ESIZE, cudaMemcpyDeviceToHost, c.stream));
-      std::cout<<"boh6"<<std::endl;
-
+      cudaCheck(cudaMemcpy(error_h, c.error_d, VSIZE, cudaMemcpyDeviceToHost));
+      
+      assert(error_h->size() == ((blocks * threadsPerBlock) < (MAX_FED * MAX_WORD)
+                                 ? (blocks * threadsPerBlock)
+                                 : (MAX_FED * MAX_WORD)));
+      
+      cudaCheck(cudaMemcpy(data_h, c.data_d, (error_h->size())*ESIZE, cudaMemcpyDeviceToHost));
   }
   cudaStreamSynchronize(c.stream);
   // End of Raw2Digi and passing data for clusterization

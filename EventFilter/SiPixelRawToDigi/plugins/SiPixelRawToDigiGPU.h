@@ -69,8 +69,8 @@ private:
   // to store the output
   uint32_t *pdigi_h, *rawIdArr_h;                   // host copy of output
   error_obj *data_h = nullptr;
-  vecError *error_h = nullptr;
-  vecError *error_h_tmp = nullptr;
+  GPU::SimpleVector<error_obj> *error_h = nullptr;
+  GPU::SimpleVector<error_obj> *error_h_tmp = nullptr;
   // store the start and end index for each module (total 1856 modules-phase 1)
   int *mIndexStart_h, *mIndexEnd_h;
 

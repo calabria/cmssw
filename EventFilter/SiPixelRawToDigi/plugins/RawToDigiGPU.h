@@ -170,7 +170,7 @@ struct context {
   uint16_t * adc_d;
   uint16_t * layer_d;
   uint32_t * rawIdArr_d;
-  vecError * error_d;
+  GPU::SimpleVector<error_obj> * error_d;
   error_obj * data_d;
 
   // store the start and end index for each module (total 1856 modules-phase 1)
@@ -182,7 +182,7 @@ struct context {
 void RawToDigi_wrapper(context &, const SiPixelFedCablingMapGPU* cablingMapDevice, const uint32_t wordCounter, uint32_t *word, 
                         const uint32_t fedCounter,  uint8_t *fedId_h,
                         bool convertADCtoElectrons, uint32_t * pdigi_h, int *mIndexStart_h, int *mIndexEnd_h,
-                        uint32_t *rawIdArr_h, vecError *error_h, vecError *error_h_tmp, error_obj *data_h,
+                        uint32_t *rawIdArr_h, GPU::SimpleVector<error_obj> *error_h, GPU::SimpleVector<error_obj> *error_h_tmp, error_obj *data_h,
                         bool useQualityInfo, bool includeErrors, bool debug = false);
 
 // void initCablingMap();

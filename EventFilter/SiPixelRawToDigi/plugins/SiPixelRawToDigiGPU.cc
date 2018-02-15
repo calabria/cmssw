@@ -128,9 +128,10 @@ SiPixelRawToDigiGPU::SiPixelRawToDigiGPU( const edm::ParameterSet& conf )
   // to store the output of RawToDigi
   cudaMallocHost(&pdigi_h,    sizeof(uint32_t)*WSIZE);
   cudaMallocHost(&rawIdArr_h, sizeof(uint32_t)*WSIZE);
-  uint32_t ESIZE =  2*(sizeof(uint32_t) + sizeof(unsigned char));
-  bool success = cudaMallocHost(&error_h, ESIZE) == cudaSuccess &&
-                 cudaMallocHost(&error_h_tmp, ESIZE) == cudaSuccess &&
+  uint32_t VSIZE = sizeof(GPU::SimpleVector<error_obj>);
+  uint32_t ESIZE = sizeof(error_obj);
+  bool success = cudaMallocHost(&error_h, VSIZE) == cudaSuccess &&
+                 cudaMallocHost(&error_h_tmp, VSIZE) == cudaSuccess &&
                  cudaMallocHost(&data_h, MAX_FED*MAX_WORD*ESIZE) == cudaSuccess;
     
   assert(success);
@@ -149,8 +150,6 @@ SiPixelRawToDigiGPU::SiPixelRawToDigiGPU( const edm::ParameterSet& conf )
   assert(error_h->capacity() == static_cast<int>(MAX_FED*MAX_WORD));
   assert(error_h_tmp->size() == 0);
   assert(error_h_tmp->capacity() == static_cast<int>(MAX_FED*MAX_WORD));
-    
-    cout<<"boh1"<<endl;
 
   // // allocate auxilary memory for clustering
   // initDeviceMemCluster();
@@ -368,9 +367,10 @@ SiPixelRawToDigiGPU::produce( edm::Event& ev, const edm::EventSetup& es)
   }
     cout<<"Size: "<<error_h->size()<<endl;
   for (uint32_t i = 0; i < wordCounterGPU; i++) {
-//      if (error_h[i].errorType != 0) {
-//          SiPixelRawDataError error(error_h[i].word, error_h[i].errorType, error_h[i].fedId + 1200);
-//          errors[error_h[i].rawId].push_back(error);
+//      error_obj err = *error_h[i];
+//      if (err.errorType != 0) {
+//          SiPixelRawDataError error(err.word, err.errorType, err.fedId + 1200);
+//          errors[err.rawId].push_back(error);
 //      }
       
       if (pdigi_h[i]==0) continue;
